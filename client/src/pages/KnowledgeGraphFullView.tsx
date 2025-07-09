@@ -12,7 +12,7 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
   const containerWidth = window.innerWidth - 100;
   const containerHeight = window.innerHeight - 200;
   
-  // Create a better distributed layout for full screen
+  // Create a better distributed layout with forced spacing
   const nodePositions = nodes.map((node, index) => {
     const cols = Math.ceil(Math.sqrt(nodes.length));
     const rows = Math.ceil(nodes.length / cols);
@@ -20,18 +20,24 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
     const col = index % cols;
     const row = Math.floor(index / cols);
     
-    const paddingX = 120;
-    const paddingY = 80;
+    const paddingX = 150;
+    const paddingY = 100;
+    const minSpacing = 120; // Minimum space between nodes
+    
     const availableWidth = containerWidth - 2 * paddingX;
     const availableHeight = containerHeight - 2 * paddingY;
     
-    const x = paddingX + (col * availableWidth) / (cols - 1 || 1);
-    const y = paddingY + (row * availableHeight) / (rows - 1 || 1);
+    // Calculate positions with minimum spacing
+    const cellWidth = Math.max(minSpacing, availableWidth / cols);
+    const cellHeight = Math.max(minSpacing, availableHeight / rows);
+    
+    const x = paddingX + col * cellWidth + cellWidth / 2;
+    const y = paddingY + row * cellHeight + cellHeight / 2;
     
     return {
       ...node,
-      x: Math.max(80, Math.min(containerWidth - 80, x)),
-      y: Math.max(60, Math.min(containerHeight - 60, y))
+      x: Math.max(100, Math.min(containerWidth - 100, x)),
+      y: Math.max(80, Math.min(containerHeight - 80, y))
     };
   });
   
@@ -99,18 +105,20 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
               strokeWidth="3"
               opacity="0.7"
             />
-            {/* Edge label for all connections in full view */}
-            <text
-              x={(connection.from.x + connection.to.x) / 2}
-              y={(connection.from.y + connection.to.y) / 2}
-              textAnchor="middle"
-              fontSize="12"
-              fill="#6B7280"
-              className="pointer-events-none"
-              dy="-3"
-            >
-              {connection.type}
-            </text>
+            {/* Edge label - only show for reasonable distances */}
+            {Math.sqrt(Math.pow(connection.from.x - connection.to.x, 2) + Math.pow(connection.from.y - connection.to.y, 2)) > 80 && (
+              <text
+                x={(connection.from.x + connection.to.x) / 2}
+                y={(connection.from.y + connection.to.y) / 2}
+                textAnchor="middle"
+                fontSize="11"
+                fill="#6B7280"
+                className="pointer-events-none"
+                dy="-3"
+              >
+                {connection.type}
+              </text>
+            )}
           </g>
         ))}
         
@@ -132,12 +140,23 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
                 className="cursor-pointer hover:opacity-80"
               />
               
-              {/* Node label */}
+              {/* Node label with background for better visibility */}
+              <rect
+                x={node.x - (node.name.length * 4)}
+                y={node.y - nodeSize - 30}
+                width={node.name.length * 8}
+                height="18"
+                fill="white"
+                fillOpacity="0.9"
+                stroke="#E5E7EB"
+                strokeWidth="1"
+                rx="3"
+              />
               <text
                 x={node.x}
-                y={node.y - nodeSize - 15}
+                y={node.y - nodeSize - 18}
                 textAnchor="middle"
-                fontSize="14"
+                fontSize="13"
                 fontWeight="600"
                 fill="#374151"
                 className="pointer-events-none"
@@ -159,10 +178,21 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
                  node.type === "event" ? "E" : "D"}
               </text>
 
-              {/* Connection count */}
+              {/* Connection count with background */}
+              <rect
+                x={node.x - 25}
+                y={node.y + nodeSize + 8}
+                width="50"
+                height="14"
+                fill="white"
+                fillOpacity="0.8"
+                stroke="#E5E7EB"
+                strokeWidth="1"
+                rx="2"
+              />
               <text
                 x={node.x}
-                y={node.y + nodeSize + 20}
+                y={node.y + nodeSize + 18}
                 textAnchor="middle"
                 fontSize="10"
                 fill="#6B7280"
