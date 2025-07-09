@@ -7,8 +7,8 @@ import { chatApi } from "@/lib/chatApi";
 
 // Network Graph Component
 function NetworkGraph({ nodes, relationships }) {
-  const containerWidth = 350;
-  const containerHeight = 240;
+  const containerWidth = 480;
+  const containerHeight = 320;
   
   // Create a simpler circular layout for nodes
   const nodePositions = nodes.map((node, index) => {
@@ -101,7 +101,7 @@ function NetworkGraph({ nodes, relationships }) {
               fill="#374151"
               className="pointer-events-none"
             >
-              {node.name.length > 8 ? `${node.name.substring(0, 8)}...` : node.name}
+              {node.name.length > 12 ? `${node.name.substring(0, 12)}...` : node.name}
             </text>
             
             {/* Node type indicator */}
@@ -123,14 +123,16 @@ function NetworkGraph({ nodes, relationships }) {
       
       {/* Legend */}
       <g transform="translate(10, 10)">
-        <rect width="100" height="60" fill="white" fillOpacity="0.9" stroke="#E5E7EB" rx="4" />
-        <text x="5" y="15" fontSize="10" fontWeight="600" fill="#374151">Legend</text>
-        <circle cx="10" cy="25" r="4" fill="#3B82F6" />
-        <text x="18" y="28" fontSize="9" fill="#374151">Person</text>
-        <circle cx="10" cy="38" r="4" fill="#8B5CF6" />
-        <text x="18" y="41" fontSize="9" fill="#374151">Topic</text>
-        <circle cx="10" cy="51" r="4" fill="#10B981" />
-        <text x="18" y="54" fontSize="9" fill="#374151">Event</text>
+        <rect width="120" height="80" fill="white" fillOpacity="0.9" stroke="#E5E7EB" rx="4" />
+        <text x="5" y="15" fontSize="11" fontWeight="600" fill="#374151">Legend</text>
+        <circle cx="12" cy="28" r="5" fill="#3B82F6" />
+        <text x="22" y="32" fontSize="10" fill="#374151">Person</text>
+        <circle cx="12" cy="45" r="5" fill="#8B5CF6" />
+        <text x="22" y="49" fontSize="10" fill="#374151">Topic</text>
+        <circle cx="12" cy="62" r="5" fill="#10B981" />
+        <text x="22" y="66" fontSize="10" fill="#374151">Event</text>
+        <circle cx="12" cy="79" r="5" fill="#F59E0B" />
+        <text x="22" y="83" fontSize="10" fill="#374151">Date</text>
       </g>
     </svg>
   );
@@ -206,7 +208,7 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
   }
 
   return (
-    <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+    <div className="w-[500px] bg-white border-l border-gray-200 flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
@@ -236,15 +238,15 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
               {/* Graph Visualization */}
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Entity Network</h4>
-                <div className="bg-gray-50 rounded-lg p-4 h-64 relative overflow-hidden">
+                <div className="bg-gray-50 rounded-lg p-4 h-80 relative overflow-hidden">
                   {!graphData?.nodes?.length ? (
                     <div className="flex items-center justify-center h-full text-gray-500 text-sm">
                       No entities found. Start a conversation with @aiagent to populate the graph.
                     </div>
                   ) : (
                     <NetworkGraph 
-                      nodes={graphData.nodes.slice(0, 8)} 
-                      relationships={graphData.relationships.slice(0, 12)} 
+                      nodes={graphData.nodes.slice(0, 12)} 
+                      relationships={graphData.relationships.slice(0, 20)} 
                     />
                   )}
                 </div>
@@ -252,21 +254,27 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
 
               {/* Entity List */}
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Recent Entities</h4>
-                <div className="space-y-2">
-                  {graphData?.entitySummaries?.slice(0, 10).map((entity, index) => (
+                <h4 className="text-sm font-medium text-gray-700 mb-2">All Entities ({graphData?.nodes?.length || 0})</h4>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {graphData?.entitySummaries?.map((entity, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <div className={getEntityColor(entity.type)}>
                         {getEntityIcon(entity.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{entity.name}</div>
+                        <div className="text-sm font-medium">{entity.name}</div>
                         <div className="text-xs text-gray-500">
                           {entity.mentions} mentions • {formatDate(entity.lastMentioned)}
                         </div>
+                        {entity.relatedEntities?.length > 0 && (
+                          <div className="text-xs text-gray-400 mt-1">
+                            Connected to: {entity.relatedEntities.slice(0, 3).join(', ')}
+                            {entity.relatedEntities.length > 3 && ` +${entity.relatedEntities.length - 3} more`}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -276,16 +284,19 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
 
             <TabsContent value="relationships" className="space-y-4 mt-0">
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Entity Relationships</h4>
-                <div className="space-y-2">
-                  {graphData?.relationships?.slice(0, 10).map((rel) => (
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Entity Relationships ({graphData?.relationships?.length || 0})</h4>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {graphData?.relationships?.map((rel) => (
                     <div
                       key={rel.id}
-                      className="p-3 bg-gray-50 rounded-lg"
+                      className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <div className="text-sm font-medium">{rel.type}</div>
+                      <div className="text-sm font-medium capitalize">{rel.type}</div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {graphData.nodes.find(n => n.id === rel.from)?.name} → {graphData.nodes.find(n => n.id === rel.to)?.name}
+                        <span className="font-medium">{graphData.nodes.find(n => n.id === rel.from)?.name}</span> → <span className="font-medium">{graphData.nodes.find(n => n.id === rel.to)?.name}</span>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {graphData.nodes.find(n => n.id === rel.from)?.type} connects to {graphData.nodes.find(n => n.id === rel.to)?.type}
                       </div>
                     </div>
                   ))}
@@ -295,19 +306,19 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
 
             <TabsContent value="threads" className="space-y-4 mt-0">
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Conversation Threads</h4>
-                <div className="space-y-2">
-                  {conversationThreads?.slice(0, 10).map((thread) => (
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Conversation Threads ({conversationThreads?.length || 0})</h4>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {conversationThreads?.map((thread) => (
                     <div
                       key={thread.id}
-                      className="p-3 bg-gray-50 rounded-lg"
+                      className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <div className="text-sm font-medium">{thread.topic}</div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {thread.participants.join(" → ")}
+                        Participants: {thread.participants.join(", ")}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {thread.messageCount} messages • {formatDate(thread.lastMessageAt)}
+                        {thread.messageCount} messages • Last: {formatDate(thread.lastMessageAt)}
                       </div>
                     </div>
                   ))}

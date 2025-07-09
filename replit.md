@@ -34,6 +34,8 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced UI**: Added clear messages functionality with proper cache invalidation
 - **Knowledge Graph Rebuild**: Added "Rebuild Knowledge Graph" button to process all existing messages and extract entities from entire conversation history
 - **Comprehensive Entity Extraction**: System now extracts entities from all messages, not just AI responses
+- **Enhanced Graph Visualization**: Expanded sidebar to 500px width with larger graph (480x320), showing up to 12 nodes and 20 relationships
+- **Improved Information Display**: All entities, relationships, and threads now show complete information with scrollable lists and hover effects
 
 ### Project Structure
 ```
