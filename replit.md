@@ -24,6 +24,13 @@ Preferred communication style: Simple, everyday language.
 - **ORM**: Drizzle ORM with TypeScript schema definitions
 - **AI Integration**: OpenAI API for chat responses and entity extraction
 - **Session Management**: Built-in session handling for user activity
+- **Storage**: Currently using MemStorage (in-memory) for development
+
+### Recent Changes (July 9, 2025)
+- Fixed TypeScript errors in storage layer and routes
+- Updated AI agent to access full conversation history
+- Added debug logging to track conversation context
+- Modified OpenAI service to pass complete message history with user names
 
 ### Project Structure
 ```

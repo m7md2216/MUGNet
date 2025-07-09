@@ -62,6 +62,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mention.toLowerCase().includes('agent') || mention.toLowerCase().includes('ai')
       );
 
+      console.log('AI Mention Check:', {
+        mentions: messageData.mentions,
+        aiMentions,
+        willTriggerAI: aiMentions.length > 0
+      });
+
       if (aiMentions.length > 0) {
         // Generate AI response
         const user = await storage.getUser(messageData.userId!);
@@ -108,6 +114,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           } catch (aiError) {
             console.error("AI Response Error:", aiError);
+            console.error("AI Error Details:", {
+              message: (aiError as any).message,
+              stack: (aiError as any).stack,
+              type: (aiError as any).constructor?.name
+            });
             res.json({ message, error: "Failed to generate AI response" });
           }
         } else {
