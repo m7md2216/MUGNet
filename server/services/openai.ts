@@ -62,18 +62,24 @@ Instructions:
 - Be helpful and contextual
 - Reference previous conversations when relevant by looking at the conversation history
 - When asked about what someone said or did, check the conversation history first
-- Identify and extract entities for knowledge graph updates
+- Extract meaningful entities for knowledge graph updates (be thorough!)
 - Respond in a natural, conversational tone
 - Keep responses concise but informative
+
+IMPORTANT: Extract entities aggressively! Look for:
+- People: All names mentioned (including the current user)
+- Topics: Activities, subjects, places, interests (like "hiking", "Pennsylvania", "mountains", "trails")
+- Events: Things that happened ("went hiking", "vacation", "meeting")
+- Dates: Any time references ("yesterday", "last week", "today")
 
 Respond with JSON in this format:
 {
   "response": "Your conversational response here",
   "extractedEntities": {
-    "people": ["array of person names mentioned"],
-    "topics": ["array of topics discussed"],
-    "events": ["array of events mentioned"],
-    "dates": ["array of dates mentioned"]
+    "people": ["array of ALL person names mentioned in the conversation"],
+    "topics": ["array of ALL topics/subjects/activities discussed"],
+    "events": ["array of ALL events/activities mentioned"],
+    "dates": ["array of ALL time references mentioned"]
   },
   "relevantContext": ["array of relevant context points used"]
 }`;
@@ -162,12 +168,33 @@ export async function extractAndStoreEntities(
   participants: string[]
 ): Promise<void> {
   try {
+    console.log('Extracting entities for message:', messageId);
+    console.log('Extracted entities:', extractedEntities);
+    console.log('Participants:', participants);
+
     const allEntities = [
       ...extractedEntities.people.map(name => ({ name, type: 'person' })),
       ...extractedEntities.topics.map(name => ({ name, type: 'topic' })),
       ...extractedEntities.events.map(name => ({ name, type: 'event' })),
       ...extractedEntities.dates.map(name => ({ name, type: 'date' }))
     ];
+
+    console.log('All entities to process:', allEntities);
+
+    // Always create entities for participants
+    for (const participant of participants) {
+      if (participant !== 'AI Agent') {
+        let participantEntity = await storage.getKnowledgeGraphEntityByName(participant);
+        if (!participantEntity) {
+          participantEntity = await storage.createKnowledgeGraphEntity({
+            name: participant,
+            type: 'person',
+            properties: {}
+          });
+          console.log('Created participant entity:', participantEntity);
+        }
+      }
+    }
 
     // Create entities and relationships
     for (const entityData of allEntities) {
@@ -179,22 +206,22 @@ export async function extractAndStoreEntities(
           type: entityData.type,
           properties: {}
         });
+        console.log('Created entity:', entity);
       }
 
-      // Create relationships between people and other entities
-      if (entityData.type === 'person') {
-        for (const participant of participants) {
-          if (participant !== entityData.name) {
-            const participantEntity = await storage.getKnowledgeGraphEntityByName(participant);
-            if (participantEntity) {
-              await storage.createKnowledgeGraphRelationship({
-                fromEntityId: participantEntity.id,
-                toEntityId: entity.id,
-                relationshipType: 'mentions',
-                properties: {},
-                messageId
-              });
-            }
+      // Create relationships between participants and entities
+      for (const participant of participants) {
+        if (participant !== 'AI Agent' && participant !== entityData.name) {
+          const participantEntity = await storage.getKnowledgeGraphEntityByName(participant);
+          if (participantEntity) {
+            const relationship = await storage.createKnowledgeGraphRelationship({
+              fromEntityId: participantEntity.id,
+              toEntityId: entity.id,
+              relationshipType: entityData.type === 'person' ? 'mentions' : 'discusses',
+              properties: {},
+              messageId
+            });
+            console.log('Created relationship:', relationship);
           }
         }
       }

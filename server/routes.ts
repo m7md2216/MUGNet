@@ -94,11 +94,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // Update message to mark as AI response
               aiMessage.isAiResponse = true;
 
-              // Extract and store entities
+              // Extract and store entities from both user message and AI response
+              await extractAndStoreEntities(
+                message.id,
+                aiResponse.extractedEntities,
+                [user.name, ...(messageData.mentions || [])]
+              );
+              
               await extractAndStoreEntities(
                 aiMessage.id,
                 aiResponse.extractedEntities,
-                [user.name, ...(messageData.mentions || [])]
+                [user.name, "AI Agent", ...(messageData.mentions || [])]
               );
 
               // Create or update conversation thread
