@@ -12,40 +12,32 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
   const containerWidth = window.innerWidth - 100;
   const containerHeight = window.innerHeight - 200;
   
-  // Force-directed layout with better spacing for full screen
+  // Wide spaced layout with guaranteed minimum distance
   const nodePositions = nodes.map((node, index) => {
-    // Start with circular positioning as base
-    const angle = (index * 2 * Math.PI) / nodes.length;
-    const radius = Math.min(containerWidth, containerHeight) * 0.3;
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
+    const maxCols = 4;
+    const cols = Math.min(maxCols, nodes.length);
+    const rows = Math.ceil(nodes.length / cols);
     
-    let x = centerX + radius * Math.cos(angle);
-    let y = centerY + radius * Math.sin(angle);
+    const col = index % cols;
+    const row = Math.floor(index / cols);
     
-    // Apply repulsion forces from other nodes
-    nodes.forEach((otherNode, otherIndex) => {
-      if (index !== otherIndex) {
-        const otherAngle = (otherIndex * 2 * Math.PI) / nodes.length;
-        const otherX = centerX + radius * Math.cos(otherAngle);
-        const otherY = centerY + radius * Math.sin(otherAngle);
-        
-        const dx = x - otherX;
-        const dy = y - otherY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 150) { // Minimum distance threshold for full screen
-          const repulsionForce = 80 / (distance + 1);
-          x += (dx / distance) * repulsionForce;
-          y += (dy / distance) * repulsionForce;
-        }
-      }
-    });
+    const minSpacing = 200; // Large minimum spacing
+    const paddingX = 150;
+    const paddingY = 120;
+    
+    const totalWidth = containerWidth - 2 * paddingX;
+    const totalHeight = containerHeight - 2 * paddingY;
+    
+    const cellWidth = Math.max(minSpacing, totalWidth / cols);
+    const cellHeight = Math.max(minSpacing, totalHeight / rows);
+    
+    const x = paddingX + (col * cellWidth) + (cellWidth / 2);
+    const y = paddingY + (row * cellHeight) + (cellHeight / 2);
     
     return {
       ...node,
-      x: Math.max(100, Math.min(containerWidth - 100, x)),
-      y: Math.max(80, Math.min(containerHeight - 80, y))
+      x: Math.max(120, Math.min(containerWidth - 120, x)),
+      y: Math.max(100, Math.min(containerHeight - 100, y))
     };
   });
   
@@ -113,20 +105,18 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
               strokeWidth="3"
               opacity="0.7"
             />
-            {/* Edge label - only show for well-spaced connections */}
-            {Math.sqrt(Math.pow(connection.from.x - connection.to.x, 2) + Math.pow(connection.from.y - connection.to.y, 2)) > 120 && (
-              <text
-                x={(connection.from.x + connection.to.x) / 2}
-                y={(connection.from.y + connection.to.y) / 2}
-                textAnchor="middle"
-                fontSize="10"
-                fill="#6B7280"
-                className="pointer-events-none"
-                dy="-3"
-              >
-                {connection.type}
-              </text>
-            )}
+            {/* Edge labels for full screen */}
+            <text
+              x={(connection.from.x + connection.to.x) / 2}
+              y={(connection.from.y + connection.to.y) / 2}
+              textAnchor="middle"
+              fontSize="11"
+              fill="#6B7280"
+              className="pointer-events-none"
+              dy="-3"
+            >
+              {connection.type}
+            </text>
           </g>
         ))}
         
@@ -190,8 +180,8 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
           );
         })}
         
-        {/* Legend */}
-        <g transform="translate(40, 40)">
+        {/* Legend moved to top right */}
+        <g transform={`translate(${containerWidth - 220}, 40)`}>
           <rect width="180" height="120" fill="white" fillOpacity="0.95" stroke="#E5E7EB" strokeWidth="2" rx="8" />
           <text x="10" y="25" fontSize="16" fontWeight="600" fill="#374151">Legend</text>
           <circle cx="20" cy="45" r="8" fill="#3B82F6" />

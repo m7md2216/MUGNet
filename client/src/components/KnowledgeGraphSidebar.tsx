@@ -11,40 +11,26 @@ function NetworkGraph({ nodes, relationships }) {
   const containerWidth = 480;
   const containerHeight = 320;
   
-  // Force-directed layout simulation to prevent overlaps
+  // Simple spaced grid layout for sidebar
   const nodePositions = nodes.map((node, index) => {
-    // Start with circular positioning as base
-    const angle = (index * 2 * Math.PI) / nodes.length;
-    const radius = Math.min(containerWidth, containerHeight) * 0.25;
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
+    const cols = 2; // Only 2 columns for sidebar
+    const rows = Math.ceil(nodes.length / cols);
     
-    let x = centerX + radius * Math.cos(angle);
-    let y = centerY + radius * Math.sin(angle);
+    const col = index % cols;
+    const row = Math.floor(index / rows);
     
-    // Apply repulsion forces from other nodes
-    nodes.forEach((otherNode, otherIndex) => {
-      if (index !== otherIndex) {
-        const otherAngle = (otherIndex * 2 * Math.PI) / nodes.length;
-        const otherX = centerX + radius * Math.cos(otherAngle);
-        const otherY = centerY + radius * Math.sin(otherAngle);
-        
-        const dx = x - otherX;
-        const dy = y - otherY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 80) { // Minimum distance threshold
-          const repulsionForce = 40 / (distance + 1);
-          x += (dx / distance) * repulsionForce;
-          y += (dy / distance) * repulsionForce;
-        }
-      }
-    });
+    const paddingX = 80;
+    const paddingY = 60;
+    const cellWidth = (containerWidth - 2 * paddingX) / cols;
+    const cellHeight = (containerHeight - 2 * paddingY) / rows;
+    
+    const x = paddingX + (col * cellWidth) + (cellWidth / 2);
+    const y = paddingY + (row * cellHeight) + (cellHeight / 2);
     
     return {
       ...node,
-      x: Math.max(60, Math.min(containerWidth - 60, x)),
-      y: Math.max(50, Math.min(containerHeight - 50, y))
+      x: Math.max(70, Math.min(containerWidth - 70, x)),
+      y: Math.max(60, Math.min(containerHeight - 60, y))
     };
   });
   
@@ -271,8 +257,8 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
                     </div>
                   ) : (
                     <NetworkGraph 
-                      nodes={graphData.nodes.slice(0, 6)} 
-                      relationships={graphData.relationships.slice(0, 8)} 
+                      nodes={graphData.nodes.slice(0, 4)} 
+                      relationships={graphData.relationships.slice(0, 4)} 
                     />
                   )}
                 </div>
