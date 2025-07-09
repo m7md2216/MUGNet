@@ -5,6 +5,137 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Users, Hash, Calendar, Activity } from "lucide-react";
 import { chatApi } from "@/lib/chatApi";
 
+// Network Graph Component
+function NetworkGraph({ nodes, relationships }) {
+  const containerWidth = 350;
+  const containerHeight = 240;
+  
+  // Create a simpler circular layout for nodes
+  const nodePositions = nodes.map((node, index) => {
+    const angle = (index * 2 * Math.PI) / nodes.length;
+    const radius = Math.min(containerWidth, containerHeight) * 0.3;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
+    
+    return {
+      ...node,
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle)
+    };
+  });
+  
+  // Find connections for each node
+  const connections = relationships.map(rel => {
+    const fromNode = nodePositions.find(n => n.id === rel.from);
+    const toNode = nodePositions.find(n => n.id === rel.to);
+    return fromNode && toNode ? { from: fromNode, to: toNode, type: rel.type } : null;
+  }).filter(Boolean);
+  
+  const getNodeColor = (type) => {
+    switch (type) {
+      case "person": return "#3B82F6";
+      case "topic": return "#8B5CF6";
+      case "event": return "#10B981";
+      case "date": return "#F59E0B";
+      default: return "#6B7280";
+    }
+  };
+  
+  const getNodeSize = (connections) => {
+    return Math.max(8, Math.min(20, 8 + connections * 2));
+  };
+  
+  return (
+    <svg width={containerWidth} height={containerHeight} className="absolute inset-0">
+      {/* Render edges first (so they appear behind nodes) */}
+      {connections.map((connection, index) => (
+        <g key={index}>
+          <line
+            x1={connection.from.x}
+            y1={connection.from.y}
+            x2={connection.to.x}
+            y2={connection.to.y}
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            opacity="0.7"
+          />
+          {/* Edge label */}
+          <text
+            x={(connection.from.x + connection.to.x) / 2}
+            y={(connection.from.y + connection.to.y) / 2}
+            textAnchor="middle"
+            fontSize="10"
+            fill="#6B7280"
+            className="pointer-events-none"
+          >
+            {connection.type}
+          </text>
+        </g>
+      ))}
+      
+      {/* Render nodes */}
+      {nodePositions.map((node, index) => {
+        const nodeSize = getNodeSize(node.connections);
+        const nodeColor = getNodeColor(node.type);
+        
+        return (
+          <g key={node.id}>
+            {/* Node circle */}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={nodeSize}
+              fill={nodeColor}
+              stroke="white"
+              strokeWidth="2"
+              className="cursor-pointer hover:opacity-80"
+            />
+            
+            {/* Node label */}
+            <text
+              x={node.x}
+              y={node.y - nodeSize - 5}
+              textAnchor="middle"
+              fontSize="11"
+              fontWeight="600"
+              fill="#374151"
+              className="pointer-events-none"
+            >
+              {node.name.length > 8 ? `${node.name.substring(0, 8)}...` : node.name}
+            </text>
+            
+            {/* Node type indicator */}
+            <text
+              x={node.x}
+              y={node.y + 4}
+              textAnchor="middle"
+              fontSize="8"
+              fill="white"
+              className="pointer-events-none font-medium"
+            >
+              {node.type === "person" ? "P" : 
+               node.type === "topic" ? "T" : 
+               node.type === "event" ? "E" : "D"}
+            </text>
+          </g>
+        );
+      })}
+      
+      {/* Legend */}
+      <g transform="translate(10, 10)">
+        <rect width="100" height="60" fill="white" fillOpacity="0.9" stroke="#E5E7EB" rx="4" />
+        <text x="5" y="15" fontSize="10" fontWeight="600" fill="#374151">Legend</text>
+        <circle cx="10" cy="25" r="4" fill="#3B82F6" />
+        <text x="18" y="28" fontSize="9" fill="#374151">Person</text>
+        <circle cx="10" cy="38" r="4" fill="#8B5CF6" />
+        <text x="18" y="41" fontSize="9" fill="#374151">Topic</text>
+        <circle cx="10" cy="51" r="4" fill="#10B981" />
+        <text x="18" y="54" fontSize="9" fill="#374151">Event</text>
+      </g>
+    </svg>
+  );
+}
+
 interface KnowledgeGraphSidebarProps {
   onClose: () => void;
 }
@@ -104,52 +235,17 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
             <TabsContent value="entities" className="space-y-4 mt-0">
               {/* Graph Visualization */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Entity Relationships</h4>
-                <div className="bg-gray-50 rounded-lg p-4 h-48 relative overflow-hidden">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Entity Network</h4>
+                <div className="bg-gray-50 rounded-lg p-4 h-64 relative overflow-hidden">
                   {!graphData?.nodes?.length ? (
                     <div className="flex items-center justify-center h-full text-gray-500 text-sm">
                       No entities found. Start a conversation with @aiagent to populate the graph.
                     </div>
                   ) : (
-                    <>
-                      {graphData?.nodes?.slice(0, 5).map((node, index) => (
-                        <div
-                          key={node.id}
-                          className={`absolute w-12 h-12 rounded-full flex items-center justify-center text-white text-xs font-semibold cursor-pointer transition-transform hover:scale-110 ${
-                            node.type === "person" ? "bg-blue-500" :
-                            node.type === "topic" ? "bg-purple-500" :
-                            node.type === "event" ? "bg-green-500" :
-                            "bg-gray-500"
-                          }`}
-                          style={{
-                            left: `${20 + (index * 30)}px`,
-                            top: `${20 + (index % 3) * 40}px`,
-                          }}
-                          title={node.name}
-                        >
-                          {node.type === "person" 
-                            ? node.name.split(" ").map(n => n[0]).join("").toUpperCase()
-                            : node.name.slice(0, 2).toUpperCase()
-                          }
-                        </div>
-                      ))}
-                      
-                      {/* Connection lines */}
-                      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                        {graphData?.relationships?.slice(0, 3).map((rel, index) => (
-                          <line
-                            key={rel.id}
-                            x1={50 + (index * 30)}
-                            y1={50 + (index % 3) * 40}
-                            x2={80 + (index * 30)}
-                            y2={80 + ((index + 1) % 3) * 40}
-                            stroke="#6B7280"
-                            strokeWidth="2"
-                            strokeDasharray="5,5"
-                          />
-                        ))}
-                      </svg>
-                    </>
+                    <NetworkGraph 
+                      nodes={graphData.nodes.slice(0, 8)} 
+                      relationships={graphData.relationships.slice(0, 12)} 
+                    />
                   )}
                 </div>
               </div>
