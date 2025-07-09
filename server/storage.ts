@@ -17,6 +17,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
+import { neo4jService } from "./services/neo4j";
 
 export interface IStorage {
   // User management
@@ -261,6 +262,7 @@ export class DatabaseStorage implements IStorage {
   constructor() {
     // Initialize with AI agent if not exists
     this.initializeAIAgent();
+    this.initializeNeo4j();
   }
 
   private async initializeAIAgent() {
@@ -271,6 +273,14 @@ export class DatabaseStorage implements IStorage {
         initials: "AI",
         color: "emerald"
       });
+    }
+  }
+
+  private async initializeNeo4j() {
+    try {
+      await neo4jService.connect();
+    } catch (error) {
+      console.warn('Neo4j initialization failed, continuing without graph features:', error);
     }
   }
 
@@ -322,7 +332,65 @@ export class DatabaseStorage implements IStorage {
         isAiResponse: false
       })
       .returning();
+    
+    // Sync with Neo4j
+    try {
+      const sender = await this.getUser(message.userId || 0);
+      if (sender) {
+        await neo4jService.syncUser(sender);
+        
+        // Get recipients for mentions
+        const recipients = await Promise.all(
+          (message.mentions || []).map(async (mention) => {
+            const user = await this.getUserByName(mention);
+            return user;
+          })
+        );
+        
+        const validRecipients = recipients.filter(user => user !== undefined) as User[];
+        
+        // Extract topics from message content
+        const topics = this.extractTopics(message.content);
+        
+        await neo4jService.syncMessage({
+          message,
+          sender,
+          recipients: validRecipients,
+          topics,
+          timestamp: message.timestamp || new Date()
+        });
+      }
+    } catch (error) {
+      console.error('Neo4j sync failed:', error);
+    }
+    
     return message;
+  }
+
+  private extractTopics(text: string): string[] {
+    const topics: string[] = [];
+    const lowerText = text.toLowerCase();
+    
+    // Extract hashtags
+    const hashtags = text.match(/#(\w+)/g);
+    if (hashtags) {
+      topics.push(...hashtags.map(tag => tag.slice(1)));
+    }
+    
+    // Extract common topic keywords
+    const topicKeywords = [
+      'project', 'meeting', 'deadline', 'task', 'bug', 'feature',
+      'review', 'testing', 'deployment', 'design', 'planning',
+      'discussion', 'question', 'problem', 'solution', 'update'
+    ];
+    
+    topicKeywords.forEach(keyword => {
+      if (lowerText.includes(keyword)) {
+        topics.push(keyword);
+      }
+    });
+    
+    return [...new Set(topics)]; // Remove duplicates
   }
 
   async getAllMessages(): Promise<Message[]> {

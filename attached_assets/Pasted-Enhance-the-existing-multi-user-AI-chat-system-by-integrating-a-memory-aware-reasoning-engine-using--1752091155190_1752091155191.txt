@@ -1,0 +1,62 @@
+Enhance the existing multi-user AI chat system by integrating a memory-aware reasoning engine using LangChain, LangGraph, and Neo4j. This upgrade must allow the assistant (@ai) to recall, reason about, and respond intelligently to long, multi-user conversation histories and relationship-based queries.
+
+🧠 Example capabilities the assistant must support:
+- Respond to: "What did Bob say about the Cybertruck last week?"
+- Respond to: "Who was Alice talking to when she mentioned Tesla?"
+
+🔧 Implementation Requirements:
+
+1. Install and configure the following dependencies in the backend environment:
+   pip install langchain langgraph openai neo4j
+
+2. Integrate LangChain:
+   - Implement `ConversationBufferMemory` to store assistant memory for each user.
+   - Implement `PromptTemplate` to generate structured prompts that include:
+     - Message content
+     - Sender and recipient
+     - Topics mentioned
+     - Timestamps
+
+3. Implement LangGraph as a state machine to manage assistant reasoning:
+   - Step 1: Parse incoming user messages and detect intent.
+   - Step 2: If the message is addressed to the assistant (@ai), route it through LangGraph.
+   - Step 3: Use state nodes to handle:
+     a. Memory lookup based on topic, sender, timeframe
+     b. Graph lookup via Neo4j for relevant historical context
+     c. Prompt construction
+     d. OpenAI GPT-4 response generation
+   - Step 4: Send the assistant's response back through the existing message system.
+
+4. Integrate Neo4j as a persistent knowledge graph:
+   - Create and store the following nodes:
+     - Users
+     - Messages
+     - Topics
+     - Named entities
+   - Create and store the following relationships:
+     - (:User)-[:SENT]->(:Message)
+     - (:Message)-[:TO]->(:User)
+     - (:Message)-[:MENTIONS]->(:Topic)
+     - (:Message)-[:REPLIED_TO]->(:Message)
+     - (:Message)-[:PART_OF_THREAD]->(:Thread)
+   - All existing and future messages must be mirrored from PostgreSQL to Neo4j in real time or through a syncing mechanism.
+
+5. Implement query logic for assistant reasoning:
+   - When the assistant is asked a question about prior context:
+     - Query Neo4j for matching messages based on sender, topic, and time constraints.
+     - Retrieve the full message content, sender, recipient, and timestamp.
+     - Inject this data into the LangChain prompt template.
+     - Call GPT-4 to generate a natural language answer.
+     - Return the response to the frontend as the assistant's reply.
+
+6. Preserve the existing PostgreSQL-based backend:
+   - Do not replace or remove any existing functionality.
+   - Ensure every new message continues to be stored in PostgreSQL as the source of record.
+   - Ensure Neo4j remains in sync by writing each new message into the graph.
+
+7. Preserve the existing frontend and all APIs:
+   - Do not modify any frontend components, routes, or behavior.
+   - Ensure the assistant appears and behaves as it does now, with enhanced memory and reasoning powered by LangChain and Neo4j.
+
+🎯 Outcome:
+The assistant must respond with long-term, context-aware, relationship-informed answers by combining LangChain’s agent memory, LangGraph’s decision logic, and Neo4j’s persistent knowledge graph. All enhancements must integrate seamlessly with the existing full-stack system while maintaining all current features and performance.
