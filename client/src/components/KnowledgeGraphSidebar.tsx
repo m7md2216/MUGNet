@@ -11,26 +11,23 @@ function NetworkGraph({ nodes, relationships }) {
   const containerWidth = 480;
   const containerHeight = 320;
   
-  // Simple spaced grid layout for sidebar
+  // Scattered layout for sidebar
   const nodePositions = nodes.map((node, index) => {
-    const cols = 2; // Only 2 columns for sidebar
-    const rows = Math.ceil(nodes.length / cols);
+    const padding = 60;
+    const availableWidth = containerWidth - 2 * padding;
+    const availableHeight = containerHeight - 2 * padding;
     
-    const col = index % cols;
-    const row = Math.floor(index / rows);
+    // Create deterministic positions based on node data
+    const seedX = (node.id * 137 + index * 293) % 1000;
+    const seedY = (node.id * 491 + index * 617) % 1000;
     
-    const paddingX = 80;
-    const paddingY = 60;
-    const cellWidth = (containerWidth - 2 * paddingX) / cols;
-    const cellHeight = (containerHeight - 2 * paddingY) / rows;
-    
-    const x = paddingX + (col * cellWidth) + (cellWidth / 2);
-    const y = paddingY + (row * cellHeight) + (cellHeight / 2);
+    const x = padding + (seedX / 1000) * availableWidth;
+    const y = padding + (seedY / 1000) * availableHeight;
     
     return {
       ...node,
-      x: Math.max(70, Math.min(containerWidth - 70, x)),
-      y: Math.max(60, Math.min(containerHeight - 60, y))
+      x: Math.max(50, Math.min(containerWidth - 50, x)),
+      y: Math.max(40, Math.min(containerHeight - 40, y))
     };
   });
   

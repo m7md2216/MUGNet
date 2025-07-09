@@ -12,32 +12,50 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
   const containerWidth = window.innerWidth - 100;
   const containerHeight = window.innerHeight - 200;
   
-  // Wide spaced layout with guaranteed minimum distance
+  // Random scattered layout with minimum distance enforcement
   const nodePositions = nodes.map((node, index) => {
-    const maxCols = 4;
-    const cols = Math.min(maxCols, nodes.length);
-    const rows = Math.ceil(nodes.length / cols);
+    const padding = 100;
+    const availableWidth = containerWidth - 2 * padding;
+    const availableHeight = containerHeight - 2 * padding;
     
-    const col = index % cols;
-    const row = Math.floor(index / cols);
+    // Create a deterministic but scattered layout
+    const seedX = (index * 123 + node.id * 456) % 1000;
+    const seedY = (index * 789 + node.id * 321) % 1000;
     
-    const minSpacing = 200; // Large minimum spacing
-    const paddingX = 150;
-    const paddingY = 120;
+    let x = padding + (seedX / 1000) * availableWidth;
+    let y = padding + (seedY / 1000) * availableHeight;
     
-    const totalWidth = containerWidth - 2 * paddingX;
-    const totalHeight = containerHeight - 2 * paddingY;
-    
-    const cellWidth = Math.max(minSpacing, totalWidth / cols);
-    const cellHeight = Math.max(minSpacing, totalHeight / rows);
-    
-    const x = paddingX + (col * cellWidth) + (cellWidth / 2);
-    const y = paddingY + (row * cellHeight) + (cellHeight / 2);
+    // Ensure minimum distance from other nodes
+    const minDistance = 150;
+    let attempts = 0;
+    while (attempts < 50) {
+      let tooClose = false;
+      
+      for (let i = 0; i < index; i++) {
+        const otherSeedX = (i * 123 + nodes[i].id * 456) % 1000;
+        const otherSeedY = (i * 789 + nodes[i].id * 321) % 1000;
+        const otherX = padding + (otherSeedX / 1000) * availableWidth;
+        const otherY = padding + (otherSeedY / 1000) * availableHeight;
+        
+        const distance = Math.sqrt(Math.pow(x - otherX, 2) + Math.pow(y - otherY, 2));
+        if (distance < minDistance) {
+          tooClose = true;
+          break;
+        }
+      }
+      
+      if (!tooClose) break;
+      
+      // Adjust position
+      x = padding + ((seedX + attempts * 100) % 1000 / 1000) * availableWidth;
+      y = padding + ((seedY + attempts * 150) % 1000 / 1000) * availableHeight;
+      attempts++;
+    }
     
     return {
       ...node,
-      x: Math.max(120, Math.min(containerWidth - 120, x)),
-      y: Math.max(100, Math.min(containerHeight - 100, y))
+      x: Math.max(80, Math.min(containerWidth - 80, x)),
+      y: Math.max(60, Math.min(containerHeight - 60, y))
     };
   });
   

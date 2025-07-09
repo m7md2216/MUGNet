@@ -39,6 +39,8 @@ Preferred communication style: Simple, everyday language.
 - **Full-Screen Knowledge Graph**: Added dedicated page at `/knowledge-graph` with full-screen visualization, zoom controls, and tabbed interface
 - **Smart Grid Layout**: Replaced circular layout with grid-based positioning to prevent node overlaps and text cutoff
 - **Responsive Design**: "Full View" link in sidebar opens comprehensive visualization when window space is limited
+- **Scattered Layout**: Implemented natural scattered positioning with minimum distance enforcement to eliminate clustering
+- **Optimized Display**: Reduced to 4 nodes in sidebar for clean visualization, full data available in full-screen view
 
 ### Project Structure
 ```
