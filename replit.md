@@ -41,6 +41,7 @@ Preferred communication style: Simple, everyday language.
 - **Responsive Design**: "Full View" link in sidebar opens comprehensive visualization when window space is limited
 - **Scattered Layout**: Implemented natural scattered positioning with minimum distance enforcement to eliminate clustering
 - **Optimized Display**: Reduced to 4 nodes in sidebar for clean visualization, full data available in full-screen view
+- **List-Based Sidebar**: Replaced complex network graph with clean list format showing entities and relationships in readable cards
 
 ### Project Structure
 ```

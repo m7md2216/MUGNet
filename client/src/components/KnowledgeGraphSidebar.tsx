@@ -6,132 +6,84 @@ import { X, Users, Hash, Calendar, Activity, ExternalLink } from "lucide-react";
 import { chatApi } from "@/lib/chatApi";
 import { Link } from "wouter";
 
-// Network Graph Component
+// List-based Graph Component for cleaner display
 function NetworkGraph({ nodes, relationships }) {
-  const containerWidth = 480;
-  const containerHeight = 320;
-  
-  // Scattered layout for sidebar
-  const nodePositions = nodes.map((node, index) => {
-    const padding = 60;
-    const availableWidth = containerWidth - 2 * padding;
-    const availableHeight = containerHeight - 2 * padding;
-    
-    // Create deterministic positions based on node data
-    const seedX = (node.id * 137 + index * 293) % 1000;
-    const seedY = (node.id * 491 + index * 617) % 1000;
-    
-    const x = padding + (seedX / 1000) * availableWidth;
-    const y = padding + (seedY / 1000) * availableHeight;
-    
-    return {
-      ...node,
-      x: Math.max(50, Math.min(containerWidth - 50, x)),
-      y: Math.max(40, Math.min(containerHeight - 40, y))
-    };
-  });
-  
-  // Find connections for each node
-  const connections = relationships.map(rel => {
-    const fromNode = nodePositions.find(n => n.id === rel.from);
-    const toNode = nodePositions.find(n => n.id === rel.to);
-    return fromNode && toNode ? { from: fromNode, to: toNode, type: rel.type } : null;
-  }).filter(Boolean);
-  
   const getNodeColor = (type) => {
     switch (type) {
-      case "person": return "#3B82F6";
-      case "topic": return "#8B5CF6";
-      case "event": return "#10B981";
-      case "date": return "#F59E0B";
-      default: return "#6B7280";
+      case 'person': return '#3B82F6';
+      case 'topic': return '#8B5CF6';
+      case 'event': return '#10B981';
+      case 'date': return '#F59E0B';
+      default: return '#6B7280';
     }
   };
-  
-  const getNodeSize = (connections) => {
-    return Math.max(12, Math.min(24, 12 + connections * 1.5));
+
+  const getTypeIcon = (type) => {
+    switch (type) {
+      case 'person': return 'P';
+      case 'topic': return 'T';
+      case 'event': return 'E';
+      case 'date': return 'D';
+      default: return '?';
+    }
   };
-  
+
   return (
-    <svg width={containerWidth} height={containerHeight} className="absolute inset-0">
-      {/* Render edges first (so they appear behind nodes) */}
-      {connections.map((connection, index) => (
-        <g key={index}>
-          <line
-            x1={connection.from.x}
-            y1={connection.from.y}
-            x2={connection.to.x}
-            y2={connection.to.y}
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          {/* No edge labels in sidebar for cleaner look */}
-        </g>
-      ))}
-      
-      {/* Render nodes */}
-      {nodePositions.map((node, index) => {
-        const nodeSize = getNodeSize(node.connections);
-        const nodeColor = getNodeColor(node.type);
-        
-        return (
-          <g key={node.id}>
-            {/* Node circle */}
-            <circle
-              cx={node.x}
-              cy={node.y}
-              r={nodeSize}
-              fill={nodeColor}
-              stroke="white"
-              strokeWidth="2"
-              className="cursor-pointer hover:opacity-80"
-            />
-            
-            {/* Simplified node label */}
-            <text
-              x={node.x}
-              y={node.y - nodeSize - 5}
-              textAnchor="middle"
-              fontSize="9"
-              fontWeight="600"
-              fill="#374151"
-              className="pointer-events-none"
-            >
-              {node.name.length > 8 ? `${node.name.substring(0, 8)}...` : node.name}
-            </text>
-            
-            {/* Node type indicator */}
-            <text
-              x={node.x}
-              y={node.y + 4}
-              textAnchor="middle"
-              fontSize="8"
-              fill="white"
-              className="pointer-events-none font-medium"
-            >
-              {node.type === "person" ? "P" : 
-               node.type === "topic" ? "T" : 
-               node.type === "event" ? "E" : "D"}
-            </text>
-          </g>
-        );
-      })}
-      
-      {/* Legend positioned at bottom right */}
-      <g transform={`translate(${containerWidth - 130}, ${containerHeight - 90})`}>
-        <rect width="120" height="80" fill="white" fillOpacity="0.95" stroke="#E5E7EB" rx="4" />
-        <text x="5" y="15" fontSize="11" fontWeight="600" fill="#374151">Legend</text>
-        <circle cx="12" cy="28" r="5" fill="#3B82F6" />
-        <text x="22" y="32" fontSize="10" fill="#374151">Person</text>
-        <circle cx="12" cy="45" r="5" fill="#8B5CF6" />
-        <text x="22" y="49" fontSize="10" fill="#374151">Topic</text>
-        <circle cx="12" cy="62" r="5" fill="#10B981" />
-        <text x="22" y="66" fontSize="10" fill="#374151">Event</text>
-        <circle cx="12" cy="79" r="5" fill="#F59E0B" />
-        <text x="22" y="83" fontSize="10" fill="#374151">Date</text>
-      </g>
-    </svg>
+    <div className="p-4 space-y-4 bg-white">
+      {/* Node List */}
+      <div className="space-y-2">
+        <h4 className="text-sm font-medium text-gray-700">Entities</h4>
+        <div className="grid grid-cols-2 gap-2">
+          {nodes.map((node, index) => (
+            <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                style={{ backgroundColor: getNodeColor(node.type) }}
+              >
+                {getTypeIcon(node.type)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium text-gray-900 truncate">
+                  {node.name}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {node.connections} connections
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Relationships */}
+      {relationships.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-700">Relationships</h4>
+          <div className="space-y-1">
+            {relationships.slice(0, 3).map((rel, index) => {
+              const fromNode = nodes.find(n => n.id === rel.from);
+              const toNode = nodes.find(n => n.id === rel.to);
+              
+              if (!fromNode || !toNode) return null;
+              
+              return (
+                <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded text-xs">
+                  <span className="font-medium text-gray-900">{fromNode.name}</span>
+                  <span className="text-gray-500">→</span>
+                  <span className="font-medium text-gray-900">{toNode.name}</span>
+                  <span className="text-gray-500 ml-auto">{rel.type}</span>
+                </div>
+              );
+            })}
+            {relationships.length > 3 && (
+              <div className="text-xs text-gray-500 text-center">
+                +{relationships.length - 3} more relationships
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -247,15 +199,15 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
               {/* Graph Visualization */}
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Entity Network</h4>
-                <div className="bg-gray-50 rounded-lg p-4 h-80 relative overflow-hidden">
+                <div className="bg-gray-50 rounded-lg">
                   {!graphData?.nodes?.length ? (
-                    <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                    <div className="flex items-center justify-center h-32 text-gray-500 text-sm">
                       No entities found. Start a conversation with @aiagent to populate the graph.
                     </div>
                   ) : (
                     <NetworkGraph 
-                      nodes={graphData.nodes.slice(0, 4)} 
-                      relationships={graphData.relationships.slice(0, 4)} 
+                      nodes={graphData.nodes.slice(0, 6)} 
+                      relationships={graphData.relationships.slice(0, 6)} 
                     />
                   )}
                 </div>
