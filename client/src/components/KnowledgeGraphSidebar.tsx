@@ -12,7 +12,7 @@ interface KnowledgeGraphSidebarProps {
 export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
   const [activeTab, setActiveTab] = useState("entities");
 
-  const { data: graphData, isLoading } = useQuery({
+  const { data: graphData, isLoading, error } = useQuery({
     queryKey: ["/api/knowledge-graph"],
     queryFn: chatApi.getKnowledgeGraph,
   });
@@ -21,6 +21,12 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
     queryKey: ["/api/conversation-threads"],
     queryFn: chatApi.getConversationThreads,
   });
+
+  // Debug logging
+  console.log("Knowledge Graph Data:", graphData);
+  console.log("Conversation Threads:", conversationThreads);
+  console.log("Loading:", isLoading);
+  console.log("Error:", error);
 
   const getEntityIcon = (type: string) => {
     switch (type) {
@@ -104,43 +110,51 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Entity Relationships</h4>
                 <div className="bg-gray-50 rounded-lg p-4 h-48 relative overflow-hidden">
-                  {graphData?.nodes?.slice(0, 5).map((node, index) => (
-                    <div
-                      key={node.id}
-                      className={`absolute w-12 h-12 rounded-full flex items-center justify-center text-white text-xs font-semibold cursor-pointer transition-transform hover:scale-110 ${
-                        node.type === "person" ? "bg-blue-500" :
-                        node.type === "topic" ? "bg-purple-500" :
-                        node.type === "event" ? "bg-green-500" :
-                        "bg-gray-500"
-                      }`}
-                      style={{
-                        left: `${20 + (index * 30)}px`,
-                        top: `${20 + (index % 3) * 40}px`,
-                      }}
-                      title={node.name}
-                    >
-                      {node.type === "person" 
-                        ? node.name.split(" ").map(n => n[0]).join("").toUpperCase()
-                        : node.name.slice(0, 2).toUpperCase()
-                      }
+                  {!graphData?.nodes?.length ? (
+                    <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                      No entities found. Start a conversation with @aiagent to populate the graph.
                     </div>
-                  ))}
-                  
-                  {/* Connection lines */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                    {graphData?.relationships?.slice(0, 3).map((rel, index) => (
-                      <line
-                        key={rel.id}
-                        x1={50 + (index * 30)}
-                        y1={50 + (index % 3) * 40}
-                        x2={80 + (index * 30)}
-                        y2={80 + ((index + 1) % 3) * 40}
-                        stroke="#6B7280"
-                        strokeWidth="2"
-                        strokeDasharray="5,5"
-                      />
-                    ))}
-                  </svg>
+                  ) : (
+                    <>
+                      {graphData?.nodes?.slice(0, 5).map((node, index) => (
+                        <div
+                          key={node.id}
+                          className={`absolute w-12 h-12 rounded-full flex items-center justify-center text-white text-xs font-semibold cursor-pointer transition-transform hover:scale-110 ${
+                            node.type === "person" ? "bg-blue-500" :
+                            node.type === "topic" ? "bg-purple-500" :
+                            node.type === "event" ? "bg-green-500" :
+                            "bg-gray-500"
+                          }`}
+                          style={{
+                            left: `${20 + (index * 30)}px`,
+                            top: `${20 + (index % 3) * 40}px`,
+                          }}
+                          title={node.name}
+                        >
+                          {node.type === "person" 
+                            ? node.name.split(" ").map(n => n[0]).join("").toUpperCase()
+                            : node.name.slice(0, 2).toUpperCase()
+                          }
+                        </div>
+                      ))}
+                      
+                      {/* Connection lines */}
+                      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                        {graphData?.relationships?.slice(0, 3).map((rel, index) => (
+                          <line
+                            key={rel.id}
+                            x1={50 + (index * 30)}
+                            y1={50 + (index % 3) * 40}
+                            x2={80 + (index * 30)}
+                            y2={80 + ((index + 1) % 3) * 40}
+                            stroke="#6B7280"
+                            strokeWidth="2"
+                            strokeDasharray="5,5"
+                          />
+                        ))}
+                      </svg>
+                    </>
+                  )}
                 </div>
               </div>
 
