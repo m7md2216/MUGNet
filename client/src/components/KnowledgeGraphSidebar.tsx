@@ -11,19 +11,35 @@ function NetworkGraph({ nodes, relationships }) {
   const containerWidth = 480;
   const containerHeight = 320;
   
-  // Simple fixed grid layout to prevent overlaps
+  // Force-directed layout simulation to prevent overlaps
   const nodePositions = nodes.map((node, index) => {
-    const cols = 3; // Fixed 3 columns for sidebar
-    const rows = Math.ceil(nodes.length / cols);
+    // Start with circular positioning as base
+    const angle = (index * 2 * Math.PI) / nodes.length;
+    const radius = Math.min(containerWidth, containerHeight) * 0.25;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
     
-    const col = index % cols;
-    const row = Math.floor(index / cols);
+    let x = centerX + radius * Math.cos(angle);
+    let y = centerY + radius * Math.sin(angle);
     
-    const cellWidth = containerWidth / cols;
-    const cellHeight = containerHeight / rows;
-    
-    const x = col * cellWidth + cellWidth / 2;
-    const y = row * cellHeight + cellHeight / 2;
+    // Apply repulsion forces from other nodes
+    nodes.forEach((otherNode, otherIndex) => {
+      if (index !== otherIndex) {
+        const otherAngle = (otherIndex * 2 * Math.PI) / nodes.length;
+        const otherX = centerX + radius * Math.cos(otherAngle);
+        const otherY = centerY + radius * Math.sin(otherAngle);
+        
+        const dx = x - otherX;
+        const dy = y - otherY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 80) { // Minimum distance threshold
+          const repulsionForce = 40 / (distance + 1);
+          x += (dx / distance) * repulsionForce;
+          y += (dy / distance) * repulsionForce;
+        }
+      }
+    });
     
     return {
       ...node,
@@ -67,20 +83,7 @@ function NetworkGraph({ nodes, relationships }) {
             strokeWidth="2"
             opacity="0.7"
           />
-          {/* Edge label - only show for short connections to avoid clutter */}
-          {Math.abs(connection.from.x - connection.to.x) < 150 && Math.abs(connection.from.y - connection.to.y) < 150 && (
-            <text
-              x={(connection.from.x + connection.to.x) / 2}
-              y={(connection.from.y + connection.to.y) / 2}
-              textAnchor="middle"
-              fontSize="9"
-              fill="#6B7280"
-              className="pointer-events-none"
-              dy="-2"
-            >
-              {connection.type}
-            </text>
-          )}
+          {/* No edge labels in sidebar for cleaner look */}
         </g>
       ))}
       

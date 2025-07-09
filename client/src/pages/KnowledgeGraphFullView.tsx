@@ -12,26 +12,40 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
   const containerWidth = window.innerWidth - 100;
   const containerHeight = window.innerHeight - 200;
   
-  // Simple fixed grid layout for full screen
+  // Force-directed layout with better spacing for full screen
   const nodePositions = nodes.map((node, index) => {
-    const cols = Math.min(5, Math.ceil(Math.sqrt(nodes.length))); // Max 5 columns
-    const rows = Math.ceil(nodes.length / cols);
+    // Start with circular positioning as base
+    const angle = (index * 2 * Math.PI) / nodes.length;
+    const radius = Math.min(containerWidth, containerHeight) * 0.3;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
     
-    const col = index % cols;
-    const row = Math.floor(index / cols);
+    let x = centerX + radius * Math.cos(angle);
+    let y = centerY + radius * Math.sin(angle);
     
-    const paddingX = 120;
-    const paddingY = 80;
-    const cellWidth = (containerWidth - 2 * paddingX) / cols;
-    const cellHeight = (containerHeight - 2 * paddingY) / rows;
-    
-    const x = paddingX + col * cellWidth + cellWidth / 2;
-    const y = paddingY + row * cellHeight + cellHeight / 2;
+    // Apply repulsion forces from other nodes
+    nodes.forEach((otherNode, otherIndex) => {
+      if (index !== otherIndex) {
+        const otherAngle = (otherIndex * 2 * Math.PI) / nodes.length;
+        const otherX = centerX + radius * Math.cos(otherAngle);
+        const otherY = centerY + radius * Math.sin(otherAngle);
+        
+        const dx = x - otherX;
+        const dy = y - otherY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 150) { // Minimum distance threshold for full screen
+          const repulsionForce = 80 / (distance + 1);
+          x += (dx / distance) * repulsionForce;
+          y += (dy / distance) * repulsionForce;
+        }
+      }
+    });
     
     return {
       ...node,
-      x: Math.max(80, Math.min(containerWidth - 80, x)),
-      y: Math.max(60, Math.min(containerHeight - 60, y))
+      x: Math.max(100, Math.min(containerWidth - 100, x)),
+      y: Math.max(80, Math.min(containerHeight - 80, y))
     };
   });
   
@@ -99,13 +113,13 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
               strokeWidth="3"
               opacity="0.7"
             />
-            {/* Edge label - only show for reasonable distances */}
-            {Math.sqrt(Math.pow(connection.from.x - connection.to.x, 2) + Math.pow(connection.from.y - connection.to.y, 2)) > 80 && (
+            {/* Edge label - only show for well-spaced connections */}
+            {Math.sqrt(Math.pow(connection.from.x - connection.to.x, 2) + Math.pow(connection.from.y - connection.to.y, 2)) > 120 && (
               <text
                 x={(connection.from.x + connection.to.x) / 2}
                 y={(connection.from.y + connection.to.y) / 2}
                 textAnchor="middle"
-                fontSize="11"
+                fontSize="10"
                 fill="#6B7280"
                 className="pointer-events-none"
                 dy="-3"
