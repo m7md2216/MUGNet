@@ -12,32 +12,26 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
   const containerWidth = window.innerWidth - 100;
   const containerHeight = window.innerHeight - 200;
   
-  // Create a better distributed layout with forced spacing
+  // Simple fixed grid layout for full screen
   const nodePositions = nodes.map((node, index) => {
-    const cols = Math.ceil(Math.sqrt(nodes.length));
+    const cols = Math.min(5, Math.ceil(Math.sqrt(nodes.length))); // Max 5 columns
     const rows = Math.ceil(nodes.length / cols);
     
     const col = index % cols;
     const row = Math.floor(index / cols);
     
-    const paddingX = 150;
-    const paddingY = 100;
-    const minSpacing = 120; // Minimum space between nodes
-    
-    const availableWidth = containerWidth - 2 * paddingX;
-    const availableHeight = containerHeight - 2 * paddingY;
-    
-    // Calculate positions with minimum spacing
-    const cellWidth = Math.max(minSpacing, availableWidth / cols);
-    const cellHeight = Math.max(minSpacing, availableHeight / rows);
+    const paddingX = 120;
+    const paddingY = 80;
+    const cellWidth = (containerWidth - 2 * paddingX) / cols;
+    const cellHeight = (containerHeight - 2 * paddingY) / rows;
     
     const x = paddingX + col * cellWidth + cellWidth / 2;
     const y = paddingY + row * cellHeight + cellHeight / 2;
     
     return {
       ...node,
-      x: Math.max(100, Math.min(containerWidth - 100, x)),
-      y: Math.max(80, Math.min(containerHeight - 80, y))
+      x: Math.max(80, Math.min(containerWidth - 80, x)),
+      y: Math.max(60, Math.min(containerHeight - 60, y))
     };
   });
   
@@ -140,23 +134,12 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
                 className="cursor-pointer hover:opacity-80"
               />
               
-              {/* Node label with background for better visibility */}
-              <rect
-                x={node.x - (node.name.length * 4)}
-                y={node.y - nodeSize - 30}
-                width={node.name.length * 8}
-                height="18"
-                fill="white"
-                fillOpacity="0.9"
-                stroke="#E5E7EB"
-                strokeWidth="1"
-                rx="3"
-              />
+              {/* Simplified node label */}
               <text
                 x={node.x}
-                y={node.y - nodeSize - 18}
+                y={node.y - nodeSize - 10}
                 textAnchor="middle"
-                fontSize="13"
+                fontSize="12"
                 fontWeight="600"
                 fill="#374151"
                 className="pointer-events-none"
@@ -178,27 +161,16 @@ function FullScreenNetworkGraph({ nodes, relationships }) {
                  node.type === "event" ? "E" : "D"}
               </text>
 
-              {/* Connection count with background */}
-              <rect
-                x={node.x - 25}
-                y={node.y + nodeSize + 8}
-                width="50"
-                height="14"
-                fill="white"
-                fillOpacity="0.8"
-                stroke="#E5E7EB"
-                strokeWidth="1"
-                rx="2"
-              />
+              {/* Simplified connection count */}
               <text
                 x={node.x}
-                y={node.y + nodeSize + 18}
+                y={node.y + nodeSize + 15}
                 textAnchor="middle"
-                fontSize="10"
+                fontSize="9"
                 fill="#6B7280"
                 className="pointer-events-none"
               >
-                {node.connections} connections
+                {node.connections}
               </text>
             </g>
           );

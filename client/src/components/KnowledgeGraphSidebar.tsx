@@ -11,32 +11,24 @@ function NetworkGraph({ nodes, relationships }) {
   const containerWidth = 480;
   const containerHeight = 320;
   
-  // Create a better distributed layout with forced spacing
+  // Simple fixed grid layout to prevent overlaps
   const nodePositions = nodes.map((node, index) => {
-    const cols = Math.ceil(Math.sqrt(nodes.length));
+    const cols = 3; // Fixed 3 columns for sidebar
     const rows = Math.ceil(nodes.length / cols);
     
     const col = index % cols;
     const row = Math.floor(index / cols);
     
-    const paddingX = 60;
-    const paddingY = 50;
-    const minSpacing = 80; // Minimum space between nodes
+    const cellWidth = containerWidth / cols;
+    const cellHeight = containerHeight / rows;
     
-    const availableWidth = containerWidth - 2 * paddingX;
-    const availableHeight = containerHeight - 2 * paddingY;
-    
-    // Calculate positions with minimum spacing
-    const cellWidth = Math.max(minSpacing, availableWidth / cols);
-    const cellHeight = Math.max(minSpacing, availableHeight / rows);
-    
-    const x = paddingX + col * cellWidth + cellWidth / 2;
-    const y = paddingY + row * cellHeight + cellHeight / 2;
+    const x = col * cellWidth + cellWidth / 2;
+    const y = row * cellHeight + cellHeight / 2;
     
     return {
       ...node,
-      x: Math.max(50, Math.min(containerWidth - 50, x)),
-      y: Math.max(40, Math.min(containerHeight - 40, y))
+      x: Math.max(60, Math.min(containerWidth - 60, x)),
+      y: Math.max(50, Math.min(containerHeight - 50, y))
     };
   });
   
@@ -110,28 +102,17 @@ function NetworkGraph({ nodes, relationships }) {
               className="cursor-pointer hover:opacity-80"
             />
             
-            {/* Node label with background for better visibility */}
-            <rect
-              x={node.x - (Math.min(node.name.length, 10) * 3)}
-              y={node.y - nodeSize - 20}
-              width={Math.min(node.name.length, 10) * 6}
-              height="14"
-              fill="white"
-              fillOpacity="0.9"
-              stroke="#E5E7EB"
-              strokeWidth="1"
-              rx="2"
-            />
+            {/* Simplified node label */}
             <text
               x={node.x}
-              y={node.y - nodeSize - 10}
+              y={node.y - nodeSize - 5}
               textAnchor="middle"
-              fontSize="10"
+              fontSize="9"
               fontWeight="600"
               fill="#374151"
               className="pointer-events-none"
             >
-              {node.name.length > 10 ? `${node.name.substring(0, 10)}...` : node.name}
+              {node.name.length > 8 ? `${node.name.substring(0, 8)}...` : node.name}
             </text>
             
             {/* Node type indicator */}
@@ -287,8 +268,8 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
                     </div>
                   ) : (
                     <NetworkGraph 
-                      nodes={graphData.nodes.slice(0, 8)} 
-                      relationships={graphData.relationships.slice(0, 12)} 
+                      nodes={graphData.nodes.slice(0, 6)} 
+                      relationships={graphData.relationships.slice(0, 8)} 
                     />
                   )}
                 </div>
