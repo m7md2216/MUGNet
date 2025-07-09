@@ -10,17 +10,26 @@ function NetworkGraph({ nodes, relationships }) {
   const containerWidth = 480;
   const containerHeight = 320;
   
-  // Create a simpler circular layout for nodes
+  // Create a better distributed layout to prevent overlaps
   const nodePositions = nodes.map((node, index) => {
-    const angle = (index * 2 * Math.PI) / nodes.length;
-    const radius = Math.min(containerWidth, containerHeight) * 0.3;
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
+    const cols = Math.ceil(Math.sqrt(nodes.length));
+    const rows = Math.ceil(nodes.length / cols);
+    
+    const col = index % cols;
+    const row = Math.floor(index / cols);
+    
+    const paddingX = 80;
+    const paddingY = 60;
+    const availableWidth = containerWidth - 2 * paddingX;
+    const availableHeight = containerHeight - 2 * paddingY;
+    
+    const x = paddingX + (col * availableWidth) / (cols - 1 || 1);
+    const y = paddingY + (row * availableHeight) / (rows - 1 || 1);
     
     return {
       ...node,
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle)
+      x: Math.max(40, Math.min(containerWidth - 40, x)),
+      y: Math.max(30, Math.min(containerHeight - 30, y))
     };
   });
   
@@ -42,7 +51,7 @@ function NetworkGraph({ nodes, relationships }) {
   };
   
   const getNodeSize = (connections) => {
-    return Math.max(8, Math.min(20, 8 + connections * 2));
+    return Math.max(12, Math.min(24, 12 + connections * 1.5));
   };
   
   return (
@@ -59,17 +68,20 @@ function NetworkGraph({ nodes, relationships }) {
             strokeWidth="2"
             opacity="0.7"
           />
-          {/* Edge label */}
-          <text
-            x={(connection.from.x + connection.to.x) / 2}
-            y={(connection.from.y + connection.to.y) / 2}
-            textAnchor="middle"
-            fontSize="10"
-            fill="#6B7280"
-            className="pointer-events-none"
-          >
-            {connection.type}
-          </text>
+          {/* Edge label - only show for short connections to avoid clutter */}
+          {Math.abs(connection.from.x - connection.to.x) < 150 && Math.abs(connection.from.y - connection.to.y) < 150 && (
+            <text
+              x={(connection.from.x + connection.to.x) / 2}
+              y={(connection.from.y + connection.to.y) / 2}
+              textAnchor="middle"
+              fontSize="9"
+              fill="#6B7280"
+              className="pointer-events-none"
+              dy="-2"
+            >
+              {connection.type}
+            </text>
+          )}
         </g>
       ))}
       
@@ -91,17 +103,17 @@ function NetworkGraph({ nodes, relationships }) {
               className="cursor-pointer hover:opacity-80"
             />
             
-            {/* Node label */}
+            {/* Node label with better positioning */}
             <text
               x={node.x}
-              y={node.y - nodeSize - 5}
+              y={node.y - nodeSize - 8}
               textAnchor="middle"
-              fontSize="11"
+              fontSize="10"
               fontWeight="600"
               fill="#374151"
               className="pointer-events-none"
             >
-              {node.name.length > 12 ? `${node.name.substring(0, 12)}...` : node.name}
+              {node.name.length > 10 ? `${node.name.substring(0, 10)}...` : node.name}
             </text>
             
             {/* Node type indicator */}
@@ -121,9 +133,9 @@ function NetworkGraph({ nodes, relationships }) {
         );
       })}
       
-      {/* Legend */}
-      <g transform="translate(10, 10)">
-        <rect width="120" height="80" fill="white" fillOpacity="0.9" stroke="#E5E7EB" rx="4" />
+      {/* Legend positioned at bottom right */}
+      <g transform={`translate(${containerWidth - 130}, ${containerHeight - 90})`}>
+        <rect width="120" height="80" fill="white" fillOpacity="0.95" stroke="#E5E7EB" rx="4" />
         <text x="5" y="15" fontSize="11" fontWeight="600" fill="#374151">Legend</text>
         <circle cx="12" cy="28" r="5" fill="#3B82F6" />
         <text x="22" y="32" fontSize="10" fill="#374151">Person</text>
@@ -245,8 +257,8 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
                     </div>
                   ) : (
                     <NetworkGraph 
-                      nodes={graphData.nodes.slice(0, 12)} 
-                      relationships={graphData.relationships.slice(0, 20)} 
+                      nodes={graphData.nodes.slice(0, 10)} 
+                      relationships={graphData.relationships.slice(0, 15)} 
                     />
                   )}
                 </div>
