@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Users, Hash, Calendar, Activity } from "lucide-react";
+import { X, Users, Hash, Calendar, Activity, ExternalLink } from "lucide-react";
 import { chatApi } from "@/lib/chatApi";
+import { Link } from "wouter";
 
 // Network Graph Component
 function NetworkGraph({ nodes, relationships }) {
@@ -225,14 +226,26 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Knowledge Graph</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-2">
+            <Link href="/knowledge-graph">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <ExternalLink className="h-4 w-4 mr-1" />
+                Full View
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
