@@ -15,6 +15,8 @@ import {
   type ConversationThread,
   type InsertConversationThread
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -30,6 +32,7 @@ export interface IStorage {
   getAllMessages(): Promise<Message[]>;
   getMessagesByUser(userId: number): Promise<Message[]>;
   getMessagesByMention(mention: string): Promise<Message[]>;
+  deleteAllMessages(): Promise<void>;
 
   // Knowledge graph entities
   getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined>;
@@ -142,6 +145,17 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async deleteAllMessages(): Promise<void> {
+    this.messages.clear();
+    this.knowledgeGraphEntities.clear();
+    this.knowledgeGraphRelationships.clear();
+    this.conversationThreads.clear();
+    this.currentMessageId = 1;
+    this.currentEntityId = 1;
+    this.currentRelationshipId = 1;
+    this.currentThreadId = 1;
+  }
+
   // Knowledge graph entities
   async getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined> {
     return this.knowledgeGraphEntities.get(id);
@@ -243,4 +257,194 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  constructor() {
+    // Initialize with AI agent if not exists
+    this.initializeAIAgent();
+  }
+
+  private async initializeAIAgent() {
+    const aiAgent = await this.getUserByName("AI Agent");
+    if (!aiAgent) {
+      await this.createUser({
+        name: "AI Agent",
+        initials: "AI",
+        color: "emerald"
+      });
+    }
+  }
+
+  // User management
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByName(name: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.name, name));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values({
+        ...insertUser,
+        isActive: true,
+        lastActiveAt: new Date()
+      })
+      .returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.lastActiveAt));
+  }
+
+  async updateUserActivity(id: number): Promise<void> {
+    await db.update(users)
+      .set({ lastActiveAt: new Date() })
+      .where(eq(users.id, id));
+  }
+
+  // Message management
+  async getMessage(id: number): Promise<Message | undefined> {
+    const [message] = await db.select().from(messages).where(eq(messages.id, id));
+    return message || undefined;
+  }
+
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const [message] = await db
+      .insert(messages)
+      .values({
+        ...insertMessage,
+        timestamp: new Date(),
+        isAiResponse: false
+      })
+      .returning();
+    return message;
+  }
+
+  async getAllMessages(): Promise<Message[]> {
+    return await db.select().from(messages).orderBy(messages.timestamp);
+  }
+
+  async getMessagesByUser(userId: number): Promise<Message[]> {
+    return await db.select().from(messages).where(eq(messages.userId, userId));
+  }
+
+  async getMessagesByMention(mention: string): Promise<Message[]> {
+    return await db.select().from(messages).where(eq(messages.mentions, [mention]));
+  }
+
+  async deleteAllMessages(): Promise<void> {
+    // Delete in order due to foreign key constraints
+    await db.delete(knowledgeGraphRelationships);
+    await db.delete(knowledgeGraphEntities);
+    await db.delete(conversationThreads);
+    await db.delete(messages);
+  }
+
+  // Knowledge graph entities
+  async getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined> {
+    const [entity] = await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.id, id));
+    return entity || undefined;
+  }
+
+  async getKnowledgeGraphEntityByName(name: string): Promise<KnowledgeGraphEntity | undefined> {
+    const [entity] = await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.name, name));
+    return entity || undefined;
+  }
+
+  async createKnowledgeGraphEntity(insertEntity: InsertKnowledgeGraphEntity): Promise<KnowledgeGraphEntity> {
+    const [entity] = await db
+      .insert(knowledgeGraphEntities)
+      .values({
+        ...insertEntity,
+        properties: insertEntity.properties || {},
+        createdAt: new Date()
+      })
+      .returning();
+    return entity;
+  }
+
+  async getAllKnowledgeGraphEntities(): Promise<KnowledgeGraphEntity[]> {
+    return await db.select().from(knowledgeGraphEntities).orderBy(desc(knowledgeGraphEntities.createdAt));
+  }
+
+  async getKnowledgeGraphEntitiesByType(type: string): Promise<KnowledgeGraphEntity[]> {
+    return await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.type, type));
+  }
+
+  // Knowledge graph relationships
+  async getKnowledgeGraphRelationship(id: number): Promise<KnowledgeGraphRelationship | undefined> {
+    const [relationship] = await db.select().from(knowledgeGraphRelationships).where(eq(knowledgeGraphRelationships.id, id));
+    return relationship || undefined;
+  }
+
+  async createKnowledgeGraphRelationship(insertRelationship: InsertKnowledgeGraphRelationship): Promise<KnowledgeGraphRelationship> {
+    const [relationship] = await db
+      .insert(knowledgeGraphRelationships)
+      .values({
+        ...insertRelationship,
+        properties: insertRelationship.properties || {},
+        createdAt: new Date()
+      })
+      .returning();
+    return relationship;
+  }
+
+  async getKnowledgeGraphRelationshipsByEntity(entityId: number): Promise<KnowledgeGraphRelationship[]> {
+    return await db.select().from(knowledgeGraphRelationships).where(
+      eq(knowledgeGraphRelationships.fromEntityId, entityId)
+    );
+  }
+
+  async getAllKnowledgeGraphRelationships(): Promise<KnowledgeGraphRelationship[]> {
+    return await db.select().from(knowledgeGraphRelationships).orderBy(desc(knowledgeGraphRelationships.createdAt));
+  }
+
+  // Conversation threads
+  async getConversationThread(id: number): Promise<ConversationThread | undefined> {
+    const [thread] = await db.select().from(conversationThreads).where(eq(conversationThreads.id, id));
+    return thread || undefined;
+  }
+
+  async createConversationThread(insertThread: InsertConversationThread): Promise<ConversationThread> {
+    const [thread] = await db
+      .insert(conversationThreads)
+      .values({
+        ...insertThread,
+        participants: insertThread.participants || [],
+        messageIds: insertThread.messageIds || [],
+        lastMessageAt: new Date()
+      })
+      .returning();
+    return thread;
+  }
+
+  async getAllConversationThreads(): Promise<ConversationThread[]> {
+    return await db.select().from(conversationThreads).orderBy(desc(conversationThreads.lastMessageAt));
+  }
+
+  async getConversationThreadsByParticipant(participant: string): Promise<ConversationThread[]> {
+    return await db.select().from(conversationThreads).where(
+      eq(conversationThreads.participants, [participant])
+    );
+  }
+
+  async updateConversationThread(id: number, messageId: number): Promise<void> {
+    const thread = await this.getConversationThread(id);
+    if (thread) {
+      const updatedMessageIds = [...(thread.messageIds || []), messageId];
+      await db.update(conversationThreads)
+        .set({ 
+          messageIds: updatedMessageIds,
+          lastMessageAt: new Date()
+        })
+        .where(eq(conversationThreads.id, id));
+    }
+  }
+}
+
+export const storage = new DatabaseStorage();

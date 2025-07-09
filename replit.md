@@ -24,13 +24,14 @@ Preferred communication style: Simple, everyday language.
 - **ORM**: Drizzle ORM with TypeScript schema definitions
 - **AI Integration**: OpenAI API for chat responses and entity extraction
 - **Session Management**: Built-in session handling for user activity
-- **Storage**: Currently using MemStorage (in-memory) for development
+- **Storage**: Using DatabaseStorage with PostgreSQL for persistent data storage
 
 ### Recent Changes (July 9, 2025)
-- Fixed TypeScript errors in storage layer and routes
-- Updated AI agent to access full conversation history
-- Added debug logging to track conversation context
-- Modified OpenAI service to pass complete message history with user names
+- **Fixed Knowledge Graph Visualization**: Switched from MemStorage to DatabaseStorage for persistent data
+- **Added Message Deletion**: Implemented DELETE /api/messages endpoint to clear all messages and knowledge graph data
+- **Database Integration**: All messages, entities, and relationships now persist in PostgreSQL
+- **Fixed Frontend Display**: Knowledge graph sidebar now shows real-time data from database
+- **Enhanced UI**: Added clear messages functionality with proper cache invalidation
 
 ### Project Structure
 ```

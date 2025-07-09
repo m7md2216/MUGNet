@@ -22,11 +22,7 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
     queryFn: chatApi.getConversationThreads,
   });
 
-  // Debug logging
-  console.log("Knowledge Graph Data:", graphData);
-  console.log("Conversation Threads:", conversationThreads);
-  console.log("Loading:", isLoading);
-  console.log("Error:", error);
+
 
   const getEntityIcon = (type: string) => {
     switch (type) {

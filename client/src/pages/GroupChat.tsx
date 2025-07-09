@@ -19,6 +19,7 @@ export default function GroupChat() {
     messages,
     createUser,
     sendMessage,
+    deleteAllMessages,
     isLoading,
     error
   } = useChat();
@@ -57,7 +58,7 @@ export default function GroupChat() {
   };
 
   const handleClearChat = () => {
-    // This would typically clear messages - for now just show a toast
+    deleteAllMessages();
     toast({
       title: "Chat cleared",
       description: "All messages have been cleared",

@@ -138,6 +138,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Clear all messages
+  app.delete("/api/messages", async (req, res) => {
+    try {
+      await storage.deleteAllMessages();
+      res.json({ message: "All messages deleted successfully" });
+    } catch (error) {
+      console.error("Delete messages error:", error);
+      res.status(500).json({ message: "Failed to delete messages", error: error.message });
+    }
+  });
+
   // Knowledge graph routes
   app.get("/api/knowledge-graph", async (req, res) => {
     try {

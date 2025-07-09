@@ -42,6 +42,19 @@ export function useChat() {
     },
   });
 
+  // Delete all messages mutation
+  const deleteAllMessagesMutation = useMutation({
+    mutationFn: chatApi.deleteAllMessages,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/knowledge-graph"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/conversation-threads"] });
+    },
+    onError: (error) => {
+      setError(error);
+    },
+  });
+
   // Clear error when data changes
   useEffect(() => {
     if (error) {
@@ -58,11 +71,16 @@ export function useChat() {
     sendMessageMutation.mutate(messageData);
   };
 
+  const deleteAllMessages = () => {
+    deleteAllMessagesMutation.mutate();
+  };
+
   return {
     users: users as User[],
     messages: messages as Message[],
     createUser,
     sendMessage,
+    deleteAllMessages,
     isLoading: usersLoading || messagesLoading || createUserMutation.isPending || sendMessageMutation.isPending,
     error,
   };

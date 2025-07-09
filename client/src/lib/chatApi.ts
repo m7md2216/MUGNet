@@ -36,4 +36,9 @@ export const chatApi = {
     const response = await apiRequest("GET", "/api/conversation-threads");
     return response.json();
   },
+
+  deleteAllMessages: async () => {
+    const response = await apiRequest("DELETE", "/api/messages");
+    return response.json();
+  },
 };
