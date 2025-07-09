@@ -20,6 +20,7 @@ export default function GroupChat() {
     createUser,
     sendMessage,
     deleteAllMessages,
+    processMessages,
     isLoading,
     error
   } = useChat();
@@ -92,6 +93,14 @@ export default function GroupChat() {
     });
   };
 
+  const handleRebuildKnowledgeGraph = () => {
+    processMessages();
+    toast({
+      title: "Knowledge graph rebuilt",
+      description: "All messages have been processed for entity extraction",
+    });
+  };
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -112,6 +121,7 @@ export default function GroupChat() {
         onUserSwitch={handleUserSwitch}
         onCreateUser={createUser}
         onToggleKnowledgeGraph={() => setIsKnowledgeGraphOpen(!isKnowledgeGraphOpen)}
+        onRebuildKnowledgeGraph={handleRebuildKnowledgeGraph}
       />
 
       {/* Main Chat Area */}

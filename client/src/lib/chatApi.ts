@@ -41,4 +41,9 @@ export const chatApi = {
     const response = await apiRequest("DELETE", "/api/messages");
     return response.json();
   },
+
+  processMessages: async () => {
+    const response = await apiRequest("POST", "/api/process-messages", {});
+    return response.json();
+  },
 };

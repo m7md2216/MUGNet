@@ -6,6 +6,68 @@ import { knowledgeGraphService } from "./services/knowledgeGraph";
 import { insertUserSchema, insertMessageSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Helper functions for basic entity extraction
+function extractTopics(text: string): string[] {
+  // Basic topic extraction - look for common nouns/activities
+  const topics = [];
+  const topicKeywords = ['hiking', 'beach', 'restaurant', 'cuisine', 'food', 'travel', 'brewery', 'italian', 'cooking', 'music', 'sports', 'work', 'vacation', 'shopping', 'pennsylvania', 'newark', 'delaware'];
+  
+  for (const keyword of topicKeywords) {
+    if (text.toLowerCase().includes(keyword)) {
+      topics.push(keyword);
+    }
+  }
+  
+  return topics;
+}
+
+function extractEvents(text: string): string[] {
+  // Basic event extraction - look for past/future actions
+  const events = [];
+  const eventPatterns = [
+    /went (to|hiking|swimming|shopping|running)/gi,
+    /visited (.*?)(?:\s|$)/gi,
+    /went to (.*?)(?:\s|$)/gi,
+    /ate at (.*?)(?:\s|$)/gi,
+    /saw (.*?)(?:\s|$)/gi
+  ];
+  
+  for (const pattern of eventPatterns) {
+    const matches = text.match(pattern);
+    if (matches) {
+      events.push(...matches);
+    }
+  }
+  
+  return events;
+}
+
+function extractDates(text: string): string[] {
+  // Basic date extraction - look for time references
+  const dates = [];
+  const datePatterns = [
+    /today/gi,
+    /yesterday/gi,
+    /tomorrow/gi,
+    /the other day/gi,
+    /last week/gi,
+    /next week/gi,
+    /this week/gi,
+    /the day after/gi,
+    /last month/gi,
+    /next month/gi
+  ];
+  
+  for (const pattern of datePatterns) {
+    const matches = text.match(pattern);
+    if (matches) {
+      dates.push(...matches.map(m => m.toLowerCase()));
+    }
+  }
+  
+  return dates;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // User management routes
   app.get("/api/users", async (req, res) => {
@@ -146,6 +208,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Delete messages error:", error);
       res.status(500).json({ message: "Failed to delete messages", error: error.message });
+    }
+  });
+
+  // Process all existing messages to populate knowledge graph
+  app.post("/api/process-messages", async (req, res) => {
+    try {
+      const messages = await storage.getAllMessages();
+      const users = await storage.getAllUsers();
+      const userMap = new Map(users.map(u => [u.id, u]));
+      
+      for (const message of messages) {
+        const user = userMap.get(message.userId);
+        if (!user) continue;
+        
+        // Extract entities from each message
+        const fakeAiResponse = {
+          response: message.content,
+          extractedEntities: {
+            people: message.mentions || [],
+            topics: extractTopics(message.content),
+            events: extractEvents(message.content),
+            dates: extractDates(message.content)
+          },
+          relevantContext: []
+        };
+        
+        await extractAndStoreEntities(
+          message.id,
+          fakeAiResponse.extractedEntities,
+          [user.name, ...(message.mentions || [])]
+        );
+      }
+      
+      res.json({ message: "All messages processed successfully", processedCount: messages.length });
+    } catch (error) {
+      console.error("Process messages error:", error);
+      res.status(500).json({ message: "Failed to process messages", error: error.message });
     }
   });
 

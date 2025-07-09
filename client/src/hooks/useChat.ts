@@ -55,6 +55,18 @@ export function useChat() {
     },
   });
 
+  // Process messages mutation
+  const processMessagesMutation = useMutation({
+    mutationFn: chatApi.processMessages,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/knowledge-graph"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/conversation-threads"] });
+    },
+    onError: (error) => {
+      setError(error);
+    },
+  });
+
   // Clear error when data changes
   useEffect(() => {
     if (error) {
@@ -75,9 +87,14 @@ export function useChat() {
     deleteAllMessagesMutation.mutate();
   };
 
+  const processMessages = () => {
+    processMessagesMutation.mutate();
+  };
+
   return {
     users: users as User[],
     messages: messages as Message[],
+    processMessages,
     createUser,
     sendMessage,
     deleteAllMessages,

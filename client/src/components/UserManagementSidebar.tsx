@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserAvatar } from "./UserAvatar";
-import { Plus, Activity } from "lucide-react";
+import { Plus, Activity, RefreshCw } from "lucide-react";
 import { type User, type InsertUser } from "@shared/schema";
 
 interface UserManagementSidebarProps {
@@ -12,6 +12,7 @@ interface UserManagementSidebarProps {
   onUserSwitch: (user: User) => void;
   onCreateUser: (userData: InsertUser) => void;
   onToggleKnowledgeGraph: () => void;
+  onRebuildKnowledgeGraph: () => void;
 }
 
 const userColors = [
@@ -24,6 +25,7 @@ export function UserManagementSidebar({
   onUserSwitch,
   onCreateUser,
   onToggleKnowledgeGraph,
+  onRebuildKnowledgeGraph,
 }: UserManagementSidebarProps) {
   const [newUserName, setNewUserName] = useState("");
 
@@ -173,10 +175,19 @@ export function UserManagementSidebar({
         <Button
           onClick={onToggleKnowledgeGraph}
           variant="outline"
-          className="w-full"
+          className="w-full mb-2"
         >
           <Activity className="h-4 w-4 mr-2" />
           View Knowledge Graph
+        </Button>
+        <Button
+          onClick={onRebuildKnowledgeGraph}
+          variant="outline"
+          className="w-full"
+          size="sm"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Rebuild Knowledge Graph
         </Button>
       </div>
     </div>

@@ -32,6 +32,8 @@ Preferred communication style: Simple, everyday language.
 - **Database Integration**: All messages, entities, and relationships now persist in PostgreSQL
 - **Fixed Frontend Display**: Knowledge graph sidebar now shows real-time data from database
 - **Enhanced UI**: Added clear messages functionality with proper cache invalidation
+- **Knowledge Graph Rebuild**: Added "Rebuild Knowledge Graph" button to process all existing messages and extract entities from entire conversation history
+- **Comprehensive Entity Extraction**: System now extracts entities from all messages, not just AI responses
 
 ### Project Structure
 ```
