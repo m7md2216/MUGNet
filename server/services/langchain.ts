@@ -128,8 +128,8 @@ Response:`;
   private async findRelevantMessages(context: ReasoningContext): Promise<any[]> {
     const { query, timeframe } = context;
     
-    // Parse query to extract intent
-    const queryAnalysis = this.analyzeQuery(query);
+    // Parse query to extract intent using actual conversation data
+    const queryAnalysis = await this.analyzeQuery(query, context.conversationHistory);
     
     try {
       // Try Neo4j for relevant messages
@@ -149,30 +149,62 @@ Response:`;
 
     // Fallback: Search conversation history directly for keywords
     const searchTerms = this.extractSearchTerms(query);
+    console.log('Search terms extracted from query:', searchTerms);
+    
     const relevantMessages = context.conversationHistory.filter(msg => {
       const content = msg.content.toLowerCase();
-      return searchTerms.some(term => content.includes(term.toLowerCase()));
+      const matches = searchTerms.some(term => content.includes(term.toLowerCase()));
+      if (matches) {
+        console.log(`Found relevant message: "${msg.content}" - matched terms: ${searchTerms.filter(term => content.includes(term.toLowerCase()))}`);
+      }
+      return matches;
     });
 
+    console.log(`Found ${relevantMessages.length} relevant messages out of ${context.conversationHistory.length} total`);
     return relevantMessages.slice(-10); // Return last 10 relevant messages
   }
 
-  private analyzeQuery(query: string): {
+  private async analyzeQuery(query: string, conversationHistory: Message[]): Promise<{
     targetUser?: string;
     targetTopic?: string;
     timeframe?: string;
-  } {
+  }> {
     const lowerQuery = query.toLowerCase();
     
-    // Extract user mentions - include actual users from your conversation
-    const userPattern = /\b(ali|mohammad|john|alice|bob|sarah|mike|emma|david|lisa|aiagent|ai|agent)\b/gi;
-    const userMatches = query.match(userPattern);
-    const targetUser = userMatches ? userMatches[0] : undefined;
+    // Dynamically extract all mentioned names from conversation history
+    const allUsers = new Set<string>();
+    conversationHistory.forEach(msg => {
+      // Extract capitalized words that could be names
+      const names = msg.content.match(/\b[A-Z][a-z]+\b/g);
+      if (names) {
+        names.forEach(name => allUsers.add(name.toLowerCase()));
+      }
+    });
+    
+    // Check if any of these users are mentioned in the query
+    const targetUser = Array.from(allUsers).find(user => 
+      lowerQuery.includes(user) || query.toLowerCase().includes(`@${user}`)
+    );
 
-    // Extract topic mentions - include all relevant topics
-    const topicPattern = /\b(beach|hiking|pennsylvania|movie|movies|restaurant|restaurants|cuisine|food|tesla|cybertruck|meeting|project|work|lunch|weekend|book|game|vacation|travel|sports|music|presentation|heretic|fast|furious)\b/gi;
-    const topicMatches = query.match(topicPattern);
-    const targetTopic = topicMatches ? topicMatches[0] : undefined;
+    // Dynamically extract topics from conversation content
+    const allTopics = new Set<string>();
+    conversationHistory.forEach(msg => {
+      // Extract meaningful words (not common words)
+      const words = msg.content.toLowerCase().match(/\b[a-z]{3,}\b/g);
+      if (words) {
+        words.forEach(word => {
+          // Skip common words
+          if (!['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'was', 'one', 'our', 'out', 'day', 'get', 'use', 'man', 'new', 'now', 'way', 'may', 'say', 'each', 'which', 'she', 'how', 'its', 'said', 'what', 'when', 'where', 'who', 'will', 'more', 'than', 'very', 'even', 'back', 'good', 'come', 'could', 'like', 'time', 'into', 'year', 'your', 'just', 'know', 'take', 'people', 'them', 'see', 'him', 'two', 'her', 'would', 'there', 'been', 'many', 'some', 'make', 'well', 'look', 'first', 'also', 'after', 'work', 'life', 'only', 'think', 'over', 'such', 'most', 'give', 'find', 'place', 'still', 'hand', 'old', 'great', 'little', 'before', 'want', 'went', 'about', 'this', 'that', 'they', 'have', 'from', 'with', 'were'].includes(word)) {
+            allTopics.add(word);
+          }
+        });
+      }
+    });
+    
+    // Check if any topics are mentioned in the query
+    const targetTopic = Array.from(allTopics).find(topic => 
+      lowerQuery.includes(topic)
+    );
 
     // Extract timeframe
     let timeframe: string | undefined;
@@ -197,16 +229,15 @@ Response:`;
     const lowerQuery = query.toLowerCase();
     const terms: string[] = [];
     
-    // Extract important keywords from the query
-    const keywords = lowerQuery.match(/\b(beach|hiking|pennsylvania|movie|restaurant|cuisine|tesla|vacation|travel|went|going|visited|watched|ate|discussed|mentioned|talked)\b/gi);
-    if (keywords) {
-      terms.push(...keywords);
-    }
-    
-    // Extract user names
-    const users = lowerQuery.match(/\b(ali|mohammad|john|alice|bob|sarah|mike|emma|david|lisa)\b/gi);
-    if (users) {
-      terms.push(...users);
+    // Extract all meaningful words from the query (3+ characters, not common words)
+    const words = lowerQuery.match(/\b[a-z]{3,}\b/g);
+    if (words) {
+      words.forEach(word => {
+        // Skip very common words but include everything else
+        if (!['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'was', 'one', 'our', 'out', 'day', 'get', 'use', 'man', 'new', 'now', 'way', 'may', 'say', 'each', 'which', 'she', 'how', 'its', 'said', 'what', 'when', 'where', 'who', 'will', 'more', 'than', 'very', 'even', 'back', 'good', 'come', 'could', 'like', 'time', 'into', 'year', 'your', 'just', 'know', 'take', 'people', 'them', 'see', 'him', 'two', 'her', 'would', 'there', 'been', 'many', 'some', 'make', 'well', 'look', 'first', 'also', 'after', 'work', 'life', 'only', 'think', 'over', 'such', 'most', 'give', 'find', 'place', 'still', 'hand', 'old', 'great', 'little', 'before', 'want', 'went', 'about', 'this', 'that', 'they', 'have', 'from', 'with', 'were'].includes(word)) {
+          terms.push(word);
+        }
+      });
     }
     
     return terms;
