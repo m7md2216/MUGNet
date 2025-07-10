@@ -300,8 +300,8 @@ Return only the JSON array of strings, no other text.`;
     const userMap: { [key: number]: string } = {
       1: 'Alice',
       2: 'Bob', 
-      3: 'John',
-      4: 'AI Assistant'
+      3: 'Ali',        // Fixed: User ID 3 is Ali, not John
+      4: 'John'        // Fixed: User ID 4 is John, not AI Assistant
     };
     
     return userMap[userId] || currentUser.name;

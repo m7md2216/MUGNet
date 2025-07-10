@@ -252,7 +252,7 @@ export class Neo4jService {
          RETURN m.id as id, m.text as text, m.timestamp as timestamp, m.mentions as mentions
          ORDER BY m.timestamp DESC
          LIMIT $limit`,
-        { userName, limit }
+        { userName, limit: Math.floor(limit) }
       );
 
       return result.records.map(record => ({
@@ -276,7 +276,7 @@ export class Neo4jService {
          RETURN m.id as id, m.text as text, m.timestamp as timestamp, u.name as sender
          ORDER BY m.timestamp DESC
          LIMIT $limit`,
-        { topicName, limit }
+        { topicName, limit: Math.floor(limit) }
       );
 
       return result.records.map(record => ({
@@ -304,7 +304,7 @@ export class Neo4jService {
         { 
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
-          limit 
+          limit: Math.floor(limit) 
         }
       );
 
