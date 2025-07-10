@@ -1,6 +1,7 @@
 import { User, Message } from '@shared/schema';
 import { langChainService } from './langchain';
 import { neo4jService } from './neo4j';
+import OpenAI from 'openai';
 
 interface AgentState {
   query: string;
@@ -14,7 +15,12 @@ interface AgentState {
 }
 
 export class LangGraphService {
+  private openai: OpenAI;
+  
   constructor() {
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     // Initialize Neo4j connection
     this.initializeServices();
   }
@@ -72,31 +78,62 @@ export class LangGraphService {
 
   private async parseIntent(state: AgentState): Promise<void> {
     const { query } = state;
-    const lowerQuery = query.toLowerCase();
 
-    // Extract topics from query
-    state.topics = this.extractTopics(query);
-    
-    // Extract timeframe
-    state.timeframe = this.extractTimeframe(query);
+    try {
+      console.log('=== LANGGRAPH INTENT PARSING ===');
+      console.log('Query:', query);
 
-    console.log('=== LANGGRAPH INTENT PARSING ===');
-    console.log('Query:', query);
-    console.log('Topics extracted:', state.topics);
-    console.log('Timeframe extracted:', state.timeframe);
+      // Use OpenAI to analyze the query intelligently
+      const analysisResponse = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a query analysis system. Analyze the user's query and extract:
+1. Intent: "memory_lookup" (asking about past conversations/memories), "graph_lookup" (asking about specific people/topics/events), or "general_chat" (greetings, thanks, etc.)
+2. Topics: Extract key topics/subjects mentioned (like "beach", "hiking", "work", "movie", etc.)
+3. Timeframe: Extract time references (like "yesterday", "last week", "the other day", etc.)
+4. Target users: Extract any specific people mentioned
 
-    // Determine intent based on query patterns
-    if (this.isMemoryQuery(lowerQuery)) {
-      state.intent = 'memory_lookup';
-    } else if (this.isGraphQuery(lowerQuery)) {
-      state.intent = 'graph_lookup';
-    } else if (this.isGeneralChat(lowerQuery)) {
-      state.intent = 'general_chat';
-    } else {
+Return JSON in this format:
+{
+  "intent": "memory_lookup" | "graph_lookup" | "general_chat",
+  "topics": ["topic1", "topic2", ...],
+  "timeframe": "timeframe or null",
+  "targetUsers": ["user1", "user2", ...],
+  "explanation": "brief explanation of analysis"
+}`
+          },
+          {
+            role: "user",
+            content: query
+          }
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 500,
+      });
+
+      const analysis = JSON.parse(analysisResponse.choices[0].message.content || "{}");
+      
+      console.log('OpenAI Analysis:', analysis);
+      
+      // Set state based on OpenAI analysis
+      state.intent = analysis.intent || 'unknown';
+      state.topics = analysis.topics || [];
+      state.timeframe = analysis.timeframe || undefined;
+      
+      console.log('Intent determined:', state.intent);
+      console.log('Topics extracted:', state.topics);
+      console.log('Timeframe extracted:', state.timeframe);
+      console.log('Explanation:', analysis.explanation);
+      
+    } catch (error) {
+      console.error('Error in OpenAI query analysis:', error);
+      // Fallback to unknown intent
       state.intent = 'unknown';
+      state.topics = [];
+      state.timeframe = undefined;
     }
-
-    console.log('Intent determined:', state.intent);
   }
 
   private async memoryLookup(state: AgentState): Promise<void> {
@@ -114,20 +151,54 @@ export class LangGraphService {
 
   private async graphLookup(state: AgentState): Promise<void> {
     // This node handles queries that require graph database lookups
-    const { query, timeframe } = state;
+    const { query, timeframe, topics } = state;
     
     try {
-      // Parse query to extract search parameters
-      const queryAnalysis = this.analyzeGraphQuery(query);
+      console.log('=== LANGGRAPH GRAPH LOOKUP ===');
+      console.log('Query:', query);
+      console.log('Topics:', topics);
+      console.log('Timeframe:', timeframe);
+      
+      // Use OpenAI to extract search parameters intelligently
+      const searchResponse = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a search parameter extraction system. Given a query, extract search parameters for finding relevant messages in a conversation history.
+
+Return JSON in this format:
+{
+  "searchTerms": ["term1", "term2", ...], 
+  "targetUser": "username or null",
+  "targetTopic": "topic or null",
+  "timeframe": "timeframe or null",
+  "explanation": "brief explanation"
+}`
+          },
+          {
+            role: "user",
+            content: query
+          }
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 300,
+      });
+
+      const searchParams = JSON.parse(searchResponse.choices[0].message.content || "{}");
+      
+      console.log('OpenAI Search Parameters:', searchParams);
       
       // Query Neo4j for relevant context
       const relevantMessages = await neo4jService.findConversationContext({
-        sender: queryAnalysis.targetUser,
-        topic: queryAnalysis.targetTopic,
-        timeframe: timeframe || queryAnalysis.timeframe,
+        sender: searchParams.targetUser,
+        topic: searchParams.targetTopic || (topics.length > 0 ? topics[0] : undefined),
+        timeframe: timeframe || searchParams.timeframe,
         limit: 10
       });
 
+      console.log('Neo4j returned messages:', relevantMessages.length);
+      
       state.relevantContext = relevantMessages;
     } catch (error) {
       console.error('Graph lookup failed:', error);

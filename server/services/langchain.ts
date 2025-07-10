@@ -163,6 +163,16 @@ Response:`;
     const searchTerms = await this.extractSearchTerms(query, context.conversationHistory);
     console.log('AI-extracted search terms from query:', searchTerms);
     
+    // Check if we can find message ID 9 which contains the beach mention
+    const beachMessage = context.conversationHistory.find(msg => msg.id === 9);
+    if (beachMessage) {
+      console.log('Found beach message ID 9:', beachMessage.content);
+    } else {
+      console.log('Beach message ID 9 not found in conversation history');
+    }
+    
+    console.log('All available messages:', context.conversationHistory.map(msg => `${msg.id}: ${msg.content}`));
+    
     const relevantMessages = context.conversationHistory.filter(msg => {
       const content = msg.content.toLowerCase();
       const matches = searchTerms.some(term => content.includes(term.toLowerCase()));
