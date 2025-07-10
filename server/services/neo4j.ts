@@ -62,8 +62,6 @@ export class Neo4jService {
   }
 
   private async createIndexes(): Promise<void> {
-    if (!this.session) return;
-
     const indexes = [
       'CREATE INDEX IF NOT EXISTS FOR (u:User) ON (u.name)',
       'CREATE INDEX IF NOT EXISTS FOR (m:Message) ON (m.id)',
@@ -74,10 +72,13 @@ export class Neo4jService {
     ];
 
     for (const index of indexes) {
+      const session = this.driver.session();
       try {
-        await this.session.run(index);
+        await session.run(index);
       } catch (error) {
         console.warn('Failed to create index:', error);
+      } finally {
+        await session.close();
       }
     }
   }

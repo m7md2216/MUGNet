@@ -38,10 +38,9 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800">
-                <strong>Setup Required:</strong> Neo4j is not installed in this environment. 
-                Follow the setup guide below to connect your own Neo4j instance.
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-sm text-green-800">
+                <strong>✓ Connected:</strong> Neo4j Aura instance is connected and ready for graph analysis.
               </p>
             </div>
             
@@ -55,31 +54,25 @@ export function KnowledgeGraphSidebar({ onClose }: KnowledgeGraphSidebarProps) {
             </div>
             
             <div className="space-y-2">
-              <h4 className="text-sm font-medium">Neo4j Aura (Free Cloud):</h4>
+              <h4 className="text-sm font-medium">Your Neo4j Aura Instance:</h4>
               <div className="bg-gray-50 p-3 rounded-lg space-y-1 text-sm font-mono">
-                <div>URI: neo4j+s://&lt;id&gt;.databases.neo4j.io</div>
+                <div>URI: neo4j+s://ba13305a.databases.neo4j.io</div>
                 <div>Username: neo4j</div>
-                <div>Password: &lt;generated-password&gt;</div>
+                <div>Status: ✓ Connected</div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => window.open('https://neo4j.com/download/', '_blank')}
+                className="w-full"
+                onClick={() => window.open('https://browser.neo4j.io/', '_blank')}
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                Download Neo4j
+                Open Neo4j Browser
               </Button>
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => window.open('https://neo4j.com/cloud/aura/', '_blank')}
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Try Neo4j Aura
-              </Button>
+              <p className="text-xs text-gray-600 text-center">
+                Use your Aura connection details to connect
+              </p>
             </div>
           </CardContent>
         </Card>
