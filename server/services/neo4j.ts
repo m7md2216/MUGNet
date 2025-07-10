@@ -28,12 +28,25 @@ export class Neo4jService {
   private session: Session | null = null;
 
   constructor() {
-    // Use a local Neo4j instance or configure based on environment
-    const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
-    const username = process.env.NEO4J_USERNAME || 'neo4j';
-    const password = process.env.NEO4J_PASSWORD || 'password';
+    // For development, we'll use Neo4j Desktop or Aura connection
+    const neo4jUri = process.env.NEO4J_URI || 'neo4j://localhost:7687';
+    const neo4jUsername = process.env.NEO4J_USERNAME || 'neo4j';
+    const neo4jPassword = process.env.NEO4J_PASSWORD || 'neo4j';
     
-    this.driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
+    console.log('Neo4j Configuration:', {
+      uri: neo4jUri,
+      username: neo4jUsername,
+      password: '***hidden***'
+    });
+    
+    this.driver = neo4j.driver(
+      neo4jUri,
+      neo4j.auth.basic(neo4jUsername, neo4jPassword),
+      {
+        // For Neo4j 4.0+ compatibility
+        disableLosslessIntegers: true
+      }
+    );
   }
 
   async connect(): Promise<void> {
@@ -52,11 +65,12 @@ export class Neo4jService {
     if (!this.session) return;
 
     const indexes = [
-      'CREATE INDEX IF NOT EXISTS FOR (u:User) ON (u.id)',
+      'CREATE INDEX IF NOT EXISTS FOR (u:User) ON (u.name)',
       'CREATE INDEX IF NOT EXISTS FOR (m:Message) ON (m.id)',
+      'CREATE INDEX IF NOT EXISTS FOR (m:Message) ON (m.timestamp)',
       'CREATE INDEX IF NOT EXISTS FOR (t:Topic) ON (t.name)',
       'CREATE INDEX IF NOT EXISTS FOR (e:Entity) ON (e.name)',
-      'CREATE INDEX IF NOT EXISTS FOR (th:Thread) ON (th.topic)'
+      'CREATE INDEX IF NOT EXISTS FOR (e:Entity) ON (e.type)'
     ];
 
     for (const index of indexes) {
@@ -73,10 +87,10 @@ export class Neo4jService {
 
     try {
       await this.session.run(
-        `MERGE (u:User {id: $id})
-         SET u.name = $name, u.initials = $initials, u.color = $color, u.lastActiveAt = $lastActiveAt`,
+        `MERGE (u:User {name: $name})
+         SET u.id = $id, u.initials = $initials, u.color = $color, u.lastActiveAt = $lastActiveAt`,
         {
-          id: user.id.toString(),
+          id: user.id,
           name: user.name,
           initials: user.initials,
           color: user.color,
@@ -97,21 +111,21 @@ export class Neo4jService {
       // Create message node
       await this.session.run(
         `MERGE (m:Message {id: $id})
-         SET m.content = $content, m.timestamp = $timestamp, m.mentions = $mentions`,
+         SET m.text = $text, m.timestamp = $timestamp, m.mentions = $mentions`,
         {
           id: message.id.toString(),
-          content: message.content,
-          timestamp: message.timestamp.toISOString(),
-          mentions: message.mentions
+          text: message.content,
+          timestamp: message.timestamp?.toISOString() || new Date().toISOString(),
+          mentions: message.mentions || []
         }
       );
 
       // Create sender relationship
       await this.session.run(
-        `MATCH (u:User {id: $senderId}), (m:Message {id: $messageId})
+        `MATCH (u:User {name: $senderName}), (m:Message {id: $messageId})
          MERGE (u)-[:SENT]->(m)`,
         {
-          senderId: sender.id.toString(),
+          senderName: sender.name,
           messageId: message.id.toString()
         }
       );
@@ -119,10 +133,10 @@ export class Neo4jService {
       // Create recipient relationships
       for (const recipient of recipients) {
         await this.session.run(
-          `MATCH (u:User {id: $recipientId}), (m:Message {id: $messageId})
+          `MATCH (u:User {name: $recipientName}), (m:Message {id: $messageId})
            MERGE (m)-[:TO]->(u)`,
           {
-            recipientId: recipient.id.toString(),
+            recipientName: recipient.name,
             messageId: message.id.toString()
           }
         );
@@ -141,9 +155,91 @@ export class Neo4jService {
           }
         );
       }
+
+      // Add entity extraction for comprehensive knowledge graph
+      await this.extractAndStoreEntities(message.content, message.id.toString());
+      
     } catch (error) {
       console.warn('Failed to sync message to Neo4j:', error);
     }
+  }
+
+  private async extractAndStoreEntities(content: string, messageId: string): Promise<void> {
+    if (!this.session) return;
+
+    try {
+      const entities = this.extractEntitiesFromText(content);
+      
+      // Store People entities
+      for (const person of entities.people) {
+        await this.session.run(
+          `MERGE (e:Entity {name: $name, type: 'Person'})
+           WITH e
+           MATCH (m:Message {id: $messageId})
+           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
+          { name: person, messageId }
+        );
+      }
+
+      // Store Events entities
+      for (const event of entities.events) {
+        await this.session.run(
+          `MERGE (e:Entity {name: $name, type: 'Event'})
+           WITH e
+           MATCH (m:Message {id: $messageId})
+           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
+          { name: event, messageId }
+        );
+      }
+
+      // Store Date entities
+      for (const date of entities.dates) {
+        await this.session.run(
+          `MERGE (e:Entity {name: $name, type: 'Date'})
+           WITH e
+           MATCH (m:Message {id: $messageId})
+           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
+          { name: date, messageId }
+        );
+      }
+
+    } catch (error) {
+      console.warn('Failed to extract entities:', error);
+    }
+  }
+
+  private extractEntitiesFromText(text: string): {
+    people: string[];
+    events: string[];
+    dates: string[];
+  } {
+    const entities = {
+      people: [] as string[],
+      events: [] as string[],
+      dates: [] as string[]
+    };
+
+    // Extract people (proper names and @mentions)
+    const peopleMatches = text.match(/@(\w+)|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*/g);
+    if (peopleMatches) {
+      entities.people = peopleMatches.map(match => match.replace('@', ''));
+    }
+
+    // Extract events (patterns like "meeting", "conference", "dinner")
+    const eventPatterns = /(?:meeting|conference|dinner|lunch|party|event|celebration|trip|vacation|wedding|birthday|anniversary|presentation|demo|launch|release)/gi;
+    const eventMatches = text.match(eventPatterns);
+    if (eventMatches) {
+      entities.events = [...new Set(eventMatches.map(match => match.toLowerCase()))];
+    }
+
+    // Extract dates (various formats)
+    const datePatterns = /(?:today|tomorrow|yesterday|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}-\d{1,2}-\d{2,4})/gi;
+    const dateMatches = text.match(datePatterns);
+    if (dateMatches) {
+      entities.dates = [...new Set(dateMatches.map(match => match.toLowerCase()))];
+    }
+
+    return entities;
   }
 
   async findMessagesByUser(userName: string, limit: number = 10): Promise<any[]> {
@@ -152,7 +248,7 @@ export class Neo4jService {
     try {
       const result = await this.session.run(
         `MATCH (u:User {name: $userName})-[:SENT]->(m:Message)
-         RETURN m.id as id, m.content as content, m.timestamp as timestamp, m.mentions as mentions
+         RETURN m.id as id, m.text as text, m.timestamp as timestamp, m.mentions as mentions
          ORDER BY m.timestamp DESC
          LIMIT $limit`,
         { userName, limit }
@@ -160,7 +256,7 @@ export class Neo4jService {
 
       return result.records.map(record => ({
         id: record.get('id'),
-        content: record.get('content'),
+        text: record.get('text'),
         timestamp: record.get('timestamp'),
         mentions: record.get('mentions')
       }));
@@ -176,7 +272,7 @@ export class Neo4jService {
     try {
       const result = await this.session.run(
         `MATCH (t:Topic {name: $topicName})<-[:MENTIONS]-(m:Message)<-[:SENT]-(u:User)
-         RETURN m.id as id, m.content as content, m.timestamp as timestamp, u.name as sender
+         RETURN m.id as id, m.text as text, m.timestamp as timestamp, u.name as sender
          ORDER BY m.timestamp DESC
          LIMIT $limit`,
         { topicName, limit }
@@ -184,7 +280,7 @@ export class Neo4jService {
 
       return result.records.map(record => ({
         id: record.get('id'),
-        content: record.get('content'),
+        text: record.get('text'),
         timestamp: record.get('timestamp'),
         sender: record.get('sender')
       }));
@@ -201,7 +297,7 @@ export class Neo4jService {
       const result = await this.session.run(
         `MATCH (u:User)-[:SENT]->(m:Message)
          WHERE datetime(m.timestamp) >= datetime($startTime) AND datetime(m.timestamp) <= datetime($endTime)
-         RETURN m.id as id, m.content as content, m.timestamp as timestamp, u.name as sender
+         RETURN m.id as id, m.text as text, m.timestamp as timestamp, u.name as sender
          ORDER BY m.timestamp DESC
          LIMIT $limit`,
         { 
@@ -213,7 +309,7 @@ export class Neo4jService {
 
       return result.records.map(record => ({
         id: record.get('id'),
-        content: record.get('content'),
+        text: record.get('text'),
         timestamp: record.get('timestamp'),
         sender: record.get('sender')
       }));
@@ -260,7 +356,7 @@ export class Neo4jService {
         cypher += ` WHERE ${conditions.join(' AND ')}`;
       }
 
-      cypher += ` RETURN m.id as id, m.content as content, m.timestamp as timestamp, u.name as sender, m.mentions as mentions
+      cypher += ` RETURN m.id as id, m.text as text, m.timestamp as timestamp, u.name as sender, m.mentions as mentions
                   ORDER BY m.timestamp DESC
                   LIMIT $limit`;
 
@@ -268,7 +364,7 @@ export class Neo4jService {
 
       return result.records.map(record => ({
         id: record.get('id'),
-        content: record.get('content'),
+        text: record.get('text'),
         timestamp: record.get('timestamp'),
         sender: record.get('sender'),
         mentions: record.get('mentions')

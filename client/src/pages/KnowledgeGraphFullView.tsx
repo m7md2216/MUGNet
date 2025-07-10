@@ -1,383 +1,284 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, Hash, Calendar, Activity, ZoomIn, ZoomOut } from "lucide-react";
-import { chatApi } from "@/lib/chatApi";
-import { Link } from "wouter";
-
-// Full-screen Network Graph Component
-function FullScreenNetworkGraph({ nodes, relationships }) {
-  const [zoom, setZoom] = useState(1);
-  const containerWidth = window.innerWidth - 100;
-  const containerHeight = window.innerHeight - 200;
-  
-  // Random scattered layout with minimum distance enforcement
-  const nodePositions = nodes.map((node, index) => {
-    const padding = 100;
-    const availableWidth = containerWidth - 2 * padding;
-    const availableHeight = containerHeight - 2 * padding;
-    
-    // Create a deterministic but scattered layout
-    const seedX = (index * 123 + node.id * 456) % 1000;
-    const seedY = (index * 789 + node.id * 321) % 1000;
-    
-    let x = padding + (seedX / 1000) * availableWidth;
-    let y = padding + (seedY / 1000) * availableHeight;
-    
-    // Ensure minimum distance from other nodes
-    const minDistance = 150;
-    let attempts = 0;
-    while (attempts < 50) {
-      let tooClose = false;
-      
-      for (let i = 0; i < index; i++) {
-        const otherSeedX = (i * 123 + nodes[i].id * 456) % 1000;
-        const otherSeedY = (i * 789 + nodes[i].id * 321) % 1000;
-        const otherX = padding + (otherSeedX / 1000) * availableWidth;
-        const otherY = padding + (otherSeedY / 1000) * availableHeight;
-        
-        const distance = Math.sqrt(Math.pow(x - otherX, 2) + Math.pow(y - otherY, 2));
-        if (distance < minDistance) {
-          tooClose = true;
-          break;
-        }
-      }
-      
-      if (!tooClose) break;
-      
-      // Adjust position
-      x = padding + ((seedX + attempts * 100) % 1000 / 1000) * availableWidth;
-      y = padding + ((seedY + attempts * 150) % 1000 / 1000) * availableHeight;
-      attempts++;
-    }
-    
-    return {
-      ...node,
-      x: Math.max(80, Math.min(containerWidth - 80, x)),
-      y: Math.max(60, Math.min(containerHeight - 60, y))
-    };
-  });
-  
-  // Find connections for each node
-  const connections = relationships.map(rel => {
-    const fromNode = nodePositions.find(n => n.id === rel.from);
-    const toNode = nodePositions.find(n => n.id === rel.to);
-    return fromNode && toNode ? { from: fromNode, to: toNode, type: rel.type } : null;
-  }).filter(Boolean);
-  
-  const getNodeColor = (type) => {
-    switch (type) {
-      case "person": return "#3B82F6";
-      case "topic": return "#8B5CF6";
-      case "event": return "#10B981";
-      case "date": return "#F59E0B";
-      default: return "#6B7280";
-    }
-  };
-  
-  const getNodeSize = (connections) => {
-    return Math.max(20, Math.min(40, 20 + connections * 2));
-  };
-  
-  return (
-    <div className="relative w-full h-full bg-gray-50 rounded-lg overflow-hidden">
-      {/* Zoom controls */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}
-          disabled={zoom <= 0.5}
-        >
-          <ZoomOut className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setZoom(Math.min(2, zoom + 0.25))}
-          disabled={zoom >= 2}
-        >
-          <ZoomIn className="h-4 w-4" />
-        </Button>
-        <span className="px-2 py-1 bg-white rounded text-sm border">
-          {Math.round(zoom * 100)}%
-        </span>
-      </div>
-
-      <svg 
-        width={containerWidth} 
-        height={containerHeight} 
-        className="absolute inset-0"
-        style={{ transform: `scale(${zoom})`, transformOrigin: '0 0' }}
-      >
-        {/* Render edges first */}
-        {connections.map((connection, index) => (
-          <g key={index}>
-            <line
-              x1={connection.from.x}
-              y1={connection.from.y}
-              x2={connection.to.x}
-              y2={connection.to.y}
-              stroke="#E5E7EB"
-              strokeWidth="3"
-              opacity="0.7"
-            />
-            {/* Edge labels for full screen */}
-            <text
-              x={(connection.from.x + connection.to.x) / 2}
-              y={(connection.from.y + connection.to.y) / 2}
-              textAnchor="middle"
-              fontSize="11"
-              fill="#6B7280"
-              className="pointer-events-none"
-              dy="-3"
-            >
-              {connection.type}
-            </text>
-          </g>
-        ))}
-        
-        {/* Render nodes */}
-        {nodePositions.map((node, index) => {
-          const nodeSize = getNodeSize(node.connections);
-          const nodeColor = getNodeColor(node.type);
-          
-          return (
-            <g key={node.id}>
-              {/* Node circle */}
-              <circle
-                cx={node.x}
-                cy={node.y}
-                r={nodeSize}
-                fill={nodeColor}
-                stroke="white"
-                strokeWidth="3"
-                className="cursor-pointer hover:opacity-80"
-              />
-              
-              {/* Simplified node label */}
-              <text
-                x={node.x}
-                y={node.y - nodeSize - 10}
-                textAnchor="middle"
-                fontSize="12"
-                fontWeight="600"
-                fill="#374151"
-                className="pointer-events-none"
-              >
-                {node.name}
-              </text>
-              
-              {/* Node type indicator */}
-              <text
-                x={node.x}
-                y={node.y + 6}
-                textAnchor="middle"
-                fontSize="12"
-                fill="white"
-                className="pointer-events-none font-medium"
-              >
-                {node.type === "person" ? "P" : 
-                 node.type === "topic" ? "T" : 
-                 node.type === "event" ? "E" : "D"}
-              </text>
-
-              {/* Simplified connection count */}
-              <text
-                x={node.x}
-                y={node.y + nodeSize + 15}
-                textAnchor="middle"
-                fontSize="9"
-                fill="#6B7280"
-                className="pointer-events-none"
-              >
-                {node.connections}
-              </text>
-            </g>
-          );
-        })}
-        
-        {/* Legend moved to top right */}
-        <g transform={`translate(${containerWidth - 220}, 40)`}>
-          <rect width="180" height="120" fill="white" fillOpacity="0.95" stroke="#E5E7EB" strokeWidth="2" rx="8" />
-          <text x="10" y="25" fontSize="16" fontWeight="600" fill="#374151">Legend</text>
-          <circle cx="20" cy="45" r="8" fill="#3B82F6" />
-          <text x="35" y="50" fontSize="14" fill="#374151">Person</text>
-          <circle cx="20" cy="70" r="8" fill="#8B5CF6" />
-          <text x="35" y="75" fontSize="14" fill="#374151">Topic</text>
-          <circle cx="20" cy="95" r="8" fill="#10B981" />
-          <text x="35" y="100" fontSize="14" fill="#374151">Event</text>
-          <circle cx="100" cy="45" r="8" fill="#F59E0B" />
-          <text x="115" y="50" fontSize="14" fill="#374151">Date</text>
-          <text x="10" y="120" fontSize="12" fill="#6B7280">Size = Connection Count</text>
-        </g>
-      </svg>
-    </div>
-  );
-}
+import React from 'react';
+import { Database, ExternalLink, Code, ArrowLeft, Copy } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Link } from 'wouter';
 
 export default function KnowledgeGraphFullView() {
-  const [activeTab, setActiveTab] = useState("graph");
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
 
-  const { data: graphData, isLoading, error } = useQuery({
-    queryKey: ["/api/knowledge-graph"],
-    queryFn: chatApi.getKnowledgeGraph,
-  });
-
-  const { data: conversationThreads = [] } = useQuery({
-    queryKey: ["/api/conversation-threads"],
-    queryFn: chatApi.getConversationThreads,
-  });
-
-  const getEntityIcon = (type: string) => {
-    switch (type) {
-      case "person":
-        return <Users className="h-5 w-5" />;
-      case "topic":
-        return <Hash className="h-5 w-5" />;
-      case "event":
-        return <Calendar className="h-5 w-5" />;
-      case "date":
-        return <Calendar className="h-5 w-5" />;
-      default:
-        return <Activity className="h-5 w-5" />;
+  const sampleQueries = [
+    {
+      title: "View Recent Conversation Graph",
+      description: "Shows the complete recent conversation network with all relationships",
+      query: `MATCH (u:User)-[:SENT]->(m:Message)
+OPTIONAL MATCH (m)-[:TO]->(r:User)
+OPTIONAL MATCH (m)-[:MENTIONS]->(t:Topic)
+OPTIONAL MATCH (m)-[:REPLIED_TO]->(prev:Message)
+OPTIONAL MATCH (m)-[:CONTAINS_ENTITY]->(e:Entity)
+RETURN u, m, r, t, prev, e
+ORDER BY m.timestamp DESC
+LIMIT 100`
+    },
+    {
+      title: "Messages About Specific Topic",
+      description: "Find all messages mentioning a specific topic (replace 'Tesla' with your topic)",
+      query: `MATCH (m:Message)-[:MENTIONS]->(t:Topic {name: "Tesla"})
+OPTIONAL MATCH (m)<-[:SENT]-(u:User)
+OPTIONAL MATCH (m)-[:TO]->(r:User)
+RETURN u, m, r, t
+ORDER BY m.timestamp DESC`
+    },
+    {
+      title: "User Conversation History",
+      description: "View all messages from a specific user with context",
+      query: `MATCH (u:User {name: "Alice"})-[:SENT]->(m:Message)
+OPTIONAL MATCH (m)-[:TO]->(recipient:User)
+OPTIONAL MATCH (m)-[:MENTIONS]->(t:Topic)
+OPTIONAL MATCH (m)-[:CONTAINS_ENTITY]->(e:Entity)
+RETURN u, m, recipient, t, e
+ORDER BY m.timestamp DESC`
+    },
+    {
+      title: "Entity Relationship Network",
+      description: "Explore entities and their connections through messages",
+      query: `MATCH (e:Entity)
+OPTIONAL MATCH (e)<-[:CONTAINS_ENTITY]-(m:Message)<-[:SENT]-(u:User)
+OPTIONAL MATCH (m)-[:TO]->(recipient:User)
+RETURN e, m, u, recipient
+ORDER BY e.type, e.name`
+    },
+    {
+      title: "Conversation Threads",
+      description: "Find message reply chains and conversation threads",
+      query: `MATCH path = (start:Message)-[:REPLIED_TO*]->(end:Message)
+MATCH (start)<-[:SENT]-(startUser:User)
+MATCH (end)<-[:SENT]-(endUser:User)
+RETURN path, startUser, endUser
+ORDER BY start.timestamp DESC`
+    },
+    {
+      title: "Complete Graph Overview",
+      description: "View the entire knowledge graph structure",
+      query: `MATCH (n)
+OPTIONAL MATCH (n)-[r]->(m)
+WHERE labels(n) IN ['User', 'Message', 'Topic', 'Entity']
+RETURN n, r, m
+LIMIT 500`
     }
-  };
-
-  const getEntityColor = (type: string) => {
-    switch (type) {
-      case "person":
-        return "text-blue-500";
-      case "topic":
-        return "text-purple-500";
-      case "event":
-        return "text-green-500";
-      case "date":
-        return "text-orange-500";
-      default:
-        return "text-gray-500";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString([], {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-500 text-lg">Loading knowledge graph...</p>
-        </div>
-      </div>
-    );
-  }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Chat
-              </Button>
-            </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Knowledge Graph - Full View</h1>
-          </div>
-          <div className="text-sm text-gray-500">
-            {graphData?.nodes?.length || 0} entities • {graphData?.relationships?.length || 0} relationships
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Chat
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <Database className="w-8 h-8 text-blue-600" />
+              Neo4j Browser Interface
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Developer access to the conversation knowledge graph
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
-            <TabsTrigger value="graph">Network Graph</TabsTrigger>
-            <TabsTrigger value="entities">Entities</TabsTrigger>
-            <TabsTrigger value="relationships">Relations</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="graph" className="mt-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <div style={{ height: 'calc(100vh - 280px)' }}>
-                {!graphData?.nodes?.length ? (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    No entities found. Start a conversation with @aiagent to populate the graph.
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Connection Info */}
+          <div className="lg:col-span-1">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="w-5 h-5" />
+                  Connection Setup
+                </CardTitle>
+                <CardDescription>
+                  Configure Neo4j connection for development access
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium">Local Development:</h4>
+                  <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-sm font-mono">
+                    <div>URI: neo4j://localhost:7687</div>
+                    <div>Username: neo4j</div>
+                    <div>Password: neo4j</div>
                   </div>
-                ) : (
-                  <FullScreenNetworkGraph 
-                    nodes={graphData.nodes} 
-                    relationships={graphData.relationships} 
-                  />
-                )}
-              </div>
-            </div>
-          </TabsContent>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium">Neo4j Aura Cloud:</h4>
+                  <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-sm font-mono">
+                    <div>URI: neo4j+s://&lt;id&gt;.databases.neo4j.io</div>
+                    <div>Username: neo4j</div>
+                    <div>Password: &lt;your-password&gt;</div>
+                  </div>
+                </div>
+                
+                <Button 
+                  className="w-full" 
+                  onClick={() => window.open('http://localhost:7474', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Open Neo4j Browser
+                </Button>
+              </CardContent>
+            </Card>
 
-          <TabsContent value="entities" className="mt-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold mb-4">All Entities ({graphData?.nodes?.length || 0})</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {graphData?.entitySummaries?.map((entity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <div className={getEntityColor(entity.type)}>
-                      {getEntityIcon(entity.type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900">{entity.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {entity.mentions} mentions • {formatDate(entity.lastMentioned)}
+            {/* Schema Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Graph Schema</CardTitle>
+                <CardDescription>
+                  Data model and relationships
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <h5 className="font-medium mb-2 flex items-center gap-2">
+                      Node Types
+                      <Badge variant="secondary" className="text-xs">4 types</Badge>
+                    </h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        <span className="font-mono">:User</span>
+                        <span className="text-gray-500 text-xs">(name, initials, color)</span>
                       </div>
-                      {entity.relatedEntities?.length > 0 && (
-                        <div className="text-sm text-gray-400 mt-1">
-                          Connected to: {entity.relatedEntities.slice(0, 3).join(', ')}
-                          {entity.relatedEntities.length > 3 && ` +${entity.relatedEntities.length - 3} more`}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span className="font-mono">:Message</span>
+                        <span className="text-gray-500 text-xs">(text, timestamp, mentions)</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-purple-50 rounded">
+                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                        <span className="font-mono">:Topic</span>
+                        <span className="text-gray-500 text-xs">(name)</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-orange-50 rounded">
+                        <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <span className="font-mono">:Entity</span>
+                        <span className="text-gray-500 text-xs">(name, type)</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
+                  
+                  <Separator />
+                  
+                  <div>
+                    <h5 className="font-medium mb-2 flex items-center gap-2">
+                      Relationships
+                      <Badge variant="secondary" className="text-xs">4 types</Badge>
+                    </h5>
+                    <div className="space-y-1 font-mono text-xs">
+                      <div>(:User)-[:SENT]→(:Message)</div>
+                      <div>(:Message)-[:TO]→(:User)</div>
+                      <div>(:Message)-[:MENTIONS]→(:Topic)</div>
+                      <div>(:Message)-[:CONTAINS_ENTITY]→(:Entity)</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <TabsContent value="relationships" className="mt-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold mb-4">All Relationships ({graphData?.relationships?.length || 0})</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {graphData?.relationships?.map((rel) => (
-                  <div
-                    key={rel.id}
-                    className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="font-medium capitalize text-gray-900">{rel.type}</div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      <span className="font-medium">{graphData.nodes.find(n => n.id === rel.from)?.name}</span> → <span className="font-medium">{graphData.nodes.find(n => n.id === rel.to)?.name}</span>
+          {/* Sample Queries */}
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Code className="w-5 h-5" />
+                <h2 className="text-xl font-semibold">Sample Cypher Queries</h2>
+              </div>
+
+              {sampleQueries.map((query, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-base">{query.title}</CardTitle>
+                        <CardDescription>{query.description}</CardDescription>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyToClipboard(query.query)}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <div className="text-sm text-gray-400 mt-1">
-                      {graphData.nodes.find(n => n.id === rel.from)?.type} connects to {graphData.nodes.find(n => n.id === rel.to)?.type}
-                    </div>
-                  </div>
-                ))}
+                  </CardHeader>
+                  <CardContent>
+                    <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+                      {query.query}
+                    </pre>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Getting Started</CardTitle>
+            <CardDescription>
+              How to use Neo4j Browser with the conversation graph
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-medium mb-2">1. Start Neo4j Database</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Install Neo4j Desktop or use Neo4j Aura</li>
+                  <li>• Create a new database or use existing</li>
+                  <li>• Start the database instance</li>
+                  <li>• Note the connection URI and credentials</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">2. Configure Environment</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Set NEO4J_URI environment variable</li>
+                  <li>• Set NEO4J_USERNAME and NEO4J_PASSWORD</li>
+                  <li>• Restart the application</li>
+                  <li>• Verify connection in server logs</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">3. Access Neo4j Browser</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Open http://localhost:7474 in browser</li>
+                  <li>• Enter connection credentials</li>
+                  <li>• Run sample queries above</li>
+                  <li>• Explore the conversation graph visually</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">4. Analyze Conversations</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Use graph visualization for patterns</li>
+                  <li>• Query specific users or topics</li>
+                  <li>• Export data for external analysis</li>
+                  <li>• Build custom queries for insights</li>
+                </ul>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
