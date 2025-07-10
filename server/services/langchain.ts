@@ -148,8 +148,8 @@ Response:`;
     }
 
     // Fallback: Search conversation history directly for keywords
-    const searchTerms = this.extractSearchTerms(query);
-    console.log('Search terms extracted from query:', searchTerms);
+    const searchTerms = await this.extractSearchTerms(query, context.conversationHistory);
+    console.log('AI-extracted search terms from query:', searchTerms);
     
     const relevantMessages = context.conversationHistory.filter(msg => {
       const content = msg.content.toLowerCase();
@@ -169,78 +169,89 @@ Response:`;
     targetTopic?: string;
     timeframe?: string;
   }> {
-    const lowerQuery = query.toLowerCase();
-    
-    // Dynamically extract all mentioned names from conversation history
-    const allUsers = new Set<string>();
-    conversationHistory.forEach(msg => {
-      // Extract capitalized words that could be names
-      const names = msg.content.match(/\b[A-Z][a-z]+\b/g);
-      if (names) {
-        names.forEach(name => allUsers.add(name.toLowerCase()));
-      }
-    });
-    
-    // Check if any of these users are mentioned in the query
-    const targetUser = Array.from(allUsers).find(user => 
-      lowerQuery.includes(user) || query.toLowerCase().includes(`@${user}`)
-    );
+    try {
+      // Use OpenAI to intelligently extract entities from conversation history
+      const conversationSample = conversationHistory
+        .slice(-20) // Last 20 messages for context
+        .map(msg => msg.content)
+        .join('\n');
 
-    // Dynamically extract topics from conversation content
-    const allTopics = new Set<string>();
-    conversationHistory.forEach(msg => {
-      // Extract meaningful words (not common words)
-      const words = msg.content.toLowerCase().match(/\b[a-z]{3,}\b/g);
-      if (words) {
-        words.forEach(word => {
-          // Skip common words
-          if (!['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'was', 'one', 'our', 'out', 'day', 'get', 'use', 'man', 'new', 'now', 'way', 'may', 'say', 'each', 'which', 'she', 'how', 'its', 'said', 'what', 'when', 'where', 'who', 'will', 'more', 'than', 'very', 'even', 'back', 'good', 'come', 'could', 'like', 'time', 'into', 'year', 'your', 'just', 'know', 'take', 'people', 'them', 'see', 'him', 'two', 'her', 'would', 'there', 'been', 'many', 'some', 'make', 'well', 'look', 'first', 'also', 'after', 'work', 'life', 'only', 'think', 'over', 'such', 'most', 'give', 'find', 'place', 'still', 'hand', 'old', 'great', 'little', 'before', 'want', 'went', 'about', 'this', 'that', 'they', 'have', 'from', 'with', 'were'].includes(word)) {
-            allTopics.add(word);
-          }
-        });
-      }
-    });
-    
-    // Check if any topics are mentioned in the query
-    const targetTopic = Array.from(allTopics).find(topic => 
-      lowerQuery.includes(topic)
-    );
+      const extractionPrompt = `Analyze this conversation history and extract entities, then analyze the user query for intent.
 
-    // Extract timeframe
-    let timeframe: string | undefined;
-    if (lowerQuery.includes('last week') || lowerQuery.includes('week ago')) {
-      timeframe = 'last week';
-    } else if (lowerQuery.includes('yesterday') || lowerQuery.includes('day ago') || lowerQuery.includes('other day')) {
-      timeframe = 'yesterday';
-    } else if (lowerQuery.includes('last month') || lowerQuery.includes('month ago')) {
-      timeframe = 'last month';
-    } else if (lowerQuery.includes('hour ago') || lowerQuery.includes('last hour')) {
-      timeframe = 'last hour';
+Conversation History:
+${conversationSample}
+
+User Query: "${query}"
+
+Extract and return JSON with:
+1. "users" - array of all person names mentioned in conversation
+2. "topics" - array of all activities, places, objects, subjects discussed
+3. "targetUser" - which user (if any) the query is asking about
+4. "targetTopic" - which topic (if any) the query is asking about  
+5. "timeframe" - time reference in query (yesterday, last week, etc.)
+
+Focus on meaningful entities. Return valid JSON only.`;
+
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: extractionPrompt }],
+        response_format: { type: "json_object" },
+        max_tokens: 500,
+        temperature: 0.1
+      });
+
+      const analysis = JSON.parse(response.choices[0].message.content || '{}');
+      
+      return {
+        targetUser: analysis.targetUser || undefined,
+        targetTopic: analysis.targetTopic || undefined,
+        timeframe: analysis.timeframe || undefined
+      };
+    } catch (error) {
+      console.error('AI entity extraction failed, using fallback:', error);
+      // Simple fallback
+      const lowerQuery = query.toLowerCase();
+      return {
+        targetUser: undefined,
+        targetTopic: undefined,
+        timeframe: lowerQuery.includes('yesterday') ? 'yesterday' : undefined
+      };
     }
-
-    return {
-      targetUser,
-      targetTopic,
-      timeframe
-    };
   }
 
-  private extractSearchTerms(query: string): string[] {
-    const lowerQuery = query.toLowerCase();
-    const terms: string[] = [];
-    
-    // Extract all meaningful words from the query (3+ characters, not common words)
-    const words = lowerQuery.match(/\b[a-z]{3,}\b/g);
-    if (words) {
-      words.forEach(word => {
-        // Skip very common words but include everything else
-        if (!['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'was', 'one', 'our', 'out', 'day', 'get', 'use', 'man', 'new', 'now', 'way', 'may', 'say', 'each', 'which', 'she', 'how', 'its', 'said', 'what', 'when', 'where', 'who', 'will', 'more', 'than', 'very', 'even', 'back', 'good', 'come', 'could', 'like', 'time', 'into', 'year', 'your', 'just', 'know', 'take', 'people', 'them', 'see', 'him', 'two', 'her', 'would', 'there', 'been', 'many', 'some', 'make', 'well', 'look', 'first', 'also', 'after', 'work', 'life', 'only', 'think', 'over', 'such', 'most', 'give', 'find', 'place', 'still', 'hand', 'old', 'great', 'little', 'before', 'want', 'went', 'about', 'this', 'that', 'they', 'have', 'from', 'with', 'were'].includes(word)) {
-          terms.push(word);
-        }
+  private async extractSearchTerms(query: string, conversationHistory: Message[]): Promise<string[]> {
+    try {
+      // Use OpenAI to extract the most relevant search terms
+      const searchPrompt = `Extract the most important search keywords from this query that would help find relevant messages in a conversation.
+
+Query: "${query}"
+
+Return a JSON array of the most important words/phrases to search for. Focus on:
+- Names of people
+- Activities (hiking, movies, restaurants, etc.)  
+- Places (Pennsylvania, beach, etc.)
+- Objects or subjects being discussed
+- Action words (went, watched, discussed, mentioned)
+
+Return only the JSON array of strings, no other text.`;
+
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: searchPrompt }],
+        response_format: { type: "json_object" },
+        max_tokens: 200,
+        temperature: 0.1
       });
+
+      const result = JSON.parse(response.choices[0].message.content || '{"terms": []}');
+      return result.terms || result.keywords || Object.values(result)[0] || [];
+    } catch (error) {
+      console.error('AI search term extraction failed, using fallback:', error);
+      // Simple word extraction fallback
+      return query.toLowerCase().split(/\s+/).filter(word => 
+        word.length > 2 && !['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'was'].includes(word)
+      );
     }
-    
-    return terms;
   }
 
   private getUserName(userId: number, currentUser: User): string {
