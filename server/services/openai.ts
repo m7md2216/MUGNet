@@ -27,11 +27,28 @@ export async function generateAIResponse(
   conversationHistory: Message[]
 ): Promise<AIResponse> {
   try {
-    // Check if this is a memory-aware query that should use LangGraph
-    if (isMemoryAwareQuery(messageContent)) {
-      return await generateMemoryAwareResponse(messageContent, currentUser, conversationHistory);
-    }
+    console.log('=== AI RESPONSE GENERATION START ===');
+    console.log('Message content:', messageContent);
+    console.log('Mentioned users:', mentionedUsers);
+    console.log('Current user:', currentUser.name);
     
+    // ALWAYS use LangGraph for @aiagent mentions to ensure proper search
+    return await generateMemoryAwareResponse(messageContent, currentUser, conversationHistory);
+    
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    throw new Error("Failed to generate AI response: " + (error as Error).message);
+  }
+}
+
+// Legacy function - not used anymore since we always use LangGraph
+async function generateLegacyResponse(
+  mentionedUsers: string[],
+  messageContent: string,
+  currentUser: User,
+  conversationHistory: Message[]
+): Promise<AIResponse> {
+  try {
     // Get conversation history for mentioned users
     const contextualMessages = await getContextualMessages(mentionedUsers, conversationHistory);
     
