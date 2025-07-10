@@ -124,11 +124,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mention.toLowerCase().includes('agent') || mention.toLowerCase().includes('ai')
       );
 
-      console.log('AI Mention Check:', {
-        mentions: messageData.mentions,
-        aiMentions,
-        willTriggerAI: aiMentions.length > 0
-      });
+      console.log('=== AI MENTION DEBUG ===');
+      console.log('Message content:', messageData.content);
+      console.log('Message mentions:', messageData.mentions);
+      console.log('AI Mentions found:', aiMentions);
+      console.log('Will trigger AI?:', aiMentions.length > 0);
 
       if (aiMentions.length > 0) {
         // Generate AI response
