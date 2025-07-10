@@ -80,6 +80,11 @@ export class LangGraphService {
     // Extract timeframe
     state.timeframe = this.extractTimeframe(query);
 
+    console.log('=== LANGGRAPH INTENT PARSING ===');
+    console.log('Query:', query);
+    console.log('Topics extracted:', state.topics);
+    console.log('Timeframe extracted:', state.timeframe);
+
     // Determine intent based on query patterns
     if (this.isMemoryQuery(lowerQuery)) {
       state.intent = 'memory_lookup';
@@ -90,6 +95,8 @@ export class LangGraphService {
     } else {
       state.intent = 'unknown';
     }
+
+    console.log('Intent determined:', state.intent);
   }
 
   private async memoryLookup(state: AgentState): Promise<void> {
@@ -167,7 +174,27 @@ export class LangGraphService {
       /who said .+ about/,
       /find .+ conversation/,
       /search for .+ message/,
+      /who went to/,
+      /who was at/,
+      /who visited/,
+      /who did/,
+      /what happened/,
+      /where did .+ go/,
+      /where was .+ going/,
+      /who .+ about/,
+      /what .+ about/,
+      /where .+ about/,
+      /when .+ about/,
+      /who .+ to/,
+      /who .+ the/,
+      /who .+ beach/,
+      /who .+ day/,
+      /who .+ other/,
     ];
+
+    console.log('=== LANGGRAPH GRAPH QUERY CHECK ===');
+    console.log('Query:', query);
+    console.log('Patterns matching:', graphPatterns.filter(p => p.test(query)));
 
     return graphPatterns.some(pattern => pattern.test(query));
   }
@@ -196,6 +223,11 @@ export class LangGraphService {
       /movie/gi,
       /book/gi,
       /game/gi,
+      /beach/gi,
+      /hiking/gi,
+      /vacation/gi,
+      /travel/gi,
+      /trip/gi,
     ];
 
     const topics: string[] = [];
@@ -234,12 +266,12 @@ export class LangGraphService {
     const lowerQuery = query.toLowerCase();
     
     // Extract user mentions
-    const userPattern = /\b(alice|bob|john|sarah|mike|emma|david|lisa)\b/gi;
+    const userPattern = /\b(alice|bob|john|sarah|mike|emma|david|lisa|mohammad|ali)\b/gi;
     const userMatches = query.match(userPattern);
     const targetUser = userMatches ? userMatches[0] : undefined;
 
     // Extract topic mentions  
-    const topicPattern = /\b(cybertruck|tesla|meeting|project|work|lunch|weekend|movie|book|game)\b/gi;
+    const topicPattern = /\b(cybertruck|tesla|meeting|project|work|lunch|weekend|movie|book|game|beach|hiking|vacation|travel|trip)\b/gi;
     const topicMatches = query.match(topicPattern);
     const targetTopic = topicMatches ? topicMatches[0] : undefined;
 
