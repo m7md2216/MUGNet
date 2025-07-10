@@ -150,7 +150,17 @@ function isMemoryAwareQuery(messageContent: string): boolean {
     /when .+ about/,
   ];
 
-  return memoryPatterns.some(pattern => pattern.test(lowerContent));
+  console.log('=== MEMORY QUERY CHECK ===');
+  console.log('Message content:', messageContent);
+  console.log('Lower content:', lowerContent);
+  
+  const matchedPatterns = memoryPatterns.filter(pattern => pattern.test(lowerContent));
+  console.log('Matched patterns:', matchedPatterns);
+  
+  const isMemoryQuery = memoryPatterns.some(pattern => pattern.test(lowerContent));
+  console.log('Is memory query?', isMemoryQuery);
+  
+  return isMemoryQuery;
 }
 
 // Generate memory-aware response using LangGraph
