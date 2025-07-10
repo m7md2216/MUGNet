@@ -77,6 +77,14 @@ Response:`;
       // Get relevant messages from Neo4j based on query analysis
       const relevantMessages = await this.findRelevantMessages(context);
       
+      // Debug logging
+      console.log('=== LANGCHAIN RESPONSE DEBUG ===');
+      console.log('Query:', context.query);
+      console.log('Relevant messages found:', relevantMessages.length);
+      console.log('Relevant messages:', relevantMessages);
+      console.log('Conversation history count:', context.conversationHistory.length);
+      console.log('Recent messages:', context.conversationHistory.slice(-5).map(msg => `${msg.id}: ${msg.content}`));
+      
       // Format conversation history
       const conversationHistory = context.conversationHistory
         .slice(-10) // Last 10 messages for context
@@ -86,9 +94,11 @@ Response:`;
       // Format relevant messages
       const relevantMessagesText = relevantMessages.length > 0
         ? relevantMessages.map(msg => 
-            `${msg.sender} (${new Date(msg.timestamp).toLocaleDateString()}): ${msg.content}`
+            `${msg.sender || this.getUserName(msg.userId, context.sender)} (${new Date(msg.timestamp || msg.createdAt).toLocaleDateString()}): ${msg.content}`
           ).join('\n')
         : 'No specific relevant messages found.';
+
+      console.log('Formatted relevant messages text:', relevantMessagesText);
 
       // Generate response using the prompt template
       const prompt = this.promptTemplate
@@ -98,6 +108,8 @@ Response:`;
         .replace('{relevantMessages}', relevantMessagesText)
         .replace('{topics}', context.topics.join(', '))
         .replace('{currentTime}', new Date().toLocaleString());
+
+      console.log('Full prompt to AI:', prompt);
 
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4o',
