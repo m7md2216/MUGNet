@@ -131,12 +131,23 @@ function isMemoryAwareQuery(messageContent: string): boolean {
     /what was .+ discussing/,
     /find .+ conversation/,
     /search for .+ message/,
+    /who went to/,
+    /who was at/,
+    /who visited/,
+    /who did/,
+    /what happened/,
+    /where did .+ go/,
+    /where was .+ going/,
     /last week/,
     /yesterday/,
     /last month/,
     /do you remember/,
     /what did (i|we) talk about/,
     /earlier (i|we|someone)/,
+    /who .+ about/,
+    /what .+ about/,
+    /where .+ about/,
+    /when .+ about/,
   ];
 
   return memoryPatterns.some(pattern => pattern.test(lowerContent));
