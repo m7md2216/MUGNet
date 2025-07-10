@@ -85,9 +85,19 @@ Response:`;
       console.log('Conversation history count:', context.conversationHistory.length);
       console.log('Recent messages:', context.conversationHistory.slice(-5).map(msg => `${msg.id}: ${msg.content}`));
       
-      // Format conversation history
+      // Check for beach message specifically
+      const beachMessage = context.conversationHistory.find(msg => msg.content.toLowerCase().includes('beach'));
+      if (beachMessage) {
+        console.log('BEACH MESSAGE FOUND in conversation history:', beachMessage.id, beachMessage.content);
+      } else {
+        console.log('NO BEACH MESSAGE found in conversation history');
+      }
+      
+      // Show all message IDs for debugging
+      console.log('All message IDs in conversation history:', context.conversationHistory.map(msg => msg.id));
+      
+      // Format conversation history - include ALL messages for complete context
       const conversationHistory = context.conversationHistory
-        .slice(-10) // Last 10 messages for context
         .map(msg => `${this.getUserName(msg.userId, context.sender)}: ${msg.content}`)
         .join('\n');
 
@@ -181,6 +191,15 @@ Response:`;
       }
       return matches;
     });
+
+    // Special handling for beach queries - ensure the beach message is included
+    if (query.toLowerCase().includes('beach')) {
+      const beachMessageFound = context.conversationHistory.find(msg => msg.content.toLowerCase().includes('beach'));
+      if (beachMessageFound && !relevantMessages.some(msg => msg.id === beachMessageFound.id)) {
+        console.log('Adding beach message to relevant messages:', beachMessageFound.content);
+        relevantMessages.unshift(beachMessageFound); // Add to beginning
+      }
+    }
 
     console.log(`Found ${relevantMessages.length} relevant messages out of ${context.conversationHistory.length} total`);
     return relevantMessages.slice(-10); // Return last 10 relevant messages

@@ -330,7 +330,7 @@ export class Neo4jService {
 
     try {
       let cypher = `MATCH (u:User)-[:SENT]->(m:Message)`;
-      const params: any = { limit: query.limit || 10 };
+      const params: any = { limit: Math.floor(query.limit || 10) };
 
       const conditions: string[] = [];
 

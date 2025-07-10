@@ -31,6 +31,16 @@ export async function generateAIResponse(
     console.log('Message content:', messageContent);
     console.log('Mentioned users:', mentionedUsers);
     console.log('Current user:', currentUser.name);
+    console.log('Conversation history count:', conversationHistory.length);
+    
+    // Check if beach message exists in conversation history
+    const beachMessage = conversationHistory.find(msg => msg.content.toLowerCase().includes('beach'));
+    if (beachMessage) {
+      console.log('FOUND BEACH MESSAGE in conversation history:', beachMessage.content);
+    } else {
+      console.log('NO BEACH MESSAGE found in conversation history');
+      console.log('Recent messages:', conversationHistory.slice(-5).map(msg => `${msg.id}: ${msg.content}`));
+    }
     
     // ALWAYS use LangGraph for @aiagent mentions to ensure proper search
     return await generateMemoryAwareResponse(messageContent, currentUser, conversationHistory);

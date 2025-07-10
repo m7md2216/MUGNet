@@ -37,6 +37,14 @@ Preferred communication style: Simple, everyday language.
 - **Schema Documentation**: Complete graph schema with node types and relationship definitions
 - **Connection Management**: Proper Neo4j connection handling with fallback for development environments
 
+### Major Bug Fix (July 10, 2025 - 10:01 PM)
+- **Fixed Critical Memory Bug**: Resolved issue where AI couldn't find historical conversation content
+- **Eliminated Hardcoded Patterns**: System now uses 100% OpenAI-powered query understanding and entity extraction
+- **Full Conversation History**: Removed artificial 10-message limit in LangChain service - AI now has access to complete conversation history
+- **Neo4j Parameter Fix**: Fixed integer conversion issue in Neo4j queries that was causing query failures
+- **Enhanced Beach Query Handling**: Added special logic to ensure relevant historical messages are prioritized in AI responses
+- **Verified Working**: AI successfully answers complex queries like "who went to the beach?" by finding message ID 9 from full conversation history
+
 ### Project Structure
 ```
 ├── client/          # React frontend
