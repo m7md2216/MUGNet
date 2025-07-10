@@ -148,6 +148,11 @@ function isMemoryAwareQuery(messageContent: string): boolean {
     /what .+ about/,
     /where .+ about/,
     /when .+ about/,
+    /who .+ to/,
+    /who .+ the/,
+    /who .+ beach/,
+    /who .+ day/,
+    /who .+ other/,
   ];
 
   console.log('=== MEMORY QUERY CHECK ===');
