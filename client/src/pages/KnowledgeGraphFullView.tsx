@@ -108,31 +108,61 @@ LIMIT 500`
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium">Local Development:</h4>
-                  <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-sm font-mono">
-                    <div>URI: neo4j://localhost:7687</div>
-                    <div>Username: neo4j</div>
-                    <div>Password: neo4j</div>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-amber-800 mb-2">⚠️ Neo4j Setup Required</h4>
+                  <p className="text-sm text-amber-700">
+                    This application is designed to work with Neo4j, but no Neo4j instance is currently running. 
+                    Choose one of the options below to get started with graph visualization.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Option 1: Local Neo4j</h4>
+                    <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-xs font-mono">
+                      <div>URI: neo4j://localhost:7687</div>
+                      <div>Username: neo4j</div>
+                      <div>Password: your-password</div>
+                    </div>
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => window.open('https://neo4j.com/download/', '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-2" />
+                      Download Neo4j Desktop
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Option 2: Neo4j Aura (Free)</h4>
+                    <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-xs font-mono">
+                      <div>URI: neo4j+s://&lt;id&gt;.databases.neo4j.io</div>
+                      <div>Username: neo4j</div>
+                      <div>Password: &lt;generated&gt;</div>
+                    </div>
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => window.open('https://neo4j.com/cloud/aura/', '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-2" />
+                      Try Neo4j Aura Free
+                    </Button>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium">Neo4j Aura Cloud:</h4>
-                  <div className="bg-gray-100 p-3 rounded-lg space-y-1 text-sm font-mono">
-                    <div>URI: neo4j+s://&lt;id&gt;.databases.neo4j.io</div>
-                    <div>Username: neo4j</div>
-                    <div>Password: &lt;your-password&gt;</div>
-                  </div>
+                <div className="border-t pt-4">
+                  <h4 className="text-sm font-medium mb-2">After Setup:</h4>
+                  <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                    <li>Set environment variables (NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD)</li>
+                    <li>Restart this application</li>
+                    <li>Open Neo4j Browser (usually http://localhost:7474)</li>
+                    <li>Start exploring your conversation graph!</li>
+                  </ol>
                 </div>
-                
-                <Button 
-                  className="w-full" 
-                  onClick={() => window.open('http://localhost:7474', '_blank')}
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Open Neo4j Browser
-                </Button>
               </CardContent>
             </Card>
 
