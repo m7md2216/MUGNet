@@ -131,15 +131,30 @@ Response:`;
     // Parse query to extract intent
     const queryAnalysis = this.analyzeQuery(query);
     
-    // Query Neo4j for relevant messages
-    const relevantMessages = await neo4jService.findConversationContext({
-      sender: queryAnalysis.targetUser,
-      topic: queryAnalysis.targetTopic,
-      timeframe: queryAnalysis.timeframe || timeframe,
-      limit: 15
+    try {
+      // Try Neo4j for relevant messages
+      const relevantMessages = await neo4jService.findConversationContext({
+        sender: queryAnalysis.targetUser,
+        topic: queryAnalysis.targetTopic,
+        timeframe: queryAnalysis.timeframe || timeframe,
+        limit: 15
+      });
+
+      if (relevantMessages.length > 0) {
+        return relevantMessages;
+      }
+    } catch (error) {
+      console.warn('Neo4j search failed, falling back to direct conversation history search:', error);
+    }
+
+    // Fallback: Search conversation history directly for keywords
+    const searchTerms = this.extractSearchTerms(query);
+    const relevantMessages = context.conversationHistory.filter(msg => {
+      const content = msg.content.toLowerCase();
+      return searchTerms.some(term => content.includes(term.toLowerCase()));
     });
 
-    return relevantMessages;
+    return relevantMessages.slice(-10); // Return last 10 relevant messages
   }
 
   private analyzeQuery(query: string): {
@@ -149,13 +164,13 @@ Response:`;
   } {
     const lowerQuery = query.toLowerCase();
     
-    // Extract user mentions
-    const userPattern = /\b(alice|bob|john|sarah|mike|emma|david|lisa)\b/gi;
+    // Extract user mentions - include actual users from your conversation
+    const userPattern = /\b(ali|mohammad|john|alice|bob|sarah|mike|emma|david|lisa|aiagent|ai|agent)\b/gi;
     const userMatches = query.match(userPattern);
     const targetUser = userMatches ? userMatches[0] : undefined;
 
-    // Extract topic mentions
-    const topicPattern = /\b(cybertruck|tesla|meeting|project|work|lunch|weekend|movie|book|game)\b/gi;
+    // Extract topic mentions - include all relevant topics
+    const topicPattern = /\b(beach|hiking|pennsylvania|movie|movies|restaurant|restaurants|cuisine|food|tesla|cybertruck|meeting|project|work|lunch|weekend|book|game|vacation|travel|sports|music|presentation|heretic|fast|furious)\b/gi;
     const topicMatches = query.match(topicPattern);
     const targetTopic = topicMatches ? topicMatches[0] : undefined;
 
@@ -163,7 +178,7 @@ Response:`;
     let timeframe: string | undefined;
     if (lowerQuery.includes('last week') || lowerQuery.includes('week ago')) {
       timeframe = 'last week';
-    } else if (lowerQuery.includes('yesterday') || lowerQuery.includes('day ago')) {
+    } else if (lowerQuery.includes('yesterday') || lowerQuery.includes('day ago') || lowerQuery.includes('other day')) {
       timeframe = 'yesterday';
     } else if (lowerQuery.includes('last month') || lowerQuery.includes('month ago')) {
       timeframe = 'last month';
@@ -176,6 +191,25 @@ Response:`;
       targetTopic,
       timeframe
     };
+  }
+
+  private extractSearchTerms(query: string): string[] {
+    const lowerQuery = query.toLowerCase();
+    const terms: string[] = [];
+    
+    // Extract important keywords from the query
+    const keywords = lowerQuery.match(/\b(beach|hiking|pennsylvania|movie|restaurant|cuisine|tesla|vacation|travel|went|going|visited|watched|ate|discussed|mentioned|talked)\b/gi);
+    if (keywords) {
+      terms.push(...keywords);
+    }
+    
+    // Extract user names
+    const users = lowerQuery.match(/\b(ali|mohammad|john|alice|bob|sarah|mike|emma|david|lisa)\b/gi);
+    if (users) {
+      terms.push(...users);
+    }
+    
+    return terms;
   }
 
   private getUserName(userId: number, currentUser: User): string {
