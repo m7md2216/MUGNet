@@ -97,15 +97,11 @@ Response:`;
       console.log('All message IDs in conversation history:', context.conversationHistory.map(msg => msg.id));
       
       // Format conversation history - include ALL messages for complete context
-      const conversationHistory = context.conversationHistory
-        .map(msg => `${this.getUserName(msg.userId, context.sender)}: ${msg.content}`)
-        .join('\n');
+      const conversationHistory = await this.formatConversationHistory(context.conversationHistory, context.sender);
 
       // Format relevant messages
       const relevantMessagesText = relevantMessages.length > 0
-        ? relevantMessages.map(msg => 
-            `${msg.sender || this.getUserName(msg.userId, context.sender)} (${new Date(msg.timestamp || msg.createdAt).toLocaleDateString()}): ${msg.content}`
-          ).join('\n')
+        ? await this.formatRelevantMessages(relevantMessages, context.sender)
         : 'No specific relevant messages found.';
 
       console.log('Formatted relevant messages text:', relevantMessagesText);
@@ -295,16 +291,44 @@ Return only the JSON array of strings, no other text.`;
     }
   }
 
-  private getUserName(userId: number, currentUser: User): string {
-    // This is a simplified mapping - in a real system, you'd fetch from storage
-    const userMap: { [key: number]: string } = {
-      1: 'Alice',
-      2: 'Bob', 
-      3: 'Ali',        // Fixed: User ID 3 is Ali, not John
-      4: 'John'        // Fixed: User ID 4 is John, not AI Assistant
-    };
+  private async formatConversationHistory(messages: Message[], currentUser: User): Promise<string> {
+    const { storage } = await import('../storage');
+    const formattedMessages = [];
     
-    return userMap[userId] || currentUser.name;
+    for (const msg of messages) {
+      try {
+        const user = await storage.getUser(msg.userId || 0);
+        const userName = user?.name || currentUser.name;
+        formattedMessages.push(`${userName}: ${msg.content}`);
+      } catch (error) {
+        formattedMessages.push(`${currentUser.name}: ${msg.content}`);
+      }
+    }
+    
+    return formattedMessages.join('\n');
+  }
+
+  private async formatRelevantMessages(messages: any[], currentUser: User): Promise<string> {
+    const { storage } = await import('../storage');
+    const formattedMessages = [];
+    
+    for (const msg of messages) {
+      try {
+        let userName = msg.sender;
+        if (!userName && msg.userId) {
+          const user = await storage.getUser(msg.userId);
+          userName = user?.name || currentUser.name;
+        }
+        userName = userName || currentUser.name;
+        
+        const date = new Date(msg.timestamp || msg.createdAt).toLocaleDateString();
+        formattedMessages.push(`${userName} (${date}): ${msg.content}`);
+      } catch (error) {
+        formattedMessages.push(`${currentUser.name}: ${msg.content}`);
+      }
+    }
+    
+    return formattedMessages.join('\n');
   }
 
   async clearMemory(userId: string): Promise<void> {
