@@ -169,7 +169,7 @@ export class Neo4jService {
     if (!this.session) return;
 
     try {
-      const entities = this.extractEntitiesFromText(content);
+      const entities = await this.extractEntitiesFromText(content);
       
       // Only store entities that are actually meaningful and relevant
       // Store People entities (only @mentions)
@@ -214,35 +214,74 @@ export class Neo4jService {
     }
   }
 
-  private extractEntitiesFromText(text: string): {
+  private async extractEntitiesFromText(text: string): Promise<{
     people: string[];
     events: string[];
     dates: string[];
-  } {
+  }> {
     const entities = {
       people: [] as string[],
       events: [] as string[],
       dates: [] as string[]
     };
 
-    // Only extract @mentions as people (much more selective)
+    // Always extract @mentions as people (guaranteed accurate)
     const mentionMatches = text.match(/@(\w+)/g);
     if (mentionMatches) {
       entities.people = mentionMatches.map(match => match.replace('@', ''));
     }
 
-    // Extract only clear, meaningful activities and locations (very selective)
-    const meaningfulPatterns = /(?:restaurant|cafe|bar|park|beach|mountain|hiking|dinner|lunch|meeting|conference|trip|vacation|movie|concert|shopping|gym|hotel|airport|downtown|office|home|school|hospital|library|museum|theater|stadium|mall|birthday|anniversary|wedding|party|celebration|festival|game|match|tournament|class|lesson|training|workshop|seminar|presentation|demo|launch|event|show|performance|exhibition|fair|market|store|club|church|bank|spa|garden|lake|river|city|town|village|street|avenue|plaza|square|center|building|house|apartment|room|kitchen|bedroom|bathroom|backyard|garage|basement|attic|roof|patio|deck|balcony)/gi;
-    const meaningfulMatches = text.match(meaningfulPatterns);
-    if (meaningfulMatches) {
-      entities.events = [...new Set(meaningfulMatches.map(match => match.toLowerCase()))];
-    }
+    // Use OpenAI for intelligent entity extraction
+    try {
+      const { OpenAI } = await import('openai');
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [{
+          role: "user",
+          content: `Extract entities from this message: "${text}"
 
-    // Extract only clear date references (more selective)
-    const clearDatePatterns = /(?:today|tomorrow|yesterday|monday|tuesday|wednesday|thursday|friday|saturday|sunday|this week|next week|last week|this month|next month|last month|this year|next year|last year|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}-\d{1,2}-\d{2,4})/gi;
-    const dateMatches = text.match(clearDatePatterns);
-    if (dateMatches) {
-      entities.dates = [...new Set(dateMatches.map(match => match.toLowerCase()))];
+Return only a JSON object with these exact keys:
+- "locations": places, venues, buildings, cities, addresses (like "downtown", "Marco's Bistro", "Philadelphia")  
+- "activities": actions, events, hobbies, plans (like "hiking", "dinner", "meeting", "trip")
+- "time_references": dates, times, schedules (like "today", "next week", "Friday")
+
+Only include entities that are clearly mentioned. Keep names short and lowercase.
+
+Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "dinner"], "time_references": ["today"]}`
+        }],
+        response_format: { type: "json_object" },
+        max_tokens: 200,
+        temperature: 0.1
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || '{}');
+      
+      entities.events = [
+        ...(result.locations || []),
+        ...(result.activities || [])
+      ];
+      entities.dates = result.time_references || [];
+      
+    } catch (error) {
+      console.warn('OpenAI entity extraction failed, using fallback:', error);
+      
+      // Simple fallback extraction for reliability
+      const basicLocationPatterns = /(?:restaurant|cafe|bar|park|beach|downtown|office|home|school|hotel|airport|mall|store|gym|library|museum|theater|club|church|bank|spa|garden|lake|river|city|building|house|apartment|room|kitchen|bedroom|bathroom|garage)/gi;
+      const basicActivityPatterns = /(?:hiking|dinner|lunch|meeting|trip|vacation|movie|concert|shopping|birthday|party|celebration|game|class|lesson|training|workshop|presentation|demo|event|show|performance)/gi;
+      const basicDatePatterns = /(?:today|tomorrow|yesterday|monday|tuesday|wednesday|thursday|friday|saturday|sunday|this week|next week|last week|this month|next month|last month|\d{1,2}\/\d{1,2}\/\d{2,4})/gi;
+      
+      const locationMatches = text.match(basicLocationPatterns);
+      const activityMatches = text.match(basicActivityPatterns);
+      const dateMatches = text.match(basicDatePatterns);
+      
+      if (locationMatches) entities.events.push(...locationMatches.map(m => m.toLowerCase()));
+      if (activityMatches) entities.events.push(...activityMatches.map(m => m.toLowerCase()));
+      if (dateMatches) entities.dates.push(...dateMatches.map(m => m.toLowerCase()));
+      
+      entities.events = [...new Set(entities.events)];
+      entities.dates = [...new Set(entities.dates)];
     }
 
     return entities;
