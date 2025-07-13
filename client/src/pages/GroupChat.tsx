@@ -104,13 +104,12 @@ export default function GroupChat() {
 
   const handleGenerateExamples = async () => {
     try {
-      const response = await apiRequest('/api/generate-examples', {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', '/api/generate-examples');
+      const data = await response.json();
       
       toast({
         title: "Examples generated!",
-        description: `${response.messagesCreated} example messages added to the chat`,
+        description: `${data.messagesCreated} example messages added to the chat`,
       });
     } catch (error) {
       toast({
