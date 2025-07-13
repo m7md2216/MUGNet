@@ -7,8 +7,73 @@ export async function generateExampleConversations(users: User[]): Promise<Inser
   // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
   const userNames = users.map(u => u.name);
   
-  // Use fallback examples for reliable generation
-  return generateFallbackExamples(users);
+  const conversationPrompt = `Generate a realistic group chat conversation between these users: ${userNames.join(", ")}. 
+
+Create a natural, engaging conversation that includes:
+- Casual greetings and small talk
+- References to activities (hiking, restaurants, travel, work, hobbies)
+- Mentions of specific places (cities, restaurants, parks, etc.)
+- Some @mentions between users
+- A few questions that could be answered later (to test the AI's memory)
+- Mix of short and longer messages
+- Natural conversation flow with some time gaps
+
+Make it feel like real friends chatting. Include 12-15 messages total.
+Each message should be realistic and conversational.
+
+IMPORTANT: Return a JSON object with a "messages" array containing exactly 12-15 message objects.
+
+{
+  "messages": [
+    {
+      "sender": "${userNames[0]}",
+      "content": "Hey everyone! How's your weekend going?",
+      "mentions": []
+    },
+    {
+      "sender": "${userNames[1]}", 
+      "content": "@${userNames[0]} pretty good! Just got back from hiking at Valley Forge",
+      "mentions": ["${userNames[0]}"]
+    }
+  ]
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: conversationPrompt }],
+      response_format: { type: "json_object" },
+      max_tokens: 2000,
+      temperature: 0.8,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{"messages": []}');
+    const messages = result.messages || [];
+    
+    // Convert to InsertMessage format
+    const insertMessages: InsertMessage[] = [];
+    
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      const user = users.find(u => u.name === msg.sender);
+      
+      if (user) {
+        insertMessages.push({
+          userId: user.id,
+          content: msg.content,
+          mentions: msg.mentions || [],
+        });
+      }
+    }
+    
+    return insertMessages;
+    
+  } catch (error) {
+    console.error('Failed to generate conversation examples:', error);
+    
+    // Fallback: Create basic examples if OpenAI fails
+    return generateFallbackExamples(users);
+  }
 }
 
 function generateFallbackExamples(users: User[]): InsertMessage[] {
