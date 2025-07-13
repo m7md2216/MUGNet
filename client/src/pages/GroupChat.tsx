@@ -5,9 +5,10 @@ import { MessagesContainer } from "@/components/MessagesContainer";
 import { MessageInput } from "@/components/MessageInput";
 import { KnowledgeGraphSidebar } from "@/components/KnowledgeGraphSidebar";
 import { Button } from "@/components/ui/button";
-import { Trash2, Download } from "lucide-react";
+import { Trash2, Download, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { type User } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function GroupChat() {
   const [activeUser, setActiveUser] = useState<User | null>(null);
@@ -101,6 +102,25 @@ export default function GroupChat() {
     });
   };
 
+  const handleGenerateExamples = async () => {
+    try {
+      const response = await apiRequest('/api/generate-examples', {
+        method: 'POST',
+      });
+      
+      toast({
+        title: "Examples generated!",
+        description: `${response.messagesCreated} example messages added to the chat`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error generating examples",
+        description: error.message || "Failed to generate example conversations",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -134,6 +154,15 @@ export default function GroupChat() {
               <span className="text-sm text-gray-500">{users.length} members</span>
             </div>
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleGenerateExamples}
+                className="text-blue-600 hover:text-blue-700"
+                title="Generate example conversations"
+              >
+                <Sparkles className="h-4 w-4" />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"

@@ -248,6 +248,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate example conversations
+  app.post("/api/generate-examples", async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      const regularUsers = users.filter(u => u.name !== "AI Agent");
+      
+      if (regularUsers.length < 2) {
+        return res.status(400).json({ 
+          message: "At least 2 non-AI users are required to generate examples" 
+        });
+      }
+
+      // Generate realistic conversation examples using OpenAI
+      const { generateExampleConversations } = await import("./services/exampleGenerator");
+      const exampleMessages = await generateExampleConversations(regularUsers);
+      
+      // Insert the generated messages into the database
+      const createdMessages = [];
+      for (const msg of exampleMessages) {
+        const message = await storage.createMessage(msg);
+        createdMessages.push(message);
+      }
+      
+      res.json({ 
+        message: "Example conversations generated successfully",
+        messagesCreated: createdMessages.length,
+        examples: createdMessages
+      });
+    } catch (error) {
+      console.error("Generate examples error:", error);
+      res.status(500).json({ message: "Failed to generate examples", error: error.message });
+    }
+  });
+
   // Knowledge graph routes
   app.get("/api/knowledge-graph", async (req, res) => {
     try {
