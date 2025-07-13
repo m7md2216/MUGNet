@@ -171,35 +171,40 @@ export class Neo4jService {
     try {
       const entities = this.extractEntitiesFromText(content);
       
-      // Store People entities
+      // Only store entities that are actually meaningful and relevant
+      // Store People entities (only @mentions)
       for (const person of entities.people) {
-        await this.session.run(
-          `MERGE (e:Entity {name: $name, type: 'Person'})
-           WITH e
-           MATCH (m:Message {id: $messageId})
-           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
-          { name: person, messageId }
-        );
+        if (person.length > 2) { // Only store names longer than 2 characters
+          await this.session.run(
+            `MERGE (e:Entity {name: $name, type: 'Person'})
+             WITH e
+             MATCH (m:Message {id: $messageId})
+             MERGE (m)-[:MENTIONS]->(e)`,
+            { name: person, messageId }
+          );
+        }
       }
 
-      // Store Events entities
+      // Store only the most relevant location/activity entities
       for (const event of entities.events) {
-        await this.session.run(
-          `MERGE (e:Entity {name: $name, type: 'Event'})
-           WITH e
-           MATCH (m:Message {id: $messageId})
-           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
-          { name: event, messageId }
-        );
+        if (event.length > 3) { // Only store events longer than 3 characters
+          await this.session.run(
+            `MERGE (e:Entity {name: $name, type: 'Location'})
+             WITH e
+             MATCH (m:Message {id: $messageId})
+             MERGE (m)-[:DISCUSSES]->(e)`,
+            { name: event, messageId }
+          );
+        }
       }
 
-      // Store Date entities
+      // Store only meaningful date references
       for (const date of entities.dates) {
         await this.session.run(
-          `MERGE (e:Entity {name: $name, type: 'Date'})
+          `MERGE (e:Entity {name: $name, type: 'Time'})
            WITH e
            MATCH (m:Message {id: $messageId})
-           MERGE (m)-[:CONTAINS_ENTITY]->(e)`,
+           MERGE (m)-[:REFERS_TO]->(e)`,
           { name: date, messageId }
         );
       }
@@ -220,22 +225,22 @@ export class Neo4jService {
       dates: [] as string[]
     };
 
-    // Extract people (proper names and @mentions)
-    const peopleMatches = text.match(/@(\w+)|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*/g);
-    if (peopleMatches) {
-      entities.people = peopleMatches.map(match => match.replace('@', ''));
+    // Only extract @mentions as people (much more selective)
+    const mentionMatches = text.match(/@(\w+)/g);
+    if (mentionMatches) {
+      entities.people = mentionMatches.map(match => match.replace('@', ''));
     }
 
-    // Extract events (patterns like "meeting", "conference", "dinner")
-    const eventPatterns = /(?:meeting|conference|dinner|lunch|party|event|celebration|trip|vacation|wedding|birthday|anniversary|presentation|demo|launch|release)/gi;
-    const eventMatches = text.match(eventPatterns);
-    if (eventMatches) {
-      entities.events = [...new Set(eventMatches.map(match => match.toLowerCase()))];
+    // Extract only clear, meaningful activities and locations (very selective)
+    const meaningfulPatterns = /(?:restaurant|cafe|bar|park|beach|mountain|hiking|dinner|lunch|meeting|conference|trip|vacation|movie|concert|shopping|gym|hotel|airport|downtown|office|home|school|hospital|library|museum|theater|stadium|mall|birthday|anniversary|wedding|party|celebration|festival|game|match|tournament|class|lesson|training|workshop|seminar|presentation|demo|launch|event|show|performance|exhibition|fair|market|store|club|church|bank|spa|garden|lake|river|city|town|village|street|avenue|plaza|square|center|building|house|apartment|room|kitchen|bedroom|bathroom|backyard|garage|basement|attic|roof|patio|deck|balcony)/gi;
+    const meaningfulMatches = text.match(meaningfulPatterns);
+    if (meaningfulMatches) {
+      entities.events = [...new Set(meaningfulMatches.map(match => match.toLowerCase()))];
     }
 
-    // Extract dates (various formats)
-    const datePatterns = /(?:today|tomorrow|yesterday|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}-\d{1,2}-\d{2,4})/gi;
-    const dateMatches = text.match(datePatterns);
+    // Extract only clear date references (more selective)
+    const clearDatePatterns = /(?:today|tomorrow|yesterday|monday|tuesday|wednesday|thursday|friday|saturday|sunday|this week|next week|last week|this month|next month|last month|this year|next year|last year|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}-\d{1,2}-\d{2,4})/gi;
+    const dateMatches = text.match(clearDatePatterns);
     if (dateMatches) {
       entities.dates = [...new Set(dateMatches.map(match => match.toLowerCase()))];
     }
@@ -391,6 +396,18 @@ export class Neo4jService {
     }
 
     return null;
+  }
+
+  async clearAllData(): Promise<void> {
+    if (!this.session) return;
+    
+    try {
+      // Clear all nodes and relationships 
+      await this.session.run('MATCH (n) DETACH DELETE n');
+      console.log('Neo4j database cleared successfully');
+    } catch (error) {
+      console.warn('Failed to clear Neo4j database:', error);
+    }
   }
 
   async close(): Promise<void> {

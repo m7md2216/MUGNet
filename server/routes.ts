@@ -323,6 +323,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Clear Neo4j graph database
+  app.post("/api/clear-neo4j", async (req, res) => {
+    try {
+      const { neo4jService } = await import("./services/neo4j");
+      await neo4jService.clearAllData();
+      res.json({ message: "Neo4j database cleared successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to clear Neo4j database" });
+    }
+  });
+
   // Conversation threads
   app.get("/api/conversation-threads", async (req, res) => {
     try {
