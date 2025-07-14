@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { generateAIResponse, extractAndStoreEntities } from "./services/openai";
+import { simpleAIService } from "./services/simpleAI";
 import { knowledgeGraphService } from "./services/knowledgeGraph";
 import { insertUserSchema, insertMessageSchema } from "@shared/schema";
 import { z } from "zod";
@@ -119,8 +119,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateUserActivity(messageData.userId);
       }
 
+      // Extract mentions from content if not provided
+      let mentions = messageData.mentions || [];
+      if (mentions.length === 0) {
+        const mentionMatches = messageData.content.match(/@(\w+)/g);
+        if (mentionMatches) {
+          mentions = mentionMatches.map(match => match.replace('@', ''));
+        }
+      }
+
       // Check if AI agent is mentioned
-      const aiMentions = (messageData.mentions || []).filter(mention => 
+      const aiMentions = mentions.filter(mention => 
         mention.toLowerCase().includes('agent') || mention.toLowerCase().includes('ai')
       );
 
@@ -137,37 +146,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (user) {
           try {
-            const aiResponse = await generateAIResponse(
-              messageData.mentions || [],
-              messageData.content,
-              user,
-              conversationHistory
-            );
+            // Prepare context for AI
+            const context = {
+              currentMessage: messageData.content,
+              senderName: user.name,
+              conversationHistory: conversationHistory.map(msg => ({
+                id: msg.id,
+                content: msg.content,
+                senderName: msg.userId === user.id ? user.name : "Unknown", // Simplified for now
+                timestamp: msg.timestamp.toISOString()
+              })),
+              relevantEntities: [] // Neo4j will provide context
+            };
+
+            const aiResponseContent = await simpleAIService.generateResponse(context);
 
             // Create AI response message
             const aiUser = await storage.getUserByName("AI Agent");
             if (aiUser) {
               const aiMessage = await storage.createMessage({
                 userId: aiUser.id,
-                content: aiResponse.response,
+                content: aiResponseContent,
                 mentions: messageData.mentions || []
               });
 
               // Update message to mark as AI response
               aiMessage.isAiResponse = true;
-
-              // Extract and store entities from both user message and AI response
-              await extractAndStoreEntities(
-                message.id,
-                aiResponse.extractedEntities,
-                [user.name, ...(messageData.mentions || [])]
-              );
-              
-              await extractAndStoreEntities(
-                aiMessage.id,
-                aiResponse.extractedEntities,
-                [user.name, "AI Agent", ...(messageData.mentions || [])]
-              );
 
               // Create or update conversation thread
               await knowledgeGraphService.createOrUpdateConversationThread(
