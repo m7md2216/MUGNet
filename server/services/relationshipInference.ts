@@ -112,29 +112,47 @@ Ali: I went skiing with my buddy Sam this weekend.
 Sam: Yeah, Ali totally bailed halfway through 😂
 Relationship: FRIENDS_WITH
 
-Zara: I'll check with my boss, Alex, before we proceed.
-Alex: Let me know what he says.
+Alex: Thanks for covering my shift at the office yesterday!
+Sam: No problem, we're a team.
+Relationship: WORKS_WITH
+
+Sarah: Can you help me with this project presentation?
+Mike: Sure, I'll send you the slides before the meeting.
 Relationship: WORKS_WITH
 
 Layla: My cousin Fatima just graduated from NYU!
 Fatima: Thanks Layla 😄
 Relationship: FAMILY
 
+Mom: Happy birthday son!
+Jake: Thanks mom, love you!
+Relationship: FAMILY
+
 User A: Hi.
 User B: Hello.
 Relationship: UNKNOWN
 
+Look for these work indicators: shift, office, meeting, project, colleague, boss, team, deadline, workplace
+Look for these family indicators: brother, sister, mom, dad, cousin, uncle, aunt, son, daughter, family
+Look for these friendship indicators: buddy, friend, hanging out, party, casual activities
+
 ${fullContext}
 Relationship:`;
+
+      console.log('🤖 Sending prompt to GPT-4o:');
+      console.log('---');
+      console.log(prompt);
+      console.log('---');
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.2,
+        temperature: 0.1, // Lower temperature for more consistent results
         max_tokens: 20
       });
 
       const relationshipText = response.choices[0].message.content?.trim() || 'UNKNOWN';
+      console.log('🤖 GPT-4o response:', relationshipText);
       
       // Parse the relationship type
       let relationshipType: 'FRIENDS_WITH' | 'WORKS_WITH' | 'FAMILY' | 'UNKNOWN' = 'UNKNOWN';
