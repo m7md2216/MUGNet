@@ -46,6 +46,16 @@ Preferred communication style: Simple, everyday language.
 - **Improved Performance**: Direct OpenAI calls are faster and more reliable
 - **Cleaner Codebase**: Removed 3 complex service files (langchain.ts, langgraph.ts, openai.ts)
 
+### Real-time Relationship Inference (July 15, 2025 - 8:42 PM)
+- **New Feature**: Added GPT-4o powered relationship inference service
+- **Service Location**: `server/services/relationshipInference.ts`
+- **Integration**: Automatically processes every message with mentions in POST /api/messages
+- **AI-Powered**: Uses few-shot prompting to infer relationships (FRIENDS_WITH, WORKS_WITH, FAMILY, UNKNOWN)
+- **Neo4j Storage**: Stores inferred relationships as bidirectional edges between User nodes
+- **Performance**: Processes messages in 0.9-3.7 seconds with OpenAI API calls
+- **Context-Aware**: Uses recent conversation history (last 3 messages) for better inference
+- **Automatic Processing**: Runs after message creation, before AI response generation
+
 ### Project Structure
 ```
 ├── client/          # React frontend

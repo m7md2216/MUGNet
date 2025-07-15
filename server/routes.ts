@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { simpleAIService } from "./services/simpleAI";
 import { knowledgeGraphService } from "./services/knowledgeGraph";
+import { relationshipInferenceService } from "./services/relationshipInference";
 import { insertUserSchema, insertMessageSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -138,6 +139,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Message mentions:', messageData.mentions);
       console.log('AI Mentions found:', aiMentions);
       console.log('Will trigger AI?:', aiMentions.length > 0);
+
+      // Process relationship inference for mentions
+      try {
+        await relationshipInferenceService.processMessage(message);
+      } catch (relationshipError) {
+        console.warn('Relationship inference failed:', relationshipError);
+      }
 
       if (aiMentions.length > 0) {
         // Generate AI response

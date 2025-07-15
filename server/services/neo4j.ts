@@ -437,6 +437,45 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
     return null;
   }
 
+  async createOrUpdateRelationship(
+    user1Name: string,
+    user2Name: string,
+    relationshipType: string,
+    properties: Record<string, any>
+  ): Promise<void> {
+    if (!this.session) return;
+
+    try {
+      // Create or update relationship between users
+      await this.session.run(
+        `MATCH (u1:User {name: $user1Name}), (u2:User {name: $user2Name})
+         MERGE (u1)-[r:${relationshipType}]->(u2)
+         SET r += $properties
+         RETURN r`,
+        {
+          user1Name,
+          user2Name,
+          properties
+        }
+      );
+      
+      // Also create the reverse relationship for bidirectional queries
+      await this.session.run(
+        `MATCH (u1:User {name: $user1Name}), (u2:User {name: $user2Name})
+         MERGE (u2)-[r:${relationshipType}]->(u1)
+         SET r += $properties
+         RETURN r`,
+        {
+          user1Name,
+          user2Name,
+          properties
+        }
+      );
+    } catch (error) {
+      console.warn('Failed to create/update relationship:', error);
+    }
+  }
+
   async clearAllData(): Promise<void> {
     if (!this.session) return;
     
