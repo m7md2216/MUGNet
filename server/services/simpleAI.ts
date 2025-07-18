@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { storage } from '../storage';
 import { neo4jService } from './neo4j';
+import { knowledgeGraphService } from './knowledgeGraph';
 
 interface AIContext {
   currentMessage: string;
@@ -31,8 +32,8 @@ export class SimpleAIService {
         .map(msg => `${msg.senderName}: ${msg.content}`)
         .join('\n');
 
-      // Temporarily disable entity context to avoid Neo4j decimal error
-      const entityContext = "Context unavailable";
+      // Get entity context from knowledge graph
+      const entityContext = await this.getEntityContextFromKnowledgeGraph(context.currentMessage);
       
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
@@ -99,21 +100,99 @@ Instructions:
       const words = message.toLowerCase().split(/\s+/);
       const relevantEntities: string[] = [];
 
+      console.log('🔍 Getting entity context for message:', message);
+      console.log('📝 Extracted words:', words);
+
       // Look for entities in Neo4j that match message content
       for (const word of words) {
         if (word.length > 3) {
-          const relatedMessages = await neo4jService.findMessagesByTopic(word, 3);
-          if (relatedMessages.length > 0) {
-            relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
+          try {
+            const relatedMessages = await neo4jService.findMessagesByTopic(word, 3);
+            console.log(`🔎 Found ${relatedMessages.length} messages for word "${word}"`);
+            if (relatedMessages.length > 0) {
+              relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
+            }
+          } catch (wordError) {
+            console.warn(`❌ Failed to search for word "${word}":`, wordError);
           }
         }
       }
 
-      return relevantEntities.length > 0 
+      const result = relevantEntities.length > 0 
         ? relevantEntities.join('\n')
         : 'No specific context from previous conversations';
+      
+      console.log('📊 Entity context result:', result);
+      return result;
     } catch (error) {
       console.warn('Failed to get entity context:', error);
+      return 'Context unavailable';
+    }
+  }
+
+  private async getEntityContextFromKnowledgeGraph(message: string): Promise<string> {
+    try {
+      console.log('🔍 Getting entity context from knowledge graph via storage');
+      
+      // Get knowledge graph entities from storage
+      const allEntities = await storage.getAllKnowledgeGraphEntities();
+      
+      if (!allEntities || allEntities.length === 0) {
+        console.log('❌ No knowledge graph entities found in storage');
+        return 'No knowledge graph entities available';
+      }
+      
+      console.log(`📊 Found ${allEntities.length} entities in knowledge graph`);
+      
+      // Extract key terms from the message
+      const words = message.toLowerCase().split(/\s+/);
+      const relevantTopics: string[] = [];
+      const relevantPeople: string[] = [];
+      const relevantEvents: string[] = [];
+      
+      // Search for relevant entities in the knowledge graph
+      for (const entity of allEntities) {
+        const entityName = entity.name.toLowerCase();
+        
+        // Check if any word in the message matches or is contained in the entity name
+        for (const word of words) {
+          if (word.length > 3 && (entityName.includes(word) || word.includes(entityName))) {
+            switch (entity.type) {
+              case 'topic':
+                relevantTopics.push(entity.name);
+                break;
+              case 'person':
+                relevantPeople.push(entity.name);
+                break;
+              case 'event':
+                relevantEvents.push(entity.name);
+                break;
+            }
+          }
+        }
+      }
+      
+      // Build context summary
+      const contextParts = [];
+      if (relevantTopics.length > 0) {
+        contextParts.push(`Relevant topics: ${relevantTopics.slice(0, 5).join(', ')}`);
+      }
+      if (relevantPeople.length > 0) {
+        contextParts.push(`Mentioned people: ${relevantPeople.slice(0, 5).join(', ')}`);
+      }
+      if (relevantEvents.length > 0) {
+        contextParts.push(`Related events: ${relevantEvents.slice(0, 5).join(', ')}`);
+      }
+      
+      const result = contextParts.length > 0 
+        ? contextParts.join('\n')
+        : 'No specific context from knowledge graph';
+      
+      console.log('📊 Knowledge graph context result:', result);
+      return result;
+      
+    } catch (error) {
+      console.warn('Failed to get entity context from knowledge graph:', error);
       return 'Context unavailable';
     }
   }

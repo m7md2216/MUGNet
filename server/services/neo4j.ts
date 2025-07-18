@@ -312,22 +312,38 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
   }
 
   async findMessagesByTopic(topicName: string, limit: number = 10): Promise<any[]> {
-    if (!this.session) return [];
+    // Ensure session is active
+    if (!this.session) {
+      console.log('🔌 No active session, attempting to reconnect...');
+      await this.connect();
+    }
+    
+    if (!this.session) {
+      console.log('❌ Could not establish Neo4j session');
+      return [];
+    }
 
     try {
+      console.log(`🔍 Searching for topic: "${topicName}"`);
+      
+      // Search for topics that contain the search term (case-insensitive)
       const result = await this.session.run(
-        `MATCH (t:Topic {name: $topicName})<-[:MENTIONS]-(m:Message)<-[:SENT]-(u:User)
-         RETURN m.id as id, m.text as text, m.timestamp as timestamp, u.name as sender
-         ORDER BY m.timestamp DESC
+        `MATCH (topic)
+         WHERE topic.name CONTAINS $topicName OR toLower(topic.name) CONTAINS toLower($topicName)
+         MATCH (topic)<-[:discusses]-(message)
+         RETURN topic.name as topicName, topic.type as topicType, message.content as messageContent, message.timestamp as timestamp
+         ORDER BY message.timestamp DESC
          LIMIT $limit`,
         { topicName, limit: Math.floor(limit) }
       );
 
+      console.log(`✅ Found ${result.records.length} records for topic "${topicName}"`);
+      
       return result.records.map(record => ({
-        id: record.get('id'),
-        text: record.get('text'),
-        timestamp: record.get('timestamp'),
-        sender: record.get('sender')
+        topicName: record.get('topicName'),
+        topicType: record.get('topicType'),
+        messageContent: record.get('messageContent'),
+        timestamp: record.get('timestamp')
       }));
     } catch (error) {
       console.warn('Failed to query messages by topic:', error);
