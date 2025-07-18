@@ -151,9 +151,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Generate AI response
         const user = await storage.getUser(messageData.userId!);
         const conversationHistory = await storage.getAllMessages();
+        const allUsers = await storage.getAllUsers();
         
         if (user) {
           try {
+            // Create user lookup map for efficient name resolution
+            const userLookup = new Map(allUsers.map(u => [u.id, u.name]));
+            
             // Prepare context for AI
             const context = {
               currentMessage: messageData.content,
@@ -161,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               conversationHistory: conversationHistory.map(msg => ({
                 id: msg.id,
                 content: msg.content,
-                senderName: msg.userId === user.id ? user.name : "Unknown", // Simplified for now
+                senderName: userLookup.get(msg.userId) || "Unknown",
                 timestamp: msg.timestamp.toISOString()
               })),
               relevantEntities: [] // Neo4j will provide context

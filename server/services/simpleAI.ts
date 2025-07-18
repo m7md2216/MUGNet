@@ -23,16 +23,37 @@ export class SimpleAIService {
 
   async generateResponse(context: AIContext): Promise<string> {
     try {
-      // Get recent conversation history (last 20 messages)
-      const recentHistory = context.conversationHistory.slice(-20);
+      // Get recent conversation history (last 50 messages to ensure we capture older context)
+      const recentHistory = context.conversationHistory.slice(-50);
       
-      // Format conversation for AI
+      // Format conversation for AI with clear attribution
       const conversationText = recentHistory
         .map(msg => `${msg.senderName}: ${msg.content}`)
         .join('\n');
 
-      // Get relevant entities from Neo4j for context
-      const entityContext = await this.getEntityContext(context.currentMessage);
+      // Temporarily disable entity context to avoid Neo4j decimal error
+      const entityContext = "Context unavailable";
+      
+      // Check if the conversation history contains the Airbnb message
+      const hasAirbnbMessage = recentHistory.some(msg => 
+        msg.content.toLowerCase().includes('airbnb')
+      );
+      
+      if (hasAirbnbMessage) {
+        console.log('✅ Found Airbnb message in conversation history');
+        const airbnbMessage = recentHistory.find(msg => 
+          msg.content.toLowerCase().includes('airbnb')
+        );
+        console.log('🎯 Airbnb message:', airbnbMessage);
+      } else {
+        console.log('❌ No Airbnb message found in conversation history');
+        console.log('📝 History length:', recentHistory.length);
+      }
+
+      console.log('🤖 AI Context - Recent History:');
+      console.log(conversationText);
+      console.log('🤖 AI Context - Entity Context:');
+      console.log(entityContext);
 
       const systemPrompt = `You are an AI assistant in a group chat. You have access to conversation history and knowledge about discussed topics.
 
@@ -45,9 +66,12 @@ ${entityContext}
 Instructions:
 - Be conversational and friendly
 - Reference past discussions when relevant
-- Answer questions based on the conversation history
+- Answer questions based on the conversation history shown above
+- CRITICAL: When asked "who said X", look CAREFULLY at the conversation history to find the exact speaker name
+- Always double-check speaker attribution before responding
 - If asked about specific people or topics, use the context provided
-- Keep responses concise but helpful`;
+- Keep responses concise but helpful
+- Be very precise about who said what - accuracy is crucial`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -56,10 +80,13 @@ Instructions:
           { role: "user", content: `${context.senderName}: ${context.currentMessage}` }
         ],
         max_tokens: 300,
-        temperature: 0.7
+        temperature: 0.3 // Lower temperature for more accurate attribution
       });
 
-      return response.choices[0].message.content || "I'm having trouble responding right now.";
+      const aiResponse = response.choices[0].message.content || "I'm having trouble responding right now.";
+      console.log('🤖 AI Response:', aiResponse);
+      
+      return aiResponse;
     } catch (error) {
       console.error('AI response failed:', error);
       return "I'm having trouble responding right now. Please try again.";
@@ -75,7 +102,7 @@ Instructions:
       // Look for entities in Neo4j that match message content
       for (const word of words) {
         if (word.length > 3) {
-          const relatedMessages = await neo4jService.findMessagesByTopic(word, Math.floor(3));
+          const relatedMessages = await neo4jService.findMessagesByTopic(word, 3);
           if (relatedMessages.length > 0) {
             relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
           }

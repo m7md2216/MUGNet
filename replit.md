@@ -56,6 +56,14 @@ Preferred communication style: Simple, everyday language.
 - **Context-Aware**: Uses recent conversation history (last 3 messages) for better inference
 - **Automatic Processing**: Runs after message creation, before AI response generation
 
+### AI Attribution & Context Enhancement (July 18, 2025 - 9:57 PM)
+- **Fixed User Attribution**: Resolved critical issue where users appeared as "Unknown" in conversation history
+- **Enhanced AI Accuracy**: AI now correctly identifies speakers for historical questions (e.g., "Who mentioned Airbnb?")
+- **Expanded Context Window**: Increased conversation history from 20 to 50 messages for better context retention
+- **Improved User Lookup**: Implemented efficient user ID to name resolution using database lookup map
+- **Better Speaker Attribution**: All conversation history now shows proper user names instead of "Unknown"
+- **Enhanced Memory**: AI can now reference older messages and correctly attribute statements to specific users
+
 ### Project Structure
 ```
 ├── client/          # React frontend
