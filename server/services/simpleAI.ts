@@ -33,7 +33,9 @@ export class SimpleAIService {
         .join('\n');
 
       // Get entity context from knowledge graph
+      console.log('🔍 About to call getEntityContextFromKnowledgeGraph with message:', context.currentMessage);
       const entityContext = await this.getEntityContextFromKnowledgeGraph(context.currentMessage);
+      console.log('✅ Knowledge graph call completed, result:', entityContext);
       
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
