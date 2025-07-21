@@ -165,16 +165,25 @@ export class Neo4jService {
     }
   }
 
-  private async extractAndStoreEntities(content: string, messageId: string): Promise<void> {
-    if (!this.session) return;
+  async extractAndStoreEntities(content: string, messageId: string): Promise<void> {
+    console.log('🔧 Neo4j extractAndStoreEntities called, session exists:', !!this.session);
+    if (!this.session) {
+      console.log('❌ No Neo4j session, skipping entity extraction');
+      return;
+    }
 
     try {
       const entities = await this.extractEntitiesFromText(content);
+      console.log('🔍 Extracted entities for message:', messageId, entities);
+      
+      // Import storage to also save to PostgreSQL for AI context
+      const { storage } = await import("../storage");
       
       // Only store entities that are actually meaningful and relevant
       // Store People entities (only @mentions)
       for (const person of entities.people) {
         if (person.length > 2) { // Only store names longer than 2 characters
+          // Store in Neo4j
           await this.session.run(
             `MERGE (e:Entity {name: $name, type: 'Person'})
              WITH e
@@ -182,12 +191,24 @@ export class Neo4jService {
              MERGE (m)-[:MENTIONS]->(e)`,
             { name: person, messageId }
           );
+          
+          // Also store in PostgreSQL for AI context
+          try {
+            await storage.createKnowledgeGraphEntity({
+              name: person,
+              type: 'person',
+              properties: { source: 'neo4j', messageId: parseInt(messageId) }
+            });
+          } catch (pgError) {
+            console.warn('Failed to store person entity in PostgreSQL:', pgError);
+          }
         }
       }
 
-      // Store only the most relevant location/activity entities
+      // Store only the most relevant location/activity entities  
       for (const event of entities.events) {
         if (event.length > 3) { // Only store events longer than 3 characters
+          // Store in Neo4j
           await this.session.run(
             `MERGE (e:Entity {name: $name, type: 'Location'})
              WITH e
@@ -195,11 +216,23 @@ export class Neo4jService {
              MERGE (m)-[:DISCUSSES]->(e)`,
             { name: event, messageId }
           );
+          
+          // Also store in PostgreSQL for AI context
+          try {
+            await storage.createKnowledgeGraphEntity({
+              name: event,
+              type: 'location',
+              properties: { source: 'neo4j', messageId: parseInt(messageId) }
+            });
+          } catch (pgError) {
+            console.warn('Failed to store location entity in PostgreSQL:', pgError);
+          }
         }
       }
 
       // Store only meaningful date references
       for (const date of entities.dates) {
+        // Store in Neo4j
         await this.session.run(
           `MERGE (e:Entity {name: $name, type: 'Time'})
            WITH e
@@ -207,6 +240,17 @@ export class Neo4jService {
            MERGE (m)-[:REFERS_TO]->(e)`,
           { name: date, messageId }
         );
+        
+        // Also store in PostgreSQL for AI context
+        try {
+          await storage.createKnowledgeGraphEntity({
+            name: date,
+            type: 'time',
+            properties: { source: 'neo4j', messageId: parseInt(messageId) }
+          });
+        } catch (pgError) {
+          console.warn('Failed to store time entity in PostgreSQL:', pgError);
+        }
       }
 
     } catch (error) {
@@ -280,8 +324,8 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
       if (activityMatches) entities.events.push(...activityMatches.map(m => m.toLowerCase()));
       if (dateMatches) entities.dates.push(...dateMatches.map(m => m.toLowerCase()));
       
-      entities.events = [...new Set(entities.events)];
-      entities.dates = [...new Set(entities.dates)];
+      entities.events = Array.from(new Set(entities.events));
+      entities.dates = Array.from(new Set(entities.dates));
     }
 
     return entities;
