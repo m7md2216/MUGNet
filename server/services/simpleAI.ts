@@ -24,18 +24,24 @@ export class SimpleAIService {
 
   async generateResponse(context: AIContext): Promise<string> {
     try {
-      // Get recent conversation history (last 50 messages to ensure we capture older context)
-      const recentHistory = context.conversationHistory.slice(-50);
+      // Get recent conversation history (last 20 messages as supplementary context)
+      const recentHistory = context.conversationHistory.slice(-20);
       
       // Format conversation for AI with clear attribution
       const conversationText = recentHistory
         .map(msg => `${msg.senderName}: ${msg.content}`)
         .join('\n');
 
-      // Get entity context from knowledge graph
-      console.log('🔍 About to call getEntityContextFromKnowledgeGraph with message:', context.currentMessage);
-      const entityContext = await this.getEntityContextFromKnowledgeGraph(context.currentMessage);
-      console.log('✅ Knowledge graph call completed, result:', entityContext);
+      // PRIMARY INTELLIGENCE: Get intelligent context from knowledge graph
+      console.log('🧠 Getting intelligent context from knowledge graph for:', context.currentMessage);
+      const intelligentContext = await knowledgeGraphService.getIntelligentContext(
+        context.currentMessage, 
+        1 // Current user ID - could be dynamic
+      );
+      console.log('✅ Intelligent context retrieved:', JSON.stringify(intelligentContext, null, 2));
+
+      // Format the intelligent context for AI (now primary source)
+      const formattedKnowledgeContext = this.formatIntelligentContext(intelligentContext);
       
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
@@ -55,16 +61,16 @@ export class SimpleAIService {
 
       console.log('🤖 AI Context - Recent History:');
       console.log(conversationText);
-      console.log('🤖 AI Context - Entity Context:');
-      console.log(entityContext);
+      console.log('🤖 AI Context - Knowledge Graph Context:');
+      console.log(formattedKnowledgeContext);
 
       const systemPrompt = `You are an AI assistant in a group chat. You have access to conversation history and knowledge about discussed topics.
 
-Current conversation context:
+RECENT CONVERSATION (supplementary context):
 ${conversationText}
 
-Related topics from past conversations:
-${entityContext}
+KNOWLEDGE GRAPH INTELLIGENCE (primary context):
+${formattedKnowledgeContext}
 
 Instructions:
 - Be conversational and friendly
@@ -208,6 +214,51 @@ Instructions:
       console.warn('Failed to find relevant history:', error);
       return [];
     }
+  }
+
+  // NEW: Format intelligent context from knowledge graph for AI
+  private formatIntelligentContext(intelligentContext: {
+    relevantEntities: Array<{name: string, type: string, context: string}>;
+    relatedPeople: Array<{name: string, relationship: string, context: string}>;
+    topicInsights: Array<{topic: string, participants: string[], lastDiscussed: Date}>;
+    entityConnections: Array<{entity1: string, entity2: string, connectionType: string}>;
+  }): string {
+    const sections: string[] = [];
+    
+    // Relevant entities (locations, activities, etc.)
+    if (intelligentContext.relevantEntities.length > 0) {
+      sections.push("RELEVANT ENTITIES:");
+      intelligentContext.relevantEntities.forEach(entity => {
+        sections.push(`  • ${entity.name} (${entity.type}): ${entity.context}`);
+      });
+    }
+    
+    // Related people and their connections
+    if (intelligentContext.relatedPeople.length > 0) {
+      sections.push("RELATED PEOPLE:");
+      intelligentContext.relatedPeople.forEach(person => {
+        sections.push(`  • ${person.name}: ${person.context}`);
+      });
+    }
+    
+    // Topic insights (who discussed what and when)
+    if (intelligentContext.topicInsights.length > 0) {
+      sections.push("TOPIC INSIGHTS:");
+      intelligentContext.topicInsights.forEach(insight => {
+        const participantList = insight.participants.join(", ");
+        sections.push(`  • "${insight.topic}": discussed by ${participantList}, last on ${insight.lastDiscussed.toLocaleDateString()}`);
+      });
+    }
+    
+    // Entity connections (how things relate to each other)
+    if (intelligentContext.entityConnections.length > 0) {
+      sections.push("CONNECTIONS:");
+      intelligentContext.entityConnections.forEach(conn => {
+        sections.push(`  • ${conn.entity1} → ${conn.entity2} (${conn.connectionType})`);
+      });
+    }
+    
+    return sections.length > 0 ? sections.join('\n') : "No relevant knowledge graph context found";
   }
 }
 
