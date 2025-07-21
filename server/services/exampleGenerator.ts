@@ -7,33 +7,40 @@ export async function generateExampleConversations(users: User[]): Promise<Inser
   // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
   const userNames = users.map(u => u.name);
   
-  const conversationPrompt = `Generate a realistic group chat conversation between these users: ${userNames.join(", ")}. 
+  // Generate random starting topics to avoid repetition
+  const randomTopics = [
+    'weekend plans', 'recent travels', 'food discoveries', 'work updates', 
+    'movie recommendations', 'exercise routines', 'weather', 'local events'
+  ];
+  const randomStarters = [
+    'What\'s everyone up to?', 'Hope everyone\'s having a good day!', 
+    'Anyone tried anything new lately?', 'How\'s everyone doing?',
+    'What a week!', 'Anyone else feeling like time is flying?'
+  ];
+  
+  const randomTopic = randomTopics[Math.floor(Math.random() * randomTopics.length)];
+  const randomStarter = randomStarters[Math.floor(Math.random() * randomStarters.length)];
+  
+  const conversationPrompt = `Generate a unique, realistic group chat conversation between these users: ${userNames.join(", ")}. 
 
-Create a natural, engaging conversation that includes:
-- Casual greetings and small talk
-- References to activities (hiking, restaurants, travel, work, hobbies)
-- Mentions of specific places (cities, restaurants, parks, etc.)
-- Some @mentions between users
-- A few questions that could be answered later (to test the AI's memory)
-- Mix of short and longer messages
-- Natural conversation flow with some time gaps
+Create a natural conversation that organically includes:
+- Different conversation starters (not just "Hey everyone!")
+- References to diverse activities: ${randomTopic}, restaurants, travel, work, hobbies, sports, entertainment
+- Mentions of varied places: specific restaurant names, neighborhoods, cities, parks
+- Natural @mentions between users when replying
+- Questions that create engagement
+- Mix of message lengths and conversation styles
+- Realistic timing and flow
 
-Make it feel like real friends chatting. Include 12-15 messages total.
-Each message should be realistic and conversational.
+Focus on making each conversation UNIQUE and VARIED. Avoid repetitive patterns.
 
-IMPORTANT: Return a JSON object with a "messages" array containing exactly 12-15 message objects.
-
+Return exactly this JSON format with 12-15 message objects:
 {
   "messages": [
     {
-      "sender": "${userNames[0]}",
-      "content": "Hey everyone! How's your weekend going?",
-      "mentions": []
-    },
-    {
-      "sender": "${userNames[1]}", 
-      "content": "@${userNames[0]} pretty good! Just got back from hiking at Valley Forge",
-      "mentions": ["${userNames[0]}"]
+      "sender": "username",
+      "content": "message text here",
+      "mentions": ["username_if_mentioned"]
     }
   ]
 }`;
@@ -44,7 +51,7 @@ IMPORTANT: Return a JSON object with a "messages" array containing exactly 12-15
       messages: [{ role: "user", content: conversationPrompt }],
       response_format: { type: "json_object" },
       max_tokens: 2000,
-      temperature: 0.8,
+      temperature: 0.9, // Higher temperature for more variation
     });
 
     const result = JSON.parse(response.choices[0].message.content || '{"messages": []}');
