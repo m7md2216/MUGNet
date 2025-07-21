@@ -34,6 +34,7 @@ export interface IStorage {
   getMessagesByUser(userId: number): Promise<Message[]>;
   getMessagesByMention(mention: string): Promise<Message[]>;
   deleteAllMessages(): Promise<void>;
+  clearKnowledgeGraph(): Promise<void>;
 
   // Knowledge graph entities
   getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined>;
@@ -152,6 +153,15 @@ export class MemStorage implements IStorage {
     this.knowledgeGraphRelationships.clear();
     this.conversationThreads.clear();
     this.currentMessageId = 1;
+    this.currentEntityId = 1;
+    this.currentRelationshipId = 1;
+    this.currentThreadId = 1;
+  }
+
+  async clearKnowledgeGraph(): Promise<void> {
+    this.knowledgeGraphEntities.clear();
+    this.knowledgeGraphRelationships.clear();
+    this.conversationThreads.clear();
     this.currentEntityId = 1;
     this.currentRelationshipId = 1;
     this.currentThreadId = 1;

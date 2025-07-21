@@ -548,6 +548,24 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
     }
   }
 
+  async clearAllData(): Promise<void> {
+    if (!this.session) {
+      console.warn('Neo4j session not available, cannot clear data');
+      return;
+    }
+
+    try {
+      await this.session.run(`
+        MATCH (n) 
+        DETACH DELETE n
+      `);
+      console.log('✅ Neo4j data cleared successfully');
+    } catch (error) {
+      console.error('Failed to clear Neo4j data:', error);
+      throw error;
+    }
+  }
+
   async close(): Promise<void> {
     if (this.session) {
       await this.session.close();

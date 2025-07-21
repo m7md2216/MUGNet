@@ -172,11 +172,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Clear all messages
+  // Clear all messages and knowledge graph
   app.delete("/api/messages", async (req, res) => {
     try {
       await storage.deleteAllMessages();
-      res.json({ message: "All messages deleted successfully" });
+      
+      // Knowledge graph data is already cleared by deleteAllMessages()
+      console.log('✅ PostgreSQL knowledge graph data cleared with messages');
+      
+      // Clear Neo4j data as well
+      try {
+        await neo4jService.clearAllData();
+      } catch (neo4jError) {
+        console.warn('Failed to clear Neo4j data:', neo4jError);
+      }
+      
+      res.json({ message: "All messages and knowledge graph data deleted successfully" });
     } catch (error) {
       console.error("Delete messages error:", error);
       res.status(500).json({ message: "Failed to delete messages", error: error.message });
