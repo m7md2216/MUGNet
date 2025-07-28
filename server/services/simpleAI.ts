@@ -24,8 +24,15 @@ export class SimpleAIService {
 
   async generateResponse(context: AIContext): Promise<string> {
     try {
-      // Get recent conversation history (last 20 messages as supplementary context)
-      const recentHistory = context.conversationHistory.slice(-20);
+      // Get comprehensive conversation history for knowledge retrieval
+      // Use all available history for knowledge graph queries, limit to recent for context efficiency
+      const isKnowledgeQuery = context.currentMessage.toLowerCase().includes('who') || 
+                               context.currentMessage.toLowerCase().includes('what') ||
+                               context.currentMessage.toLowerCase().includes('when') ||
+                               context.currentMessage.toLowerCase().includes('where');
+      
+      const historyLimit = isKnowledgeQuery ? 500 : 20; // Much more history for knowledge queries
+      const recentHistory = context.conversationHistory.slice(-historyLimit);
       
       // Format conversation for AI with clear attribution
       const conversationText = recentHistory
