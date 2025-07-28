@@ -61,16 +61,19 @@ export class ScriptImporter {
         const speaker = messageMatch[1].trim();
         const content = messageMatch[2].trim();
         
+        // Normalize content: replace @AI with @aiagent
+        const normalizedContent = content.replace(/@AI\b/g, '@aiagent');
+        
         // Extract @mentions and normalize AI mentions
-        const mentions = content.match(/@(\w+)/g)?.map(m => {
+        const mentions = normalizedContent.match(/@(\w+)/g)?.map(m => {
           const mention = m.substring(1);
-          // Normalize AI mentions to "AI Agent"
-          return mention.toLowerCase() === 'ai' ? 'AI Agent' : mention;
+          // Normalize AI mentions to "aiagent"
+          return mention.toLowerCase() === 'ai' ? 'aiagent' : mention;
         }) || [];
         
         messages.push({
           speaker,
-          content,
+          content: normalizedContent,
           mentions,
           day: currentDay,
           isAiTest: isInTestPhase
