@@ -40,16 +40,27 @@ export class SimpleAIService {
         .join('\n');
 
       // PRIMARY INTELLIGENCE: Get intelligent context from knowledge graph
-      console.log('🧠 Getting intelligent context from knowledge graph for:', context.currentMessage);
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 1: Query Analysis');
+      console.log('📝 User Query:', context.currentMessage);
+      console.log('🔍 Extracting keywords from query...');
+      
       const intelligentContext = await knowledgeGraphService.getIntelligentContext(
         context.currentMessage, 
         1 // Current user ID - could be dynamic
       );
-      console.log('✅ Intelligent context retrieved:', JSON.stringify(intelligentContext, null, 2));
+      
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 2: Knowledge Graph Retrieval');
+      console.log('📊 Raw Knowledge Graph Data Retrieved:');
+      console.log(JSON.stringify(intelligentContext, null, 2));
 
       // Format the intelligent context for AI (now primary source)
       const formattedKnowledgeContext = this.formatIntelligentContext(intelligentContext);
-      console.log('📊 Formatted knowledge context:', formattedKnowledgeContext);
+      
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 3: Formatted Context for AI');
+      console.log('📋 This is exactly what the AI sees as its primary context:');
+      console.log('='.repeat(80));
+      console.log(formattedKnowledgeContext);
+      console.log('='.repeat(80));
       
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
@@ -89,6 +100,12 @@ Instructions:
 - Answer questions based on entity relationships and structured knowledge rather than linear conversation scanning
 - Keep responses concise but comprehensive based on the knowledge graph connections`;
 
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt Construction');
+      console.log('📝 Complete prompt sent to GPT-4o:');
+      console.log('='.repeat(80));
+      console.log(systemPrompt);
+      console.log('='.repeat(80));
+
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [
@@ -100,7 +117,10 @@ Instructions:
       });
 
       const aiResponse = response.choices[0].message.content || "I'm having trouble responding right now.";
-      console.log('🤖 AI Response:', aiResponse);
+      
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 5: Final AI Response');
+      console.log('🤖 GPT-4o Generated Response:', aiResponse);
+      console.log('\n💡 Summary: AI prioritized knowledge graph entities and relationships over conversation history to generate this response\n');
       
       return aiResponse;
     } catch (error) {
