@@ -105,64 +105,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (aiMentions.length > 0) {
         // Generate AI response
-        const user = await storage.getUser(messageData.userId!);
+        const user = messageData.userId ? await storage.getUser(messageData.userId) : null;
         const conversationHistory = await storage.getAllMessages();
         const allUsers = await storage.getAllUsers();
         
-        if (user) {
-          try {
-            // Create user lookup map for efficient name resolution
-            const userLookup = new Map(allUsers.map(u => [u.id, u.name]));
-            
-            // Prepare context for AI
-            const context = {
-              currentMessage: messageData.content,
-              senderName: user.name,
-              conversationHistory: conversationHistory.map(msg => ({
-                id: msg.id,
-                content: msg.content,
-                senderName: userLookup.get(msg.userId) || "Unknown",
-                timestamp: msg.timestamp.toISOString()
-              })),
-              relevantEntities: [] // Neo4j will provide context
-            };
+        // Handle case where user is null (anonymous message with AI mention)
+        const senderName = user ? user.name : "Anonymous User";
+        
+        try {
+          // Create user lookup map for efficient name resolution
+          const userLookup = new Map(allUsers.map(u => [u.id, u.name]));
+          
+          // Prepare context for AI
+          const context = {
+            currentMessage: messageData.content,
+            senderName: senderName,
+            conversationHistory: conversationHistory.map(msg => ({
+              id: msg.id,
+              content: msg.content,
+              senderName: userLookup.get(msg.userId) || "Unknown",
+              timestamp: msg.timestamp.toISOString()
+            })),
+            relevantEntities: [] // Neo4j will provide context
+          };
 
-            const aiResponseContent = await simpleAIService.generateResponse(context);
+          const aiResponseContent = await simpleAIService.generateResponse(context);
 
-            // Create AI response message
-            const aiUser = await storage.getUserByName("AI Agent");
-            if (aiUser) {
-              const aiMessage = await storage.createMessage({
-                userId: aiUser.id,
-                content: aiResponseContent,
-                mentions: messageData.mentions || []
-              });
+          // Create AI response message
+          const aiUser = await storage.getUserByName("AI Agent");
+          if (aiUser) {
+            const aiMessage = await storage.createMessage({
+              userId: aiUser.id,
+              content: aiResponseContent,
+              mentions: messageData.mentions || []
+            });
 
-              // Update message to mark as AI response
-              aiMessage.isAiResponse = true;
+            // Update message to mark as AI response
+            aiMessage.isAiResponse = true;
 
-              // Create or update conversation thread
+            // Create or update conversation thread
+            if (user) {
               await knowledgeGraphService.createOrUpdateConversationThread(
                 "AI Conversation",
                 [user.name, "AI Agent"],
                 aiMessage.id
               );
-
-              res.json({ message, aiResponse: aiMessage });
-            } else {
-              res.json({ message });
             }
-          } catch (aiError) {
-            console.error("AI Response Error:", aiError);
-            console.error("AI Error Details:", {
-              message: (aiError as any).message,
-              stack: (aiError as any).stack,
-              type: (aiError as any).constructor?.name
-            });
-            res.json({ message, error: "Failed to generate AI response" });
+
+            res.json({ message, aiResponse: aiMessage });
+          } else {
+            res.json({ message, error: "AI Agent user not found" });
           }
-        } else {
-          res.json({ message });
+        } catch (aiError) {
+          console.error("AI Response Error:", aiError);
+          console.error("AI Error Details:", {
+            message: (aiError as any).message,
+            stack: (aiError as any).stack,
+            type: (aiError as any).constructor?.name
+          });
+          res.json({ message, error: "Failed to generate AI response" });
         }
       } else {
         res.json({ message });
