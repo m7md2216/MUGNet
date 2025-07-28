@@ -91,7 +91,7 @@ export class KnowledgeGraphService {
     try {
       const entities = await storage.getAllKnowledgeGraphEntities();
       const relationships = await storage.getAllKnowledgeGraphRelationships();
-      const messages = await storage.getMessages(); // Get all messages for comprehensive analysis
+      const messages = await storage.getAllMessages(); // Get all messages for comprehensive analysis
       
       // Extract keywords from the query
       const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
@@ -174,7 +174,7 @@ export class KnowledgeGraphService {
       );
       
       if (relevantMessages.length > 0) {
-        const participants = [...new Set(relevantMessages.map(msg => msg.userId))];
+        const participants = Array.from(new Set(relevantMessages.map(msg => msg.userId)));
         const lastMessage = relevantMessages[relevantMessages.length - 1];
         
         topicInsights.push({

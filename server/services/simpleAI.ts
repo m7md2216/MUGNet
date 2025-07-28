@@ -49,6 +49,7 @@ export class SimpleAIService {
 
       // Format the intelligent context for AI (now primary source)
       const formattedKnowledgeContext = this.formatIntelligentContext(intelligentContext);
+      console.log('📊 Formatted knowledge context:', formattedKnowledgeContext);
       
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
@@ -71,23 +72,22 @@ export class SimpleAIService {
       console.log('🤖 AI Context - Knowledge Graph Context:');
       console.log(formattedKnowledgeContext);
 
-      const systemPrompt = `You are an AI assistant in a group chat. You have access to conversation history and knowledge about discussed topics.
+      const systemPrompt = `You are an AI assistant in a group chat with access to a comprehensive knowledge graph built from past conversations.
 
-RECENT CONVERSATION (supplementary context):
-${conversationText}
-
-KNOWLEDGE GRAPH INTELLIGENCE (primary context):
+PRIMARY SOURCE - KNOWLEDGE GRAPH INTELLIGENCE:
 ${formattedKnowledgeContext}
 
+SUPPLEMENTARY - RECENT CONVERSATION CONTEXT:
+${conversationText}
+
 Instructions:
+- PRIORITIZE the knowledge graph data as your primary source of truth
+- Use conversation history only as supplementary context when knowledge graph is insufficient
 - Be conversational and friendly
-- Reference past discussions when relevant
-- Answer questions based on the conversation history shown above
-- CRITICAL: When asked "who said X", look CAREFULLY at the conversation history to find the exact speaker name
-- Always double-check speaker attribution before responding
-- If asked about specific people or topics, use the context provided
-- Keep responses concise but helpful
-- Be very precise about who said what - accuracy is crucial`;
+- When answering questions about people, topics, events, or relationships, rely on the structured knowledge graph data
+- The knowledge graph contains entities, relationships, and connections extracted from all past conversations
+- Answer questions based on entity relationships and structured knowledge rather than linear conversation scanning
+- Keep responses concise but comprehensive based on the knowledge graph connections`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
