@@ -304,6 +304,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import conversation script for testing
+  app.post("/api/import-script", async (req, res) => {
+    try {
+      const { scriptContent } = req.body;
+      if (!scriptContent) {
+        return res.status(400).json({ message: "Script content is required" });
+      }
+
+      // Clear existing data first
+      await storage.deleteAllMessages();
+      try {
+        await neo4jService.clearAllData();
+      } catch (neo4jError) {
+        console.warn('Failed to clear Neo4j data:', neo4jError);
+      }
+
+      // Import the script
+      const { scriptImporter } = await import("./services/scriptImporter");
+      const result = await scriptImporter.importScript(scriptContent);
+      
+      res.json({
+        message: "Script imported successfully",
+        ...result
+      });
+    } catch (error) {
+      console.error("Import script error:", error);
+      res.status(500).json({ message: "Failed to import script", error: error.message });
+    }
+  });
+
+  // Run AI evaluation tests
+  app.post("/api/run-evaluation", async (req, res) => {
+    try {
+      const { manualEvaluator } = await import("./services/manualEvaluator");
+      const results = await manualEvaluator.runEvaluation();
+      
+      res.json({
+        message: "Evaluation completed",
+        ...results
+      });
+    } catch (error) {
+      console.error("Evaluation error:", error);
+      res.status(500).json({ message: "Failed to run evaluation", error: error.message });
+    }
+  });
+
   app.get("/api/conversation-threads/:participant", async (req, res) => {
     try {
       const participant = req.params.participant;
