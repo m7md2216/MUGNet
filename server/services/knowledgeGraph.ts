@@ -217,15 +217,33 @@ export class KnowledgeGraphService {
   }
 
   private getEntityContext(entity: any, messages: any[], relationships: any[]): string {
-    // Find messages that mention this entity
+    // Find messages that mention this entity (exclude AI responses and current queries)
     const relevantMessages = messages.filter(msg => 
-      msg.content.toLowerCase().includes(entity.name.toLowerCase())
+      msg.content.toLowerCase().includes(entity.name.toLowerCase()) &&
+      !msg.isAiResponse && 
+      !msg.content.includes('@aiagent') // Exclude queries to AI
     );
     
-    if (relevantMessages.length === 0) return 'No recent mentions';
+    if (relevantMessages.length === 0) return 'No previous mentions found';
     
-    const lastMention = relevantMessages[relevantMessages.length - 1];
-    return `Last mentioned: "${lastMention.content.substring(0, 100)}..." (${relevantMessages.length} total mentions)`;
+    // Get the most informative messages (longer content, actual conversations)
+    const informativeMessages = relevantMessages
+      .filter(msg => msg.content.length > 20)
+      .sort((a, b) => b.content.length - a.content.length)
+      .slice(0, 2); // Get top 2 most informative messages
+    
+    if (informativeMessages.length === 0) {
+      return `${relevantMessages.length} brief mentions found`;
+    }
+    
+    const contexts = informativeMessages.map(msg => {
+      const preview = msg.content.length > 120 
+        ? msg.content.substring(0, 120) + "..." 
+        : msg.content;
+      return `"${preview}"`;
+    });
+    
+    return `Found in conversations: ${contexts.join(' | ')} (${relevantMessages.length} total mentions)`;
   }
 
   private getConnectionCount(entityId: number, relationships: KnowledgeGraphRelationship[]): number {
