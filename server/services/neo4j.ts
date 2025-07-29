@@ -160,6 +160,9 @@ export class Neo4jService {
       // Add entity extraction for comprehensive knowledge graph
       await this.extractAndStoreEntities(message.content, message.id.toString());
       
+      // Add dynamic relationship extraction
+      await this.extractAndStoreDynamicRelationships(messageContext);
+      
     } catch (error) {
       console.warn('Failed to sync message to Neo4j:', error);
     }
@@ -563,6 +566,76 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
     } catch (error) {
       console.error('Failed to clear Neo4j data:', error);
       throw error;
+    }
+  }
+
+  async extractAndStoreDynamicRelationships(messageContext: MessageContext): Promise<void> {
+    if (!this.session) return;
+
+    try {
+      const { dynamicRelationshipExtractor } = await import('./dynamicRelationshipExtractor');
+      
+      // Get recent conversation history for context
+      const recentMessages = await this.getRecentMessages(5);
+      
+      const relationships = await dynamicRelationshipExtractor.extractRelationships(
+        messageContext.message.content,
+        {
+          sender: messageContext.sender.name,
+          timestamp: messageContext.timestamp,
+          conversationHistory: recentMessages
+        }
+      );
+
+      console.log(`🔗 Storing ${relationships.length} dynamic relationships in Neo4j`);
+
+      // Store each dynamic relationship in Neo4j
+      for (const rel of relationships) {
+        if (rel.confidence > 0.6) { // Only store high-confidence relationships
+          const safeRelType = rel.relationshipType.replace(/[^A-Z_]/g, '_');
+          await this.session.run(
+            `MERGE (from:Entity {name: $fromEntity})
+             MERGE (to:Entity {name: $toEntity})
+             CREATE (from)-[:\`${safeRelType}\` {
+               confidence: $confidence,
+               context: $context,
+               timestamp: $timestamp,
+               extractedFrom: $messageId
+             }]->(to)`,
+            {
+              fromEntity: rel.fromEntity,
+              toEntity: rel.toEntity,
+              confidence: rel.confidence,
+              context: rel.context,
+              timestamp: rel.timestamp.toISOString(),
+              messageId: messageContext.message.id.toString()
+            }
+          );
+
+          console.log(`✅ Stored relationship: ${rel.fromEntity} --[${rel.relationshipType}]--> ${rel.toEntity} (confidence: ${rel.confidence})`);
+        }
+      }
+
+    } catch (error) {
+      console.warn('❌ Failed to extract/store dynamic relationships:', error);
+    }
+  }
+
+  private async getRecentMessages(limit: number = 5): Promise<string[]> {
+    if (!this.session) return [];
+
+    try {
+      const result = await this.session.run(
+        `MATCH (m:Message)
+         RETURN m.text as text
+         ORDER BY m.timestamp DESC
+         LIMIT $limit`,
+        { limit }
+      );
+
+      return result.records.map(record => record.get('text')).filter(Boolean);
+    } catch (error) {
+      return [];
     }
   }
 
