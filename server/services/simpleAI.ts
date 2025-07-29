@@ -279,9 +279,9 @@ Instructions:
     
     // Entity connections (how things relate to each other)
     if (intelligentContext.entityConnections.length > 0) {
-      sections.push("CONNECTIONS:");
+      sections.push("ACTUAL DATABASE RELATIONSHIPS:");
       intelligentContext.entityConnections.forEach(conn => {
-        sections.push(`  • ${conn.entity1} → ${conn.entity2} (${conn.connectionType})`);
+        sections.push(`  • ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
       });
     }
     
