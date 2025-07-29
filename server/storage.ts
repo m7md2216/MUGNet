@@ -339,7 +339,7 @@ export class DatabaseStorage implements IStorage {
       .values({
         ...insertMessage,
         timestamp: new Date(),
-        isAiResponse: false
+        isAiResponse: insertMessage.isAiResponse || false
       })
       .returning();
     

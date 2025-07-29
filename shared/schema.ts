@@ -56,6 +56,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   userId: true,
   content: true,
   mentions: true,
+  isAiResponse: true,
 });
 
 export const insertKnowledgeGraphEntitySchema = createInsertSchema(knowledgeGraphEntities).pick({

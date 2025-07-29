@@ -95,7 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('🚀 Starting entity extraction for message:', message.id, message.content);
           await neo4jService.extractAndStoreEntities(
             message.content,
-            message.id.toString()
+            message.id.toString(),
+            false // This is a user message, not AI response
           );
           console.log('✅ Entity extraction completed for message:', message.id);
         } catch (entityError) {
@@ -137,11 +138,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const aiMessage = await storage.createMessage({
               userId: aiUser.id,
               content: aiResponseContent,
-              mentions: messageData.mentions || []
+              mentions: messageData.mentions || [],
+              isAiResponse: true
             });
 
-            // Update message to mark as AI response
-            aiMessage.isAiResponse = true;
+            // Skip entity extraction for AI responses (to prevent feedback loop)
+            console.log('🤖 Skipping entity extraction for AI response:', aiMessage.id);
 
             // Create or update conversation thread
             if (user) {

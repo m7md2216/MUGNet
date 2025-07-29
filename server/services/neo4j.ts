@@ -157,19 +157,30 @@ export class Neo4jService {
         );
       }
 
-      // Add entity extraction for comprehensive knowledge graph
-      await this.extractAndStoreEntities(message.content, message.id.toString());
-      
-      // Add dynamic relationship extraction
-      await this.extractAndStoreDynamicRelationships(messageContext);
+      // Add entity extraction for comprehensive knowledge graph (skip for AI responses)
+      if (!message.isAiResponse) {
+        await this.extractAndStoreEntities(message.content, message.id.toString());
+        
+        // Add dynamic relationship extraction
+        await this.extractAndStoreDynamicRelationships(messageContext);
+      } else {
+        console.log('🤖 Skipping entity and relationship extraction for AI response in syncMessage');
+      }
       
     } catch (error) {
       console.warn('Failed to sync message to Neo4j:', error);
     }
   }
 
-  async extractAndStoreEntities(content: string, messageId: string): Promise<void> {
+  async extractAndStoreEntities(content: string, messageId: string, isAiResponse?: boolean): Promise<void> {
     console.log('🔧 Neo4j extractAndStoreEntities called, session exists:', !!this.session);
+    
+    // Skip AI responses to prevent feedback loop
+    if (isAiResponse) {
+      console.log('🤖 Skipping entity extraction for AI response');
+      return;
+    }
+    
     if (!this.session) {
       console.log('❌ No Neo4j session, skipping entity extraction');
       return;
@@ -571,6 +582,13 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
 
   async extractAndStoreDynamicRelationships(messageContext: MessageContext): Promise<void> {
     console.log('🔗 Starting dynamic relationship extraction for:', messageContext.message.content);
+    
+    // Skip AI responses to prevent feedback loop
+    if (messageContext.message.isAiResponse) {
+      console.log('🤖 Skipping dynamic relationship extraction for AI response');
+      return;
+    }
+    
     if (!this.session) {
       console.log('❌ No Neo4j session for dynamic relationships');
       return;
