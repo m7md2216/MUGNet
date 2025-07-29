@@ -570,13 +570,18 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
   }
 
   async extractAndStoreDynamicRelationships(messageContext: MessageContext): Promise<void> {
-    if (!this.session) return;
+    console.log('🔗 Starting dynamic relationship extraction for:', messageContext.message.content);
+    if (!this.session) {
+      console.log('❌ No Neo4j session for dynamic relationships');
+      return;
+    }
 
     try {
       const { dynamicRelationshipExtractor } = await import('./dynamicRelationshipExtractor');
       
       // Get recent conversation history for context
       const recentMessages = await this.getRecentMessages(5);
+      console.log('📝 Recent messages for context:', recentMessages.length);
       
       const relationships = await dynamicRelationshipExtractor.extractRelationships(
         messageContext.message.content,
@@ -587,7 +592,7 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
         }
       );
 
-      console.log(`🔗 Storing ${relationships.length} dynamic relationships in Neo4j`);
+      console.log(`🔗 Extracted ${relationships.length} dynamic relationships, storing in Neo4j`);
 
       // Store each dynamic relationship in Neo4j
       for (const rel of relationships) {
