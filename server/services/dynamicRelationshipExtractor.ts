@@ -27,16 +27,29 @@ export class DynamicRelationshipExtractor {
       const prompt = `
 Analyze this conversation message and extract meaningful relationships between people, places, activities, and concepts.
 
+CRITICAL: Extract relationships about the entities MENTIONED IN THE MESSAGE CONTENT, not about the message sender.
+
 Message: "${message}"
 Sender: ${messageContext.sender}
 Context: ${messageContext.conversationHistory?.slice(-3).join(' | ') || 'No prior context'}
+
+IMPORTANT DISTINCTION:
+- Message Sender: The person who wrote/sent the message (${messageContext.sender})
+- Message Subject: The people/entities that the message content is ABOUT
+
+Extract relationships about the SUBJECTS mentioned in the message content, NOT the sender.
+
+Examples:
+- If Ali says "Jake loves rock climbing" → Extract: Jake --[ENJOYS_ACTIVITY]--> rock climbing
+- If Sarah says "Emma went to Paris" → Extract: Emma --[VISITED]--> Paris
+- If Ryan says "I like jazz music" → Extract: Ryan --[ENJOYS_GENRE]--> jazz music
 
 Extract relationships in this JSON format:
 {
   "relationships": [
     {
-      "fromEntity": "person/place/thing",
-      "toEntity": "person/place/thing", 
+      "fromEntity": "person/place/thing mentioned in content",
+      "toEntity": "person/place/thing mentioned in content", 
       "relationshipType": "descriptive relationship type",
       "confidence": 0.8,
       "context": "brief explanation"
@@ -53,6 +66,7 @@ Relationship types should be semantic and meaningful, such as:
 - WORKS_AT, LIVES_IN, ENJOYS_ACTIVITY, RECOMMENDS_TO, etc.
 
 Only extract relationships that are clearly stated or strongly implied. Include confidence scores (0.0-1.0).
+Focus on what the message content says ABOUT the people/entities mentioned, not about who sent the message.
 `;
 
       const response = await this.openai.chat.completions.create({

@@ -134,6 +134,14 @@ Preferred communication style: Simple, everyday language.
 - **Neo4j Integration Verified**: Dynamic relationships successfully storing in Neo4j with specific query guide created
 - **Semantic Intelligence**: System now understands "Jake enjoys hiking" vs "Jake mentioned hiking" for superior AI responses
 
+### Critical Entity Attribution Fix (July 29, 2025 - 9:43 PM)
+- **Fixed Entity Attribution Bug**: Resolved critical issue where message content was attributed to message sender instead of message subject
+- **Enhanced Prompt Engineering**: Updated dynamic relationship extractor to distinguish between sender and subject entities
+- **Accurate Knowledge Graph**: System now correctly attributes "Ali says Jake loves rock climbing" as Jake's preference, not Ali's
+- **Verified Resolution**: Testing confirmed relationships now correctly map to entities mentioned in content rather than message authors
+- **Improved AI Accuracy**: AI responses about individual users now only include their actual preferences and activities
+- **Semantic Understanding**: GPT-4o now properly differentiates between who speaks and who the content is about
+
 ### Project Structure
 ```
 ├── client/          # React frontend
