@@ -1,0 +1,51 @@
+Prompt,Memory Type,Ground Truth
+Who went camping at Yosemite?,Factual Recall,Jake
+What food did Emma eat for lunch?,Factual Recall,A burrito with extra hot sauce
+Who is afraid of heights?,Factual Recall,Sarah
+What type of music does Ryan dislike?,Preference,Country music
+What advice did Ryan give Chloe about public speaking?,Advice/Relational,Start with a joke to ease nerves
+What dessert did Sarah mention wanting?,Factual Recall,A chocolate donut
+What gift did Chloe promise to bring for Emma?,Factual Recall,English tea
+What show did the group watch recently?,Factual Recall,Galactic Heist
+What instrument does Jake play?,Factual Recall,Guitar
+Where did the group plan a picnic?,Factual Recall,Riverside Park
+What food did Ryan choose for lunch while trying to be healthy?,Factual Recall,A simple salad
+Which city did Chloe travel to for her conference?,Factual Recall,London
+What was Chloe nervous about before traveling?,Emotional Tone,Giving a presentation at a conference
+Who suggested bungee jumping?,Factual Recall,Emma
+What dessert did Ryan get tempted by?,Factual Recall,A chocolate donut
+What activity made Sarah feel nervous?,Emotional Tone,Riding a roller coaster
+Who offered to bring cookies for the picnic?,Factual Recall,Sarah
+Who mentioned trying a meditation app?,Factual Recall,Emma
+What kind of playlist did Chloe say she likes?,Preference,Indie and folk music
+What did Jake do during the karaoke night?,Factual Recall,Sang dramatically to an empty pizza box
+Who encouraged Chloe to enjoy London?,Relational,Jake
+What kind of music does Emma like?,Preference,"Pop, classical, K-pop"
+What did Chloe plan to bring back as souvenirs?,Factual Recall,Tea and keychains
+What show did Jake warn not to spoil?,Factual Recall,Galactic Heist Chronicles
+Who had a stressful day because of a last-minute client project?,Factual Recall,Ryan
+What was Jake’s reaction to the Metallica tribute concert?,Factual Recall,His ears rang for two days
+What was Chloe's joke during her presentation?,Factual Recall,"If I talk too fast, blame the caffeine"
+What did Sarah say about her weekend?,Factual Recall,She did laundry and watched Netflix
+What vacation destination did Sarah suggest to Emma?,Factual Recall,Hawaii
+What did the group decide to do on Friday night?,Factual Recall,Karaoke at SingStar
+Who advised taking deep breaths before speaking?,Advice,Emma
+What did Ryan call his karaoke singing style?,Humor,Punk rock
+What was Chloe’s favorite part of London?,Preference,The city’s vibrancy and British accents
+Who said they became one with their couch?,Humor,Emma
+Who mentioned watching a Metallica tribute concert?,Factual Recall,Jake
+What emotional support did Emma offer Chloe?,Emotional Tone,Said she’d be cheering her on virtually
+What did the group plan for Chloe’s return?,Factual Recall,Dinner at Pizzeria Roma
+What did Chloe say about British food?,Factual Recall,She enjoyed fish and chips at a pub
+Who joked about a red telephone booth souvenir?,Humor,Ryan
+Who joked about being applauded by a showerhead?,Humor,Jake
+What did Emma say her playlist contains?,Preference,Everything from classical to K-pop
+Who suggested sending Ryan memes to cheer him up?,Relational,Emma
+What type of hike did Sarah agree to join?,Factual Recall,Gentle hiking and a picnic
+What was the name of the trending song mentioned?,Factual Recall,Midnight Reverie
+Who offered to bring snacks to the picnic?,Factual Recall,Ryan
+Who called themselves a rock/metal guy?,Preference,Ryan
+Who joked about sneaking country music onto playlists?,Humor,Sarah
+Who suggested everyone exchange playlists?,Relational,Chloe
+What show did the group all watch together?,Factual Recall,Galactic Heist Chronicles
+Who had a bear encounter while camping?,Factual Recall,Jake
