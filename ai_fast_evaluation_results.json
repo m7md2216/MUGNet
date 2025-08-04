@@ -1,0 +1,1116 @@
+{
+  "evaluation_summary": {
+    "total_questions": 50,
+    "correct_answers": 8,
+    "accuracy_percentage": 16.0,
+    "avg_confidence": 0.17666666666666664
+  },
+  "sample_results": [
+    {
+      "question_id": 1,
+      "prompt": "Who encountered a bear during a camping trip?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Hey Emma! According to the knowledge graph, Jake encountered a bear during his camping trip to Yosemite. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 2,
+      "prompt": "What is Ryan’s opinion on country music?",
+      "memory_type": "Preference",
+      "ground_truth": "He dislikes country music or anything twangy",
+      "ai_response": "Hey Emma! According to the knowledge graph, Ryan dislikes country music or anything too twangy. He prefers rock and metal, with a love for screaming guitars over banjos. 😊",
+      "correct": true,
+      "match_reason": "Strong match (5/5 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 3,
+      "prompt": "What dessert was Sarah tempted by during lunch?",
+      "memory_type": "Preference",
+      "ground_truth": "Chocolate donut",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was tempted by a chocolate donut for dessert during lunch. 🍩😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 4,
+      "prompt": "Which musical genres does Chloe enjoy?",
+      "memory_type": "Preference",
+      "ground_truth": "Indie and folk, and some pop",
+      "ai_response": "Hey Emma! According to the knowledge graph, Chloe's musical preferences haven't been specifically mentioned. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 5,
+      "prompt": "Who was nervous about a presentation in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 6,
+      "prompt": "Who brought a guitar to the group picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 7,
+      "prompt": "Why was Sarah hesitant about going to the amusement park?",
+      "memory_type": "Emotional State",
+      "ground_truth": "She is terrified of heights",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was hesitant about going to the amusement park because she has a phobia of heights. This might make her uncomfortable with certain rides, like the new giant roller coaster. 😊",
+      "correct": false,
+      "match_reason": "Partial match (1/2 key words)",
+      "confidence": 0.5
+    },
+    {
+      "question_id": 8,
+      "prompt": "What food item did Emma claim she needs to wake up?",
+      "memory_type": "Preference",
+      "ground_truth": "Spicy food / hot sauce",
+      "ai_response": "Hey Emma! According to the knowledge graph, you claimed that spicy food, specifically a burrito with extra hot sauce, helps wake you up. 🌯🌶️😊",
+      "correct": true,
+      "match_reason": "Strong match (4/4 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 9,
+      "prompt": "Who advised Chloe to use humor in her presentation?",
+      "memory_type": "Relationship",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 10,
+      "prompt": "Who helped cheer up Ryan after a stressful day at work?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma, Jake, and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    }
+  ],
+  "error_analysis": [
+    {
+      "question_id": 4,
+      "prompt": "Which musical genres does Chloe enjoy?",
+      "memory_type": "Preference",
+      "ground_truth": "Indie and folk, and some pop",
+      "ai_response": "Hey Emma! According to the knowledge graph, Chloe's musical preferences haven't been specifically mentioned. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 5,
+      "prompt": "Who was nervous about a presentation in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 6,
+      "prompt": "Who brought a guitar to the group picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 7,
+      "prompt": "Why was Sarah hesitant about going to the amusement park?",
+      "memory_type": "Emotional State",
+      "ground_truth": "She is terrified of heights",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was hesitant about going to the amusement park because she has a phobia of heights. This might make her uncomfortable with certain rides, like the new giant roller coaster. 😊",
+      "correct": false,
+      "match_reason": "Partial match (1/2 key words)",
+      "confidence": 0.5
+    },
+    {
+      "question_id": 9,
+      "prompt": "Who advised Chloe to use humor in her presentation?",
+      "memory_type": "Relationship",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 10,
+      "prompt": "Who helped cheer up Ryan after a stressful day at work?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma, Jake, and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 11,
+      "prompt": "What kind of vacation did Ryan suggest for Emma?",
+      "memory_type": "Preference",
+      "ground_truth": "A relaxing beach vacation",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 12,
+      "prompt": "Who offered to bring dessert to the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 13,
+      "prompt": "What role did Ryan play in helping Chloe calm her nerves?",
+      "memory_type": "Relationship",
+      "ground_truth": "He suggested opening with a joke to ease the tension",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 14,
+      "prompt": "Which song did Emma have on repeat?",
+      "memory_type": "Preference",
+      "ground_truth": "Midnight Reverie by The Moonlighters",
+      "ai_response": "Hey Emma! According to the knowledge graph, you didn't specifically mention having a song on repeat. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 15,
+      "prompt": "What did Chloe plan to buy as gifts for her friends in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Keychains and English tea",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 16,
+      "prompt": "Which TV show did the group discuss and avoid spoiling?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Galactic Heist Chronicles",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group discussed a TV show and made sure to avoid spoiling it, but unfortunately, the specific name of the show wasn't captured in the data. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 17,
+      "prompt": "Who fell asleep while watching 'The Galactic Heist'?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 18,
+      "prompt": "Who likes jazz music occasionally?",
+      "memory_type": "Preference",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 19,
+      "prompt": "Which activity did Sarah suggest instead of the roller coaster?",
+      "memory_type": "Preference",
+      "ground_truth": "Picnic and gentle hiking",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah suggested a picnic instead of the roller coaster. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "question_id": 21,
+      "prompt": "What did Jake say about his ears after the Metallica concert?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "His ears rang for two days",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 22,
+      "prompt": "What’s Chloe’s opinion about the weather in London?",
+      "memory_type": "Emotional State",
+      "ground_truth": "A bit dreary",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 23,
+      "prompt": "What food did Chloe enjoy in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Fish and chips",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 24,
+      "prompt": "Who missed the picnic due to traveling?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 25,
+      "prompt": "Who made a joke about being cheered on by their showerhead?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 26,
+      "prompt": "Which activity did the group plan for Friday night?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Karaoke",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group planned a movie night for Friday night. 📽️😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 27,
+      "prompt": "Who suggested Riverside Park for the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 28,
+      "prompt": "Who said they might do sightseeing to distract themselves from work?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Chloe",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 29,
+      "prompt": "Who described their playlist as chaotic?",
+      "memory_type": "Preference",
+      "ground_truth": "Emma",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 31,
+      "prompt": "Who planned to watch the Galactic Heist episode after dinner?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 32,
+      "prompt": "Who comforted Chloe by saying she’s the expert on stage?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 33,
+      "prompt": "Who expressed missing Chloe and her laugh?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, there isn't a specific mention of someone expressing missing Chloe and her laugh. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 34,
+      "prompt": "Who offered to bring snacks to the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 35,
+      "prompt": "Who joked about carrying a red telephone booth in their bag?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Hey Emma! According to the knowledge graph, User 5 joked about carrying a red telephone booth in their bag. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 36,
+      "prompt": "Who reassured Chloe after her presentation by calling her a rockstar?",
+      "memory_type": "Relationship",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 37,
+      "prompt": "Who made fun of Jake’s singing by mentioning wildlife?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 38,
+      "prompt": "Who sent memes to cheer Ryan up?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 39,
+      "prompt": "Who felt relieved after using a joke during a talk?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Chloe",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 40,
+      "prompt": "Who called Chloe’s city visit touristy?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe herself",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 43,
+      "prompt": "Who suggested everyone meet at SingStar Karaoke?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 44,
+      "prompt": "Who said their salad was to offset weekend junk food?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 45,
+      "prompt": "Who confessed to craving sweets because of Sarah?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 46,
+      "prompt": "Who declared spicy food wakes them up?",
+      "memory_type": "Preference",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 47,
+      "prompt": "What did Jake say about the night sky at Yosemite?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "The stars were unreal",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 48,
+      "prompt": "Who suggested a joke to help Chloe during her talk?",
+      "memory_type": "Relationship",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 49,
+      "prompt": "Who mentioned their conference trip was in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 50,
+      "prompt": "Who plans to catch up on the Galactic Heist episodes over the weekend?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Emma",
+      "ai_response": "Hey Emma! According to the knowledge graph, you asked who plans to catch up on the Galactic Heist episodes over the weekend. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    }
+  ],
+  "high_confidence_correct": [
+    {
+      "question_id": 1,
+      "prompt": "Who encountered a bear during a camping trip?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Hey Emma! According to the knowledge graph, Jake encountered a bear during his camping trip to Yosemite. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 2,
+      "prompt": "What is Ryan’s opinion on country music?",
+      "memory_type": "Preference",
+      "ground_truth": "He dislikes country music or anything twangy",
+      "ai_response": "Hey Emma! According to the knowledge graph, Ryan dislikes country music or anything too twangy. He prefers rock and metal, with a love for screaming guitars over banjos. 😊",
+      "correct": true,
+      "match_reason": "Strong match (5/5 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 3,
+      "prompt": "What dessert was Sarah tempted by during lunch?",
+      "memory_type": "Preference",
+      "ground_truth": "Chocolate donut",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was tempted by a chocolate donut for dessert during lunch. 🍩😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 8,
+      "prompt": "What food item did Emma claim she needs to wake up?",
+      "memory_type": "Preference",
+      "ground_truth": "Spicy food / hot sauce",
+      "ai_response": "Hey Emma! According to the knowledge graph, you claimed that spicy food, specifically a burrito with extra hot sauce, helps wake you up. 🌯🌶️😊",
+      "correct": true,
+      "match_reason": "Strong match (4/4 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 20,
+      "prompt": "Which park did the group decide to visit for the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Riverside Park",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group decided to visit Riverside Park for the picnic. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 30,
+      "prompt": "Who said variety is the spice of life?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah mentioned that variety is the spice of life. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 41,
+      "prompt": "What did Emma say she became one with during the weekend?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Her couch",
+      "ai_response": "Hey Emma! According to the knowledge graph, you mentioned that you \"became one with your couch\" during the weekend. 😊",
+      "correct": true,
+      "match_reason": "Strong match (1/1 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 42,
+      "prompt": "Who offered to save cookies for Chloe?",
+      "memory_type": "Relationship",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah offered to save cookies for Chloe. 😊🍪",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    }
+  ],
+  "detailed_results": [
+    {
+      "question_id": 1,
+      "prompt": "Who encountered a bear during a camping trip?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Hey Emma! According to the knowledge graph, Jake encountered a bear during his camping trip to Yosemite. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 2,
+      "prompt": "What is Ryan’s opinion on country music?",
+      "memory_type": "Preference",
+      "ground_truth": "He dislikes country music or anything twangy",
+      "ai_response": "Hey Emma! According to the knowledge graph, Ryan dislikes country music or anything too twangy. He prefers rock and metal, with a love for screaming guitars over banjos. 😊",
+      "correct": true,
+      "match_reason": "Strong match (5/5 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 3,
+      "prompt": "What dessert was Sarah tempted by during lunch?",
+      "memory_type": "Preference",
+      "ground_truth": "Chocolate donut",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was tempted by a chocolate donut for dessert during lunch. 🍩😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 4,
+      "prompt": "Which musical genres does Chloe enjoy?",
+      "memory_type": "Preference",
+      "ground_truth": "Indie and folk, and some pop",
+      "ai_response": "Hey Emma! According to the knowledge graph, Chloe's musical preferences haven't been specifically mentioned. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 5,
+      "prompt": "Who was nervous about a presentation in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 6,
+      "prompt": "Who brought a guitar to the group picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 7,
+      "prompt": "Why was Sarah hesitant about going to the amusement park?",
+      "memory_type": "Emotional State",
+      "ground_truth": "She is terrified of heights",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah was hesitant about going to the amusement park because she has a phobia of heights. This might make her uncomfortable with certain rides, like the new giant roller coaster. 😊",
+      "correct": false,
+      "match_reason": "Partial match (1/2 key words)",
+      "confidence": 0.5
+    },
+    {
+      "question_id": 8,
+      "prompt": "What food item did Emma claim she needs to wake up?",
+      "memory_type": "Preference",
+      "ground_truth": "Spicy food / hot sauce",
+      "ai_response": "Hey Emma! According to the knowledge graph, you claimed that spicy food, specifically a burrito with extra hot sauce, helps wake you up. 🌯🌶️😊",
+      "correct": true,
+      "match_reason": "Strong match (4/4 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 9,
+      "prompt": "Who advised Chloe to use humor in her presentation?",
+      "memory_type": "Relationship",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 10,
+      "prompt": "Who helped cheer up Ryan after a stressful day at work?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma, Jake, and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 11,
+      "prompt": "What kind of vacation did Ryan suggest for Emma?",
+      "memory_type": "Preference",
+      "ground_truth": "A relaxing beach vacation",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 12,
+      "prompt": "Who offered to bring dessert to the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 13,
+      "prompt": "What role did Ryan play in helping Chloe calm her nerves?",
+      "memory_type": "Relationship",
+      "ground_truth": "He suggested opening with a joke to ease the tension",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 14,
+      "prompt": "Which song did Emma have on repeat?",
+      "memory_type": "Preference",
+      "ground_truth": "Midnight Reverie by The Moonlighters",
+      "ai_response": "Hey Emma! According to the knowledge graph, you didn't specifically mention having a song on repeat. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 15,
+      "prompt": "What did Chloe plan to buy as gifts for her friends in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Keychains and English tea",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 16,
+      "prompt": "Which TV show did the group discuss and avoid spoiling?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Galactic Heist Chronicles",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group discussed a TV show and made sure to avoid spoiling it, but unfortunately, the specific name of the show wasn't captured in the data. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 17,
+      "prompt": "Who fell asleep while watching 'The Galactic Heist'?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 18,
+      "prompt": "Who likes jazz music occasionally?",
+      "memory_type": "Preference",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 19,
+      "prompt": "Which activity did Sarah suggest instead of the roller coaster?",
+      "memory_type": "Preference",
+      "ground_truth": "Picnic and gentle hiking",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah suggested a picnic instead of the roller coaster. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "question_id": 20,
+      "prompt": "Which park did the group decide to visit for the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Riverside Park",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group decided to visit Riverside Park for the picnic. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 21,
+      "prompt": "What did Jake say about his ears after the Metallica concert?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "His ears rang for two days",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 22,
+      "prompt": "What’s Chloe’s opinion about the weather in London?",
+      "memory_type": "Emotional State",
+      "ground_truth": "A bit dreary",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 23,
+      "prompt": "What food did Chloe enjoy in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Fish and chips",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 24,
+      "prompt": "Who missed the picnic due to traveling?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 25,
+      "prompt": "Who made a joke about being cheered on by their showerhead?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 26,
+      "prompt": "Which activity did the group plan for Friday night?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Karaoke",
+      "ai_response": "Hey Emma! According to the knowledge graph, the group planned a movie night for Friday night. 📽️😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 27,
+      "prompt": "Who suggested Riverside Park for the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 28,
+      "prompt": "Who said they might do sightseeing to distract themselves from work?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Chloe",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 29,
+      "prompt": "Who described their playlist as chaotic?",
+      "memory_type": "Preference",
+      "ground_truth": "Emma",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 30,
+      "prompt": "Who said variety is the spice of life?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah mentioned that variety is the spice of life. 😊",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 31,
+      "prompt": "Who planned to watch the Galactic Heist episode after dinner?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 32,
+      "prompt": "Who comforted Chloe by saying she’s the expert on stage?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 33,
+      "prompt": "Who expressed missing Chloe and her laugh?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, there isn't a specific mention of someone expressing missing Chloe and her laugh. If there's anything else you'd like to know, feel free to ask! 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 34,
+      "prompt": "Who offered to bring snacks to the picnic?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 35,
+      "prompt": "Who joked about carrying a red telephone booth in their bag?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Hey Emma! According to the knowledge graph, User 5 joked about carrying a red telephone booth in their bag. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 36,
+      "prompt": "Who reassured Chloe after her presentation by calling her a rockstar?",
+      "memory_type": "Relationship",
+      "ground_truth": "Jake",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 37,
+      "prompt": "Who made fun of Jake’s singing by mentioning wildlife?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 38,
+      "prompt": "Who sent memes to cheer Ryan up?",
+      "memory_type": "Relationship",
+      "ground_truth": "Emma and Sarah",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 39,
+      "prompt": "Who felt relieved after using a joke during a talk?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Chloe",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 40,
+      "prompt": "Who called Chloe’s city visit touristy?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe herself",
+      "ai_response": "I'm having trouble responding right now. Please try again.",
+      "correct": false,
+      "match_reason": "No valid response",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 41,
+      "prompt": "What did Emma say she became one with during the weekend?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Her couch",
+      "ai_response": "Hey Emma! According to the knowledge graph, you mentioned that you \"became one with your couch\" during the weekend. 😊",
+      "correct": true,
+      "match_reason": "Strong match (1/1 key words)",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 42,
+      "prompt": "Who offered to save cookies for Chloe?",
+      "memory_type": "Relationship",
+      "ground_truth": "Sarah",
+      "ai_response": "Hey Emma! According to the knowledge graph, Sarah offered to save cookies for Chloe. 😊🍪",
+      "correct": true,
+      "match_reason": "Exact match",
+      "confidence": 1.0
+    },
+    {
+      "question_id": 43,
+      "prompt": "Who suggested everyone meet at SingStar Karaoke?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 44,
+      "prompt": "Who said their salad was to offset weekend junk food?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 45,
+      "prompt": "Who confessed to craving sweets because of Sarah?",
+      "memory_type": "Emotional State",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 46,
+      "prompt": "Who declared spicy food wakes them up?",
+      "memory_type": "Preference",
+      "ground_truth": "Emma",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 47,
+      "prompt": "What did Jake say about the night sky at Yosemite?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "The stars were unreal",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 48,
+      "prompt": "Who suggested a joke to help Chloe during her talk?",
+      "memory_type": "Relationship",
+      "ground_truth": "Ryan",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 49,
+      "prompt": "Who mentioned their conference trip was in London?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Chloe",
+      "ai_response": "Error: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=20)",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    },
+    {
+      "question_id": 50,
+      "prompt": "Who plans to catch up on the Galactic Heist episodes over the weekend?",
+      "memory_type": "Factual Recall",
+      "ground_truth": "Emma",
+      "ai_response": "Hey Emma! According to the knowledge graph, you asked who plans to catch up on the Galactic Heist episodes over the weekend. 😊",
+      "correct": false,
+      "match_reason": "Weak match",
+      "confidence": 0.0
+    }
+  ]
+}
