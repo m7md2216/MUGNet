@@ -212,7 +212,7 @@ def main():
     """Main function - modify the file path to your conversation script"""
     
     # 🔧 CONFIGURATION - Change this to your conversation script file
-    conversation_file = "conversation_script.txt"  # Change this path!
+    conversation_file = "attached_assets/Pasted-Day-1-Emma-Ugh-Monday-again-sips-coffee-I-already-miss-the-weekend-Jake-Haha-same-here--1753727481195_1753727481195.txt"  # Change this path!
     
     print("📖 CONVERSATION IMPORTER TOOL")
     print("=" * 60)
