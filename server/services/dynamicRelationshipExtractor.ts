@@ -63,6 +63,10 @@ Relationship types should be semantic and meaningful, such as:
 - PREFERS_OVER (Ryan PREFERS_OVER rock)
 - VISITED_FOR (Jake VISITED_FOR camping)
 - DISLIKES_GENRE (Ryan DISLIKES_GENRE country)
+- LISTENS_TO_REPEATEDLY (Emma LISTENS_TO_REPEATEDLY "Midnight Reverie")
+- HAS_ON_REPEAT (Emma HAS_ON_REPEAT "song name")
+- WATCHES_SHOW (group WATCHES_SHOW "TV show name")
+- ENJOYS_FOOD (Emma ENJOYS_FOOD "burrito with hot sauce")
 - WORKS_AT, LIVES_IN, ENJOYS_ACTIVITY, RECOMMENDS_TO, etc.
 
 Only extract relationships that are clearly stated or strongly implied. Include confidence scores (0.0-1.0).

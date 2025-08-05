@@ -304,10 +304,13 @@ Return only a JSON object with these exact keys:
 - "locations": places, venues, buildings, cities, addresses (like "downtown", "Marco's Bistro", "Philadelphia")  
 - "activities": actions, events, hobbies, plans (like "hiking", "dinner", "meeting", "trip")
 - "time_references": dates, times, schedules (like "today", "next week", "Friday")
+- "songs": song titles, album names, artist names (like "Midnight Reverie", "The Moonlighters", "Beatles")
+- "tv_shows": TV shows, movies, series (like "Galactic Heist Chronicles", "The Office", "Breaking Bad")
+- "food_items": specific foods, dishes, ingredients (like "burrito", "hot sauce", "chocolate donut")
 
-Only include entities that are clearly mentioned. Keep names short and lowercase.
+Only include entities that are clearly mentioned. Keep song titles and show names in their original case, others lowercase.
 
-Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "dinner"], "time_references": ["today"]}`
+Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "dinner"], "time_references": ["today"], "songs": ["Midnight Reverie"], "tv_shows": ["Galactic Heist Chronicles"], "food_items": ["burrito", "hot sauce"]}`
         }],
         response_format: { type: "json_object" },
         max_tokens: 200,
@@ -318,7 +321,10 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
       
       entities.events = [
         ...(result.locations || []),
-        ...(result.activities || [])
+        ...(result.activities || []),
+        ...(result.songs || []),
+        ...(result.tv_shows || []),
+        ...(result.food_items || [])
       ];
       entities.dates = result.time_references || [];
       
@@ -547,18 +553,6 @@ Example: {"locations": ["downtown", "restaurant"], "activities": ["hiking", "din
       );
     } catch (error) {
       console.warn('Failed to create/update relationship:', error);
-    }
-  }
-
-  async clearAllData(): Promise<void> {
-    if (!this.session) return;
-    
-    try {
-      // Clear all nodes and relationships 
-      await this.session.run('MATCH (n) DETACH DELETE n');
-      console.log('Neo4j database cleared successfully');
-    } catch (error) {
-      console.warn('Failed to clear Neo4j database:', error);
     }
   }
 
