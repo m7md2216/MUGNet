@@ -163,7 +163,7 @@ class ConversationImporter:
                 
                 response = requests.post(f"{self.base_url}/api/messages", json=message_data)
                 
-                if response.status_code == 201:
+                if response.status_code in [200, 201]:
                     successful_imports += 1
                     self.imported_messages.append({
                         'speaker': speaker,

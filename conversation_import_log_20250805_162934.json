@@ -1,0 +1,14 @@
+{
+  "import_timestamp": "2025-08-05T16:29:34.147204",
+  "source_file": "conversation_script.txt",
+  "total_messages": 178,
+  "successful_imports": 0,
+  "users_created": [
+    "Jake",
+    "Chloe",
+    "Ryan",
+    "Sarah",
+    "Emma"
+  ],
+  "imported_messages": []
+}

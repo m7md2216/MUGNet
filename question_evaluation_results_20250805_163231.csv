@@ -1,0 +1,4 @@
+Question Number,Memory Type,Question,Ground Truth,AI Response,Response Length,Contains Error,Timestamp
+1,Factual Recall,Who went camping?,Jake,Error: Failed after 3 attempts,30,True,2025-08-05T16:31:51.397870
+2,Preference,What does Emma like to eat?,Burritos with hot sauce,Error: Failed after 3 attempts,30,True,2025-08-05T16:32:12.965047
+3,Event Memory,Which TV show did the group discuss?,Galactic Heist Chronicles,Error: Failed after 3 attempts,30,True,2025-08-05T16:32:31.203528

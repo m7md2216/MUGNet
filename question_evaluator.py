@@ -298,7 +298,7 @@ def main():
     """Main function - configure your questions file here"""
     
     # 🔧 CONFIGURATION - Change this to your questions file
-    questions_file = "evaluation_questions.csv"  # Change this path!
+    questions_file = "example_questions.csv"  # Change this path!
     
     print("🧪 QUESTION EVALUATOR TOOL")
     print("=" * 60)
