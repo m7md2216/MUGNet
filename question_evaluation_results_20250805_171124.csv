@@ -1,0 +1,4 @@
+Question Number,Memory Type,Question,Ground Truth,AI Response,Response Length,Contains Error,Timestamp
+1,Factual Recall,Who went camping?,Jake,Jake went camping at Yosemite with his brother. It sounds like they had an amazing time!,88,False,2025-08-05T17:11:04.333008
+2,Preference,What does Emma like to eat?,Burritos with hot sauce,"Emma seems to enjoy spicy food. She mentioned grabbing a burrito with extra hot sauce to add some spice to her Monday. She also noted that spicy food wakes her up, indicating a preference for flavorful and spicy meals. 🌶️",221,False,2025-08-05T17:11:13.984616
+3,Event Memory,Which TV show did the group discuss?,Galactic Heist Chronicles,"The group discussed a TV show, but the specific name of the show isn't mentioned in the knowledge graph. If you have more details or context, I might be able to help further!",174,False,2025-08-05T17:11:24.749163
