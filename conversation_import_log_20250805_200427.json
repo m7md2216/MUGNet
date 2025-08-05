@@ -1,0 +1,1241 @@
+{
+  "import_timestamp": "2025-08-05T20:04:27.701971",
+  "source_file": "attached_assets/Pasted-Day-1-Emma-Ugh-Monday-again-sips-coffee-I-already-miss-the-weekend-Jake-Haha-same-here--1753727481195_1753727481195.txt",
+  "total_messages": 204,
+  "successful_imports": 204,
+  "users_created": [
+    "Ryan",
+    "AI",
+    "Sarah",
+    "All",
+    "Chloe",
+    "Jake",
+    "Emma"
+  ],
+  "imported_messages": [
+    {
+      "speaker": "Emma",
+      "content": "Ugh, Monday again. *sips coffee* I already miss the weekend.",
+      "message_id": null,
+      "import_order": 1
+    },
+    {
+      "speaker": "Jake",
+      "content": "Haha, same here. I\u2019m struggling to focus this morning.",
+      "message_id": null,
+      "import_order": 2
+    },
+    {
+      "speaker": "Sarah",
+      "content": "@emma I feel you \u2013 I spilled coffee on my shirt rushing to our 8 AM meeting \ud83d\ude05. Not the best start.",
+      "message_id": null,
+      "import_order": 3
+    },
+    {
+      "speaker": "Emma",
+      "content": "Oh no! Monday chaos in full force. Did anything good happen this weekend at least?",
+      "message_id": null,
+      "import_order": 4
+    },
+    {
+      "speaker": "Jake",
+      "content": "Actually yes! I went camping at Yosemite with my brother. It was amazing.",
+      "message_id": null,
+      "import_order": 5
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Wow, Yosemite? Lucky you! How was it?",
+      "message_id": null,
+      "import_order": 6
+    },
+    {
+      "speaker": "Jake",
+      "content": "It was incredible \u2013 we hiked to a waterfall and the views were breathtaking. At night, the stars were unreal.",
+      "message_id": null,
+      "import_order": 7
+    },
+    {
+      "speaker": "Emma",
+      "content": "That sounds gorgeous. I\u2019m jealous. Any adventures with wildlife? \ud83d\udc3b",
+      "message_id": null,
+      "import_order": 8
+    },
+    {
+      "speaker": "Jake",
+      "content": "Funny you ask\u2026 We did encounter a bear near our campsite! It was sniffing around our food stash. I nearly had a heart attack, but we made loud noises and it ran off.",
+      "message_id": null,
+      "import_order": 9
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Yikes! I would\u2019ve panicked. You\u2019re brave, @jake.",
+      "message_id": null,
+      "import_order": 10
+    },
+    {
+      "speaker": "Jake",
+      "content": "Haha, I was terrified, not gonna lie. But it makes a great story now.",
+      "message_id": null,
+      "import_order": 11
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Definitely. That\u2019s a memory for the books. My weekend feels so boring in comparison \u2013 just did laundry and watched Netflix.",
+      "message_id": null,
+      "import_order": 12
+    },
+    {
+      "speaker": "Emma",
+      "content": "Same... I basically became one with my couch yesterday. Next weekend, we all need something exciting like Jake\u2019s trip!",
+      "message_id": null,
+      "import_order": 13
+    },
+    {
+      "speaker": "Sarah",
+      "content": "I\u2019m in! Maybe without the bears, though. \ud83d\ude02",
+      "message_id": null,
+      "import_order": 14
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Lunchtime, folks \u2013 what\u2019s everyone having? I\u2019m starving.",
+      "message_id": null,
+      "import_order": 15
+    },
+    {
+      "speaker": "Emma",
+      "content": "I grabbed a burrito. Extra hot sauce because this Monday needs some spice \ud83c\udf36\ufe0f.",
+      "message_id": null,
+      "import_order": 16
+    },
+    {
+      "speaker": "Sarah",
+      "content": "You and your hot sauce, @emma. How can your tongue even taste anything after that?",
+      "message_id": null,
+      "import_order": 17
+    },
+    {
+      "speaker": "Emma",
+      "content": "Spicy food is life! It wakes me up. \ud83d\ude07",
+      "message_id": null,
+      "import_order": 18
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I\u2019m having a simple salad. Trying to be healthy after all the junk I ate over the weekend.",
+      "message_id": null,
+      "import_order": 19
+    },
+    {
+      "speaker": "Sarah",
+      "content": "sigh I wish I had your willpower. I\u2019m already eyeing a chocolate donut for dessert.",
+      "message_id": null,
+      "import_order": 20
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Dooonut\u2026 You\u2019re making me crave sweets now, @sarah. \ud83d\ude05",
+      "message_id": null,
+      "import_order": 21
+    },
+    {
+      "speaker": "Emma",
+      "content": "Haha sorry, not sorry. Oh, did anyone catch that new movie on Netflix? The Galactic Heist?",
+      "message_id": null,
+      "import_order": 22
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I did! It was actually fun \u2013 cheesy effects but a good time.",
+      "message_id": null,
+      "import_order": 23
+    },
+    {
+      "speaker": "Sarah",
+      "content": "I started it but fell asleep (blame Sunday laziness, not the movie). Worth finishing then?",
+      "message_id": null,
+      "import_order": 24
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Yeah, it picks up later. And the twist at the end was wild! (No spoilers, promise.)",
+      "message_id": null,
+      "import_order": 25
+    },
+    {
+      "speaker": "Emma",
+      "content": "Okay, I\u2019ll give it another shot tonight. Maybe with popcorn... and that donut you mentioned. \ud83d\ude09",
+      "message_id": null,
+      "import_order": 26
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Now I\u2019m jealous. Save some for me, @emma!",
+      "message_id": null,
+      "import_order": 27
+    },
+    {
+      "speaker": "Ryan",
+      "content": "You guys are gonna ruin my healthy streak. \ud83d\ude2d resisting temptation...",
+      "message_id": null,
+      "import_order": 28
+    },
+    {
+      "speaker": "Emma",
+      "content": "Balance, my friend. A little treat won\u2019t hurt.",
+      "message_id": null,
+      "import_order": 29
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Guys, have you heard the new song by The Moonlighters? It\u2019s trending everywhere.",
+      "message_id": null,
+      "import_order": 30
+    },
+    {
+      "speaker": "Emma",
+      "content": "Ooh yes! \u201cMidnight Reverie,\u201d right? I\u2019ve had it on repeat. Love the vibes.",
+      "message_id": null,
+      "import_order": 31
+    },
+    {
+      "speaker": "Jake",
+      "content": "It\u2019s pretty catchy. Kind of an 80s synth feel. I\u2019m digging it.",
+      "message_id": null,
+      "import_order": 32
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Eh, not my style. Confession time: I just can\u2019t stand country music or anything too twangy, and this song has a bit of that. \ud83d\ude16",
+      "message_id": null,
+      "import_order": 33
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Haha, @ryan you and your musical hot takes! Good thing The Moonlighters are more pop-rock than country.",
+      "message_id": null,
+      "import_order": 34
+    },
+    {
+      "speaker": "Emma",
+      "content": "So noted: no country songs when we road trip with Ryan. What do you prefer?",
+      "message_id": null,
+      "import_order": 35
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I\u2019m a rock/metal guy. Give me screaming guitars over banjos any day.",
+      "message_id": null,
+      "import_order": 36
+    },
+    {
+      "speaker": "Jake",
+      "content": "I remember \u2013 you dragged me to that Metallica tribute concert last year. My ears rang for two days, bro. \ud83e\udd23",
+      "message_id": null,
+      "import_order": 37
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Worth it! What about you all? @emma, pop fan obviously. @jake likes rock. @chloe?",
+      "message_id": null,
+      "import_order": 38
+    },
+    {
+      "speaker": "Chloe",
+      "content": "I\u2019m into indie and folk. Acoustic, soulful stuff is my jam. And yeah, some pop.",
+      "message_id": null,
+      "import_order": 39
+    },
+    {
+      "speaker": "Sarah",
+      "content": "I love indie too, and throw in some jazz when I\u2019m in the mood. Variety is the spice of life, right?",
+      "message_id": null,
+      "import_order": 40
+    },
+    {
+      "speaker": "Emma",
+      "content": "Totally. My playlist is a chaotic mix from classical to K-pop. Keeps things interesting.",
+      "message_id": null,
+      "import_order": 41
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Speaking of playlists, we should swap favorites sometime. I love discovering new music from you guys.",
+      "message_id": null,
+      "import_order": 42
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Sure, as long as you don\u2019t sneak country onto mine, haha.",
+      "message_id": null,
+      "import_order": 43
+    },
+    {
+      "speaker": "Sarah",
+      "content": "No Dolly Parton for @ryan, got it. \ud83d\ude09",
+      "message_id": null,
+      "import_order": 44
+    },
+    {
+      "speaker": "Jake",
+      "content": "Hey, nothing wrong with a little Dolly! But fine, we\u2019ll curate a \u201cNo-Country\u201d playlist just for you, Ryan.",
+      "message_id": null,
+      "import_order": 45
+    },
+    {
+      "speaker": "Ryan",
+      "content": "You\u2019re all too kind. I feel so loved \ud83d\ude43.",
+      "message_id": null,
+      "import_order": 46
+    },
+    {
+      "speaker": "Emma",
+      "content": "Alright, midweek check-in \u2013 anyone up for doing something fun this weekend? We talked about not being boring, remember?",
+      "message_id": null,
+      "import_order": 47
+    },
+    {
+      "speaker": "Jake",
+      "content": "Yes! I\u2019m down. Maybe another hike or a day trip somewhere scenic? Minus the bears this time.",
+      "message_id": null,
+      "import_order": 48
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Scenic sounds nice, but I might be busy prepping for my conference\u2026 If I can spare a day, I will!",
+      "message_id": null,
+      "import_order": 49
+    },
+    {
+      "speaker": "Sarah",
+      "content": "How about the amusement park? They opened that new giant roller coaster. \ud83c\udfa2",
+      "message_id": null,
+      "import_order": 50
+    },
+    {
+      "speaker": "Emma",
+      "content": "Ooh, that could be epic. @sarah, you in?",
+      "message_id": null,
+      "import_order": 51
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Ummm you know me\u2026 I\u2019m terrified of heights. That coaster is like 300 feet high. \ud83d\ude28",
+      "message_id": null,
+      "import_order": 52
+    },
+    {
+      "speaker": "Emma",
+      "content": "Come on, it\u2019ll be fun! I\u2019ll sit next to you and hold your hand. Or we could try bungee jumping instead \u2013 go big or go home! \ud83d\ude09",
+      "message_id": null,
+      "import_order": 53
+    },
+    {
+      "speaker": "Sarah",
+      "content": "@emma, are you trying to give me a heart attack?! I\u2019d rather wrestle a lion than go bungee jumping! Nope, nope, nope!",
+      "message_id": null,
+      "import_order": 54
+    },
+    {
+      "speaker": "Jake",
+      "content": "LOL! imagining Sarah vs. lion That escalated quickly. \ud83d\ude02",
+      "message_id": null,
+      "import_order": 55
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Hahaha, poor Sarah. We promise no forcing anyone into extreme sports.",
+      "message_id": null,
+      "import_order": 56
+    },
+    {
+      "speaker": "Emma",
+      "content": "Alright, alright. Maybe something all of us will enjoy\u2026 like a picnic and gentle hiking? We can skip the heights.",
+      "message_id": null,
+      "import_order": 57
+    },
+    {
+      "speaker": "Sarah",
+      "content": "relieved sigh A picnic sounds lovely, actually. Flat ground and food, much safer.",
+      "message_id": null,
+      "import_order": 58
+    },
+    {
+      "speaker": "Chloe",
+      "content": "I second that. We could drive to Riverside Park on Saturday, it has nice trails and open fields.",
+      "message_id": null,
+      "import_order": 59
+    },
+    {
+      "speaker": "Jake",
+      "content": "Great idea. Let\u2019s do a picnic at Riverside Park. I\u2019ll bring my guitar for some music (no bungee cords attached).",
+      "message_id": null,
+      "import_order": 60
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Sweet, I\u2019ll bring snacks. Sarah\u2019s on dessert duty with those donuts, perhaps? \ud83d\ude0b",
+      "message_id": null,
+      "import_order": 61
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Haha, sure! I can bake cookies too. See, that\u2019s the kind of excitement I can handle.",
+      "message_id": null,
+      "import_order": 62
+    },
+    {
+      "speaker": "Emma",
+      "content": "Awesome, it\u2019s a plan. Saturday picnic it is. And maybe someday we\u2019ll cure Sarah\u2019s height phobia\u2026 someday.",
+      "message_id": null,
+      "import_order": 63
+    },
+    {
+      "speaker": "Sarah",
+      "content": "rolls eyes One fear at a time, please.",
+      "message_id": null,
+      "import_order": 64
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Hey guys\u2026 Can I admit something? I\u2019m really nervous about this conference I have next week in London. \ud83d\ude25",
+      "message_id": null,
+      "import_order": 65
+    },
+    {
+      "speaker": "Emma",
+      "content": "Aww @chloe, what\u2019s up? Is it the presentation you have to give?",
+      "message_id": null,
+      "import_order": 66
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Yeah. I have to present our project in front of a big audience, and just thinking about it makes my stomach flip.",
+      "message_id": null,
+      "import_order": 67
+    },
+    {
+      "speaker": "Sarah",
+      "content": "You\u2019re gonna do great, Chloe! You know your stuff inside out.",
+      "message_id": null,
+      "import_order": 68
+    },
+    {
+      "speaker": "Jake",
+      "content": "Exactly. You\u2019ve practiced so much. Remember last month when you walked us through your slides? You were a rock star.",
+      "message_id": null,
+      "import_order": 69
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Thanks, guys. It\u2019s different when it\u2019s strangers and industry experts, though. I keep imagining everything that could go wrong.",
+      "message_id": null,
+      "import_order": 70
+    },
+    {
+      "speaker": "Emma",
+      "content": "Totally normal to feel that way. But hey, even if you stumble, just remember you\u2019re the expert on that stage. Own it.",
+      "message_id": null,
+      "import_order": 71
+    },
+    {
+      "speaker": "Ryan",
+      "content": "And if you get nervous, maybe crack a little joke at the start \u2013 laughter calms everyone down. It works for me when I have to lead meetings.",
+      "message_id": null,
+      "import_order": 72
+    },
+    {
+      "speaker": "Chloe",
+      "content": "That\u2019s a good idea, actually. Maybe I will. Like, \u201cDon\u2019t mind me shaking, I just had too much coffee.\u201d \ud83d\ude05",
+      "message_id": null,
+      "import_order": 73
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Haha yes, a little self-deprecation can break the ice.",
+      "message_id": null,
+      "import_order": 74
+    },
+    {
+      "speaker": "Emma",
+      "content": "Also, deep breaths. And visualize us sitting in the front row cheering you on (because we totally would if we could be there!).",
+      "message_id": null,
+      "import_order": 75
+    },
+    {
+      "speaker": "Chloe",
+      "content": "You guys are the best \u2764\ufe0f. I\u2019m feeling a bit calmer hearing all that.",
+      "message_id": null,
+      "import_order": 76
+    },
+    {
+      "speaker": "Jake",
+      "content": "Anytime. You\u2019ve got this. And London is an awesome city \u2013 try to enjoy it a little between conference stuff.",
+      "message_id": null,
+      "import_order": 77
+    },
+    {
+      "speaker": "Chloe",
+      "content": "True, I\u2019ve never been. Maybe I\u2019ll do some sightseeing to take my mind off work.",
+      "message_id": null,
+      "import_order": 78
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Definitely! Think of it as an adventure. We expect photos of you at Big Ben and riding a double-decker bus, please.",
+      "message_id": null,
+      "import_order": 79
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Deal. I\u2019ll spam the chat with touristy pics, brace yourselves.",
+      "message_id": null,
+      "import_order": 80
+    },
+    {
+      "speaker": "Emma",
+      "content": "Can\u2019t wait! And seriously, anytime you need a confidence boost, just message us. We\u2019ll remind you how amazing you are.",
+      "message_id": null,
+      "import_order": 81
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Thank you \ud83d\udc95. I will. Having friends like you is everything.",
+      "message_id": null,
+      "import_order": 82
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Hi everyone! Quick update: I\u2019m at the airport now, about to fly to London. Boarding in 20 minutes! \u2708\ufe0f",
+      "message_id": null,
+      "import_order": 83
+    },
+    {
+      "speaker": "Emma",
+      "content": "Woo! Safe travels, @chloe. You\u2019re gonna rock that conference!",
+      "message_id": null,
+      "import_order": 84
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Good luck, Chloe! And enjoy the free airplane pretzels \ud83d\ude09.",
+      "message_id": null,
+      "import_order": 85
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Haha thanks. I\u2019ll text again when I land (though it\u2019ll be super early your time). Time zones are wild.",
+      "message_id": null,
+      "import_order": 86
+    },
+    {
+      "speaker": "Jake",
+      "content": "We\u2019ll be here whenever you ping. Take care and have a good flight!",
+      "message_id": null,
+      "import_order": 87
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Yes, safe flight! We\u2019ll miss you at the picnic, but we\u2019ll save you some cookies for when you\u2019re back. \ud83d\ude0b",
+      "message_id": null,
+      "import_order": 88
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Aww, you guys remembered. I\u2019m so sad to miss the picnic, but duty calls. Eat a s\u2019more for me!",
+      "message_id": null,
+      "import_order": 89
+    },
+    {
+      "speaker": "Emma",
+      "content": "Will do. We\u2019ll make sure to have extra fun to tell you about later.",
+      "message_id": null,
+      "import_order": 90
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Good, I expect stories. Alright, they\u2019re calling my group. Gotta go. hugs (virtually).",
+      "message_id": null,
+      "import_order": 91
+    },
+    {
+      "speaker": "Sarah",
+      "content": "hugs! \ud83e\udd17",
+      "message_id": null,
+      "import_order": 92
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Byee! You got this!",
+      "message_id": null,
+      "import_order": 93
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Ugh, what a day. Can I rant for a second?",
+      "message_id": null,
+      "import_order": 94
+    },
+    {
+      "speaker": "Emma",
+      "content": "Uh-oh, go ahead @ryan. What happened?",
+      "message_id": null,
+      "import_order": 95
+    },
+    {
+      "speaker": "Ryan",
+      "content": "My boss dumped a huge client project on me last minute. It\u2019s due in two days and half the team is out sick. I\u2019m so stressed right now.",
+      "message_id": null,
+      "import_order": 96
+    },
+    {
+      "speaker": "Jake",
+      "content": "Yikes. That\u2019s rough, man.",
+      "message_id": null,
+      "import_order": 97
+    },
+    {
+      "speaker": "Ryan",
+      "content": "And the client keeps changing requirements! I\u2019ve been getting nonstop emails. I swear, I\u2019ve reworked the plan three times today. \ud83d\ude24",
+      "message_id": null,
+      "import_order": 98
+    },
+    {
+      "speaker": "Emma",
+      "content": "That sounds exhausting. Are you gonna be able to finish on time?",
+      "message_id": null,
+      "import_order": 99
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I hope so? I\u2019ll probably be pulling a late night tonight and tomorrow. So much for work-life balance.",
+      "message_id": null,
+      "import_order": 100
+    },
+    {
+      "speaker": "Jake",
+      "content": "Wish I could help somehow. I know how crazy client demands can get.",
+      "message_id": null,
+      "import_order": 101
+    },
+    {
+      "speaker": "Emma",
+      "content": "Maybe talk to your boss? It\u2019s not fair to drop it all on you like that.",
+      "message_id": null,
+      "import_order": 102
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I did, but he\u2019s under pressure too, so it just rolls downhill. sigh I needed to vent. Thanks for listening, guys.",
+      "message_id": null,
+      "import_order": 103
+    },
+    {
+      "speaker": "Emma",
+      "content": "Anytime. Rant channel always open. You got this \u2013 just remember to take short breaks so you don\u2019t burn out.",
+      "message_id": null,
+      "import_order": 104
+    },
+    {
+      "speaker": "Ryan",
+      "content": "True. I might go walk around the block now to cool off.",
+      "message_id": null,
+      "import_order": 105
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Poor Ryan. That\u2019s a lot of pressure.",
+      "message_id": null,
+      "import_order": 106
+    },
+    {
+      "speaker": "Jake",
+      "content": "Yeah, hopefully he can power through. Maybe we should send him a funny meme or something later to cheer him up.",
+      "message_id": null,
+      "import_order": 107
+    },
+    {
+      "speaker": "Emma",
+      "content": "Good idea. Oh, speaking of, did you guys see the meme I sent earlier? The one with the cat at the keyboard? \ud83d\ude02",
+      "message_id": null,
+      "import_order": 108
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Haha yes! That was basically Ryan today frantically typing at work. Perfect timing.",
+      "message_id": null,
+      "import_order": 109
+    },
+    {
+      "speaker": "Jake",
+      "content": "Exactly. We\u2019ll find more. By the way, anyone watch last night\u2019s episode of Galactic Heist Chronicles? I need to discuss that ending!",
+      "message_id": null,
+      "import_order": 110
+    },
+    {
+      "speaker": "Emma",
+      "content": "I did! I literally gasped out loud. No spoilers for @ryan, though, not sure if he\u2019s caught up.",
+      "message_id": null,
+      "import_order": 111
+    },
+    {
+      "speaker": "Sarah",
+      "content": "I haven\u2019t seen it yet either, actually. Planning to watch tonight, so shhh!",
+      "message_id": null,
+      "import_order": 112
+    },
+    {
+      "speaker": "Jake",
+      "content": "Alright, zipping lips \ud83e\udd10. But you both are in for a treat. The show just keeps getting better.",
+      "message_id": null,
+      "import_order": 113
+    },
+    {
+      "speaker": "Emma",
+      "content": "Agreed. The character development this season has been top-notch. I was so proud of Aria in that final scene.",
+      "message_id": null,
+      "import_order": 114
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Now I\u2019m extra intrigued. Okay, definitely watching after dinner.",
+      "message_id": null,
+      "import_order": 115
+    },
+    {
+      "speaker": "Jake",
+      "content": "Do it! Then we can all scream about it together.",
+      "message_id": null,
+      "import_order": 116
+    },
+    {
+      "speaker": "Emma",
+      "content": "Haha deal. And let\u2019s remember to send Ryan some memes later, poor guy will need the laughs.",
+      "message_id": null,
+      "import_order": 117
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Already saved a few good ones to send. What are friends for, right? \ud83d\ude0a",
+      "message_id": null,
+      "import_order": 118
+    },
+    {
+      "speaker": "Emma",
+      "content": "Happy Friday! We made it through the week, guys. How\u2019s everyone doing?",
+      "message_id": null,
+      "import_order": 119
+    },
+    {
+      "speaker": "Jake",
+      "content": "Pretty good. Tired, but good. Any plans tonight?",
+      "message_id": null,
+      "import_order": 120
+    },
+    {
+      "speaker": "Sarah",
+      "content": "I\u2019m free. What\u2019s up?",
+      "message_id": null,
+      "import_order": 121
+    },
+    {
+      "speaker": "Emma",
+      "content": "How about karaoke? \ud83c\udfa4 It\u2019s been ages since we embarrassingly belted out 90s songs.",
+      "message_id": null,
+      "import_order": 122
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Oh man, my vocal cords are not ready... but I\u2019m in! I could use the unwinding.",
+      "message_id": null,
+      "import_order": 123
+    },
+    {
+      "speaker": "Jake",
+      "content": "I warn you all, my singing talent is legendary \u2014 I\u2019m sure the neighborhood cats will gather to applaud (or howl). \ud83d\ude06",
+      "message_id": null,
+      "import_order": 124
+    },
+    {
+      "speaker": "Sarah",
+      "content": "LOL @jake, we remember your \u201cmelodic\u201d shower singing from the camping trip. The frogs went silent in awe. \ud83d\ude09",
+      "message_id": null,
+      "import_order": 125
+    },
+    {
+      "speaker": "Emma",
+      "content": "Haha, Jake\u2019s so good, he scares and impresses wildlife simultaneously. Truly special.",
+      "message_id": null,
+      "import_order": 126
+    },
+    {
+      "speaker": "Jake",
+      "content": "You joke, but it\u2019s true. My showerhead gives me a standing ovation every morning.",
+      "message_id": null,
+      "import_order": 127
+    },
+    {
+      "speaker": "Ryan",
+      "content": "\ud83d\ude02 We\u2019ll need earplugs and a video recording of this performance. For science, of course.",
+      "message_id": null,
+      "import_order": 128
+    },
+    {
+      "speaker": "Emma",
+      "content": "This is gonna be epic. Okay, let\u2019s meet at SingStar Karaoke at 8? They have a private room we can rent.",
+      "message_id": null,
+      "import_order": 129
+    },
+    {
+      "speaker": "Jake",
+      "content": "Sounds good. I\u2019ll bring my amazing song list (prepare your ears).",
+      "message_id": null,
+      "import_order": 130
+    },
+    {
+      "speaker": "Sarah",
+      "content": "And I\u2019ll bring throat lozenges\u2026 for all of us after we try hitting those high notes, haha.",
+      "message_id": null,
+      "import_order": 131
+    },
+    {
+      "speaker": "Ryan",
+      "content": "I\u2019ll just scream into the mic and call it punk rock. That counts, right?",
+      "message_id": null,
+      "import_order": 132
+    },
+    {
+      "speaker": "Emma",
+      "content": "As long as we\u2019re having fun, anything goes! Can\u2019t wait.",
+      "message_id": null,
+      "import_order": 133
+    },
+    {
+      "speaker": "Jake",
+      "content": "This is the hype I needed. Friday night karaoke, here we come!",
+      "message_id": null,
+      "import_order": 134
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Woohoo! \ud83c\udf89 See you all at 8 for the concert of the century (in our minds).",
+      "message_id": null,
+      "import_order": 135
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Hello from London, friends! \ud83c\udf27\ufe0f Guess what \u2013 I survived my presentation!",
+      "message_id": null,
+      "import_order": 136
+    },
+    {
+      "speaker": "Emma",
+      "content": "Yay!!! \ud83c\udf8a How did it go?!",
+      "message_id": null,
+      "import_order": 137
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Surprisingly well. I was shaking at first, but then I told a little joke (thanks to @ryan\u2019s idea) and people laughed, and I just flowed from there.",
+      "message_id": null,
+      "import_order": 138
+    },
+    {
+      "speaker": "Jake",
+      "content": "Knew you\u2019d crush it. We\u2019re so proud of you!",
+      "message_id": null,
+      "import_order": 139
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Absolutely! Congrats, Chloe!",
+      "message_id": null,
+      "import_order": 140
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Great job, @chloe! See, told you a joke would do the trick. What joke did you go with?",
+      "message_id": null,
+      "import_order": 141
+    },
+    {
+      "speaker": "Chloe",
+      "content": "I started with, \u201cI had two cups of coffee so I could power through this \u2013 if I talk too fast, blame the caffeine.\u201d Got a chuckle, and I felt a lot more at ease.",
+      "message_id": null,
+      "import_order": 142
+    },
+    {
+      "speaker": "Emma",
+      "content": "Hah! Classic. And very you. Love it.",
+      "message_id": null,
+      "import_order": 143
+    },
+    {
+      "speaker": "Chloe",
+      "content": "\ud83d\ude0a Now that the hard part\u2019s done, I have a free day here tomorrow. Already did the Big Ben and Buckingham Palace tour yesterday after my talk. So touristy, I know.",
+      "message_id": null,
+      "import_order": 144
+    },
+    {
+      "speaker": "Sarah",
+      "content": "We want pics! How\u2019s London treating you aside from work?",
+      "message_id": null,
+      "import_order": 145
+    },
+    {
+      "speaker": "Chloe",
+      "content": "It\u2019s awesome. The city is so vibrant. The weather\u2019s a bit dreary, but I did have amazing fish and chips at a local pub. Also, British accents everywhere \u2013 I\u2019m in heaven. \ud83d\ude0d",
+      "message_id": null,
+      "import_order": 146
+    },
+    {
+      "speaker": "Jake",
+      "content": "Living your Sherlock Holmes dream, I see. Any souvenir requests?",
+      "message_id": null,
+      "import_order": 147
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Bring me one of those red telephone booths, please.",
+      "message_id": null,
+      "import_order": 148
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Sure, I\u2019ll just pop one in my carry-on. \ud83d\ude1c",
+      "message_id": null,
+      "import_order": 149
+    },
+    {
+      "speaker": "Emma",
+      "content": "Lol! But seriously, maybe some English tea? I wouldn\u2019t mind feeling fancy with authentic Earl Grey.",
+      "message_id": null,
+      "import_order": 150
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Done. I\u2019ll get a variety. And something for each of you \u2013 I saw cute keychains and stuff.",
+      "message_id": null,
+      "import_order": 151
+    },
+    {
+      "speaker": "Sarah",
+      "content": "You\u2019re so sweet. When do you head back?",
+      "message_id": null,
+      "import_order": 152
+    },
+    {
+      "speaker": "Chloe",
+      "content": "My flight home is day after tomorrow. I\u2019ll be pretty jet-lagged, but I can\u2019t wait to be home and see you all.",
+      "message_id": null,
+      "import_order": 153
+    },
+    {
+      "speaker": "Emma",
+      "content": "Can\u2019t wait to have you back! We\u2019ll plan a proper celebration for your success.",
+      "message_id": null,
+      "import_order": 154
+    },
+    {
+      "speaker": "Chloe",
+      "content": "Aww, you guys... I\u2019m just excited to share stories when I return. Oh, they\u2019re doing a group dinner now, I gotta run. Talk later!",
+      "message_id": null,
+      "import_order": 155
+    },
+    {
+      "speaker": "All",
+      "content": "Bye Chloe! \ud83e\udd17 Enjoy!",
+      "message_id": null,
+      "import_order": 156
+    },
+    {
+      "speaker": "Emma",
+      "content": "Good morning, gang! Guess what \u2013 Chloe comes back tomorrow. We should do a welcome-back dinner.",
+      "message_id": null,
+      "import_order": 157
+    },
+    {
+      "speaker": "Jake",
+      "content": "Great idea. Let\u2019s do it. Maybe at Pizzeria Roma? She loves Italian.",
+      "message_id": null,
+      "import_order": 158
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Yes! Their wood-fired pizza is awesome. I\u2019m in.",
+      "message_id": null,
+      "import_order": 159
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Count me in too. I\u2019ve missed @chloe and her laugh. Dinner and story time.",
+      "message_id": null,
+      "import_order": 160
+    },
+    {
+      "speaker": "Emma",
+      "content": "I\u2019ll make a reservation for tomorrow night. 7 PM okay for everyone?",
+      "message_id": null,
+      "import_order": 161
+    },
+    {
+      "speaker": "Jake",
+      "content": "Works for me.",
+      "message_id": null,
+      "import_order": 162
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Yup!",
+      "message_id": null,
+      "import_order": 163
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Perfect.",
+      "message_id": null,
+      "import_order": 164
+    },
+    {
+      "speaker": "Emma",
+      "content": "Awesome, done. Also, update: my boss approved my vacation days for next month. Thinking of doing a little trip. Any destination suggestions?",
+      "message_id": null,
+      "import_order": 165
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Congrats! Hmm, maybe somewhere relaxing like a beach? You deserve a no-stress vacation.",
+      "message_id": null,
+      "import_order": 166
+    },
+    {
+      "speaker": "Sarah",
+      "content": "How about Hawaii? You\u2019ve talked about wanting to go there.",
+      "message_id": null,
+      "import_order": 167
+    },
+    {
+      "speaker": "Emma",
+      "content": "Hawaii would be amazing... I\u2019ll look into it. If I go, y\u2019all better not have too much fun here without me. \ud83d\ude09",
+      "message_id": null,
+      "import_order": 168
+    },
+    {
+      "speaker": "Jake",
+      "content": "We\u2019ll try not to. Or we\u2019ll just make you jealous with our own adventures, haha.",
+      "message_id": null,
+      "import_order": 169
+    },
+    {
+      "speaker": "Emma",
+      "content": "Rude! \ud83d\ude1c",
+      "message_id": null,
+      "import_order": 170
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Don\u2019t worry, we\u2019ll mostly be boring and just re-watch Galactic Heist Chronicles until you return.",
+      "message_id": null,
+      "import_order": 171
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Speaking of, @sarah did you watch that episode finally? We never got your reaction!",
+      "message_id": null,
+      "import_order": 172
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Oh my gosh, yes \u2013 I screamed at the twist! I won\u2019t spoil for anyone else, but I did not see that coming.",
+      "message_id": null,
+      "import_order": 173
+    },
+    {
+      "speaker": "Jake",
+      "content": "I know right! So good. This season is killing it.",
+      "message_id": null,
+      "import_order": 174
+    },
+    {
+      "speaker": "Emma",
+      "content": "Okay, I really need to catch up this weekend. No more procrastinating.",
+      "message_id": null,
+      "import_order": 175
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Do it. We need full group discussion at dinner.",
+      "message_id": null,
+      "import_order": 176
+    },
+    {
+      "speaker": "Emma",
+      "content": "Deal. Alright, back to work for now. Catch you all later. Can\u2019t wait for tomorrow!",
+      "message_id": null,
+      "import_order": 177
+    },
+    {
+      "speaker": "Jake",
+      "content": "Same here. Later, everyone.",
+      "message_id": null,
+      "import_order": 178
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Bye!",
+      "message_id": null,
+      "import_order": 179
+    },
+    {
+      "speaker": "Sarah",
+      "content": "[Testing the AI\u2019s memory] Hey @ai, remember our chats last week? What did @jake say about Yosemite in the group chat?",
+      "message_id": null,
+      "import_order": 180
+    },
+    {
+      "speaker": "AI",
+      "content": "@jake mentioned that he went camping in Yosemite and had an amazing time. He described breathtaking waterfall hikes and even told us about a scary moment when a bear wandered near his campsite. He said it was incredible overall, but that the bear encounter gave him a real fright.",
+      "message_id": null,
+      "import_order": 181
+    },
+    {
+      "speaker": "Jake",
+      "content": "Wow, that\u2019s spot on. It recalled even the bear story!",
+      "message_id": null,
+      "import_order": 182
+    },
+    {
+      "speaker": "Emma",
+      "content": "Nice! It\u2019s like our personal historian. \ud83d\udcdc",
+      "message_id": null,
+      "import_order": 183
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Very cool. I just wanted to see if it remembered Jake\u2019s trip details \u2013 and it does.",
+      "message_id": null,
+      "import_order": 184
+    },
+    {
+      "speaker": "Jake",
+      "content": "I\u2019ve got one. @ai, how did @sarah react when @emma teased her about going bungee jumping the other day?",
+      "message_id": null,
+      "import_order": 185
+    },
+    {
+      "speaker": "AI",
+      "content": "Sure. When @emma suggested bungee jumping, @sarah reacted with emphatic fear (and humor). She basically said, \u201cAre you trying to give me a heart attack?! I\u2019d rather wrestle a lion than go bungee jumping!\u201d It was a pretty dramatic refusal, and everyone laughed.",
+      "message_id": null,
+      "import_order": 186
+    },
+    {
+      "speaker": "Sarah",
+      "content": "\ud83d\ude02 Oh gosh, hearing it back\u2026 I was very clear about my feelings, huh?",
+      "message_id": null,
+      "import_order": 187
+    },
+    {
+      "speaker": "Emma",
+      "content": "Haha, you were! Thanks @ai for the replay.",
+      "message_id": null,
+      "import_order": 188
+    },
+    {
+      "speaker": "Jake",
+      "content": "That\u2019s exactly what I remember too. Hilarious.",
+      "message_id": null,
+      "import_order": 189
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Okay, my turn to test it. @ai, what music did I say I dislike in our past conversations?",
+      "message_id": null,
+      "import_order": 190
+    },
+    {
+      "speaker": "AI",
+      "content": "You mentioned that you can\u2019t stand country music. In our music discussion, you said it\u2019s \u201cnot your style\u201d and you\u2019d take rock or metal over country any day.",
+      "message_id": null,
+      "import_order": 191
+    },
+    {
+      "speaker": "Ryan",
+      "content": "Correct! I did say that. Good job.",
+      "message_id": null,
+      "import_order": 192
+    },
+    {
+      "speaker": "Emma",
+      "content": "Noted again: keep country tunes away from Ryan, haha.",
+      "message_id": null,
+      "import_order": 193
+    },
+    {
+      "speaker": "Ryan",
+      "content": "The AI has officially etched my anti-country stance into memory. \ud83d\ude05",
+      "message_id": null,
+      "import_order": 194
+    },
+    {
+      "speaker": "Emma",
+      "content": "I have a question. @ai, which city did @chloe travel to for her conference?",
+      "message_id": null,
+      "import_order": 195
+    },
+    {
+      "speaker": "AI",
+      "content": "@chloe traveled to London for her conference. She was there presenting her project and even shared that she did some sightseeing around the city.",
+      "message_id": null,
+      "import_order": 196
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Right on the money. It even remembers she did sightseeing!",
+      "message_id": null,
+      "import_order": 197
+    },
+    {
+      "speaker": "Chloe",
+      "content": "That\u2019s impressive. It recalls my trip details better than I do, haha.",
+      "message_id": null,
+      "import_order": 198
+    },
+    {
+      "speaker": "Jake",
+      "content": "Knowledge graph for the win, clearly.",
+      "message_id": null,
+      "import_order": 199
+    },
+    {
+      "speaker": "Sarah",
+      "content": "Let\u2019s test its sense of humor memory. @ai, what joke did @jake make about his singing during our chat?",
+      "message_id": null,
+      "import_order": 200
+    },
+    {
+      "speaker": "AI",
+      "content": "@jake joked that his singing was so great that even the neighborhood cats would complain. Essentially, he was being self-deprecating about his singing skills \u2013 implying his singing might make cats howl or cover their ears.",
+      "message_id": null,
+      "import_order": 201
+    },
+    {
+      "speaker": "Jake",
+      "content": "\ud83d\ude02 That\u2019s exactly the joke I made! Nice.",
+      "message_id": null,
+      "import_order": 202
+    },
+    {
+      "speaker": "Emma",
+      "content": "I\u2019m dying all over again imagining it. The AI not only remembers facts, but funny moments too.",
+      "message_id": null,
+      "import_order": 203
+    },
+    {
+      "speaker": "Ryan",
+      "content": "This is awesome (and a tiny bit scary!). It really doesn\u2019t forget anything, does it?",
+      "message_id": null,
+      "import_order": 204
+    }
+  ]
+}
