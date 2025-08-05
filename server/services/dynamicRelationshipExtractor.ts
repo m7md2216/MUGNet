@@ -25,52 +25,47 @@ export class DynamicRelationshipExtractor {
       console.log('🔍 Extracting dynamic relationships from message:', message);
 
       const prompt = `
-Analyze this conversation message and extract meaningful relationships between people, places, activities, and concepts.
-
-CRITICAL: Extract relationships about the entities MENTIONED IN THE MESSAGE CONTENT, not about the message sender.
+Analyze this conversation message and intelligently extract ALL meaningful relationships between people, activities, preferences, objects, and concepts.
 
 Message: "${message}"
 Sender: ${messageContext.sender}
 Context: ${messageContext.conversationHistory?.slice(-3).join(' | ') || 'No prior context'}
 
-IMPORTANT DISTINCTION:
-- Message Sender: The person who wrote/sent the message (${messageContext.sender})
-- Message Subject: The people/entities that the message content is ABOUT
+CORE PRINCIPLE: Extract relationships about WHO or WHAT the message content discusses, not just the sender.
 
-Extract relationships about the SUBJECTS mentioned in the message content, NOT the sender.
+RELATIONSHIP INTELLIGENCE:
+- Detect preferences: "I love X", "on repeat", "favorite", "can't stand", "hate"
+- Detect actions: "went to", "watched", "listened to", "ate", "bought"  
+- Detect states: "is tired", "feels excited", "misses", "worried about"
+- Detect comparisons: "prefers X over Y", "better than", "worse than"
+- Detect ownership: "has", "owns", "got", "bought"
+- Detect experiences: "encountered", "met", "saw", "heard"
+- Detect habits: "always", "never", "usually", "often", "sometimes"
 
-Examples:
-- If Ali says "Jake loves rock climbing" → Extract: Jake --[ENJOYS_ACTIVITY]--> rock climbing
-- If Sarah says "Emma went to Paris" → Extract: Emma --[VISITED]--> Paris
-- If Ryan says "I like jazz music" → Extract: Ryan --[ENJOYS_GENRE]--> jazz music
+INTELLIGENT RELATIONSHIP NAMING:
+Instead of predefined types, CREATE descriptive relationship names that capture the exact meaning:
+- "loves chocolate" → ENJOYS_FOOD
+- "has on repeat" → LISTENS_REPEATEDLY  
+- "can't stand heights" → FEARS
+- "went camping" → EXPERIENCED_ACTIVITY
+- "misses someone" → EMOTIONALLY_ATTACHED_TO
+- "prefers tea over coffee" → PREFERS_OVER
+- "always eats spicy food" → HABITUALLY_CONSUMES
 
 Extract relationships in this JSON format:
 {
   "relationships": [
     {
-      "fromEntity": "person/place/thing mentioned in content",
-      "toEntity": "person/place/thing mentioned in content", 
-      "relationshipType": "descriptive relationship type",
-      "confidence": 0.8,
-      "context": "brief explanation"
+      "fromEntity": "person/entity the relationship is about",
+      "toEntity": "object/concept of the relationship", 
+      "relationshipType": "INTELLIGENT_DESCRIPTIVE_NAME",
+      "confidence": 0.0-1.0,
+      "context": "brief explanation of what this relationship means"
     }
   ]
 }
 
-Relationship types should be semantic and meaningful, such as:
-- EXPERIENCED_AT (Jake EXPERIENCED_AT Yosemite)
-- WATCHED_WITH (Emma WATCHED_WITH Ryan)
-- PREFERS_OVER (Ryan PREFERS_OVER rock)
-- VISITED_FOR (Jake VISITED_FOR camping)
-- DISLIKES_GENRE (Ryan DISLIKES_GENRE country)
-- LISTENS_TO_REPEATEDLY (Emma LISTENS_TO_REPEATEDLY "Midnight Reverie")
-- HAS_ON_REPEAT (Emma HAS_ON_REPEAT "song name")
-- WATCHES_SHOW (group WATCHES_SHOW "TV show name")
-- ENJOYS_FOOD (Emma ENJOYS_FOOD "burrito with hot sauce")
-- WORKS_AT, LIVES_IN, ENJOYS_ACTIVITY, RECOMMENDS_TO, etc.
-
-Only extract relationships that are clearly stated or strongly implied. Include confidence scores (0.0-1.0).
-Focus on what the message content says ABOUT the people/entities mentioned, not about who sent the message.
+THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do.
 `;
 
       const response = await this.openai.chat.completions.create({
