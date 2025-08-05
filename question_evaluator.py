@@ -128,9 +128,9 @@ class QuestionEvaluator:
                     timeout=30  # 30 second timeout
                 )
                 
-                if response.status_code == 201:
+                if response.status_code in [200, 201]:
                     # Get AI response from messages endpoint
-                    time.sleep(1)  # Brief pause for AI processing
+                    time.sleep(2)  # Longer pause for AI processing
                     
                     messages_response = requests.get(f"{self.base_url}/api/messages")
                     if messages_response.status_code == 200:
@@ -138,7 +138,8 @@ class QuestionEvaluator:
                         
                         # Find the most recent AI response
                         for message in reversed(messages):
-                            if message.get('isAI', False):
+                            # Check both isAI flag and userId (AI Agent has userId = 1)
+                            if message.get('isAI', False) or message.get('userId') == 1:  # AI Agent user ID
                                 return message.get('content', 'No response content')
                         
                         return "No AI response found"
