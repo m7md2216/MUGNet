@@ -1,0 +1,194 @@
+[
+  {
+    "question": "Emma: Oh no! Monday chaos in full force. Did anything good happen this weekend at least?",
+    "answer": "Emma asked this question in response to Sarah spilling coffee on her shirt and the general Monday chaos. She was inquiring if anything positive happened over the weekend to counterbalance the rough start to the week.",
+    "processing_time": 1.7221219539642334,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Chloe: Wow, Yosemite? Lucky you! How was it?",
+    "answer": "Chloe said, \"Wow, Yosemite? Lucky you! How was it?\" in response to Jake mentioning that he went camping at Yosemite with his brother.",
+    "processing_time": 0.9256978034973145,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Sarah: You and your hot sauce, @emma. How can your tongue even taste anything after that?",
+    "answer": "Sarah made this comment in response to Emma saying she grabbed a burrito with extra hot sauce for lunch. Sarah was playfully questioning how Emma can still taste anything after consuming such spicy food.",
+    "processing_time": 1.0049717426300049,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Haha sorry, not sorry. Oh, did anyone catch that new movie on Netflix? The Galactic Heist?",
+    "answer": "Emma asked if anyone caught the new movie on Netflix, \"The Galactic Heist.\"",
+    "processing_time": 5.304505825042725,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Sarah: I started it but fell asleep (blame Sunday laziness, not the movie). Worth finishing then?",
+    "answer": "Sarah asked if \"The Galactic Heist\" was worth finishing after she started it but fell asleep. Ryan responded, \"Yeah, it picks up later. And the twist at the end was wild! (No spoilers, promise.)\"",
+    "processing_time": 9.003638982772827,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: So noted: no country songs when we road trip with Ryan. What do you prefer?",
+    "answer": "Ryan responded to Emma's question by saying, \"I’m a rock/metal guy. Give me screaming guitars over banjos any day.\"",
+    "processing_time": 1.826279878616333,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Ryan: Worth it! What about you all? @emma, pop fan obviously. @jake likes rock. @chloe?",
+    "answer": "Chloe responded to Ryan's question about music preferences by saying, \"I’m into indie and folk. Acoustic, soulful stuff is my jam. And yeah, some pop.\"",
+    "processing_time": 1.436979055404663,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Sarah: I love indie too, and throw in some jazz when I’m in the mood. Variety is the spice of life, right?",
+    "answer": "Error: Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-YlCnIikkbms8a8vwYeX7zf9A on tokens per min (TPM): Limit 30000, Used 27422, Requested 4162. Please try again in 3.168s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}",
+    "processing_time": 17.054191827774048,
+    "truncated": false,
+    "context_size": 0,
+    "success": false
+  },
+  {
+    "question": "Emma: Alright, midweek check-in – anyone up for doing something fun this weekend? We talked about not being boring, remember?",
+    "answer": "Emma suggested doing something fun for the weekend and reminded everyone about their previous conversation about not being boring. Jake responded positively, suggesting another hike or a day trip somewhere scenic, but without bears this time. Chloe mentioned she might be busy prepping for her conference but would join if she could. Sarah suggested going to the amusement park to try the new giant roller coaster, but she also expressed her fear of heights. Emma tried to encourage Sarah by offering to sit next to her and hold her hand, or even suggesting bungee jumping as an alternative. However, Sarah was not convinced and humorously exaggerated her fear by saying she'd rather wrestle a lion than go bungee jumping. Eventually, they settled on a picnic and gentle hiking at Riverside Park, which everyone agreed on.",
+    "processing_time": 8.967961549758911,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Ooh, that could be epic. @sarah, you in?",
+    "answer": "Sarah responded to Emma's suggestion about the amusement park by saying, \"Ummm you know me… I’m terrified of heights. That coaster is like 300 feet high. 😨\" This indicates that she was hesitant about the idea due to her fear of heights.",
+    "processing_time": 1.9213802814483643,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Aww @chloe, what’s up? Is it the presentation you have to give?",
+    "answer": "Emma asked Chloe if she was nervous about the presentation she had to give at her conference in London.",
+    "processing_time": 13.659420728683472,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Ryan: Ugh, what a day. Can I rant for a second?",
+    "answer": "Ryan expressed his frustration about his day, saying, \"My boss dumped a huge client project on me last minute. It’s due in two days and half the team is out sick. I’m so stressed right now.\" He also mentioned that the client kept changing requirements, leading him to rework the plan multiple times. Emma, Jake, and Sarah offered support and advice, with Emma suggesting he take short breaks to avoid burnout.",
+    "processing_time": 6.5433714389801025,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Uh-oh, go ahead @ryan. What happened?",
+    "answer": "Emma said this in response to Ryan wanting to rant about his day. Ryan explained that his boss dumped a huge client project on him last minute, which is due in two days, and half the team is out sick. He expressed feeling stressed and mentioned that the client keeps changing requirements, leading him to rework the plan multiple times.",
+    "processing_time": 8.779966831207275,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: That sounds exhausting. Are you gonna be able to finish on time?",
+    "answer": "Emma asked Ryan if he was going to be able to finish the client project on time after he mentioned that his boss had dumped a huge project on him last minute. Ryan responded, \"I hope so? I’ll probably be pulling a late night tonight and tomorrow. So much for work-life balance.\"",
+    "processing_time": 9.843919515609741,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Happy Friday! We made it through the week, guys. How’s everyone doing?",
+    "answer": "Jake responded to Emma's question by saying, \"Pretty good. Tired, but good. Any plans tonight?\"",
+    "processing_time": 1.5509366989135742,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Jake: Pretty good. Tired, but good. Any plans tonight?",
+    "answer": "Jake asked if anyone had plans for the night, and Emma suggested karaoke. Emma said, \"How about karaoke? 🎤 It’s been ages since we embarrassingly belted out 90s songs.\" Ryan, Jake, and Sarah all agreed to the plan, with Ryan saying, \"Oh man, my vocal cords are not ready... but I’m in! I could use the unwinding.\"",
+    "processing_time": 2.4037673473358154,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Sarah: I’m free. What’s up?",
+    "answer": "Sarah said \"I’m free. What’s up?\" in response to Jake asking if anyone had plans for the night. Emma then suggested going to karaoke.",
+    "processing_time": 1.6604738235473633,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Ryan: I’ll just scream into the mic and call it punk rock. That counts, right?",
+    "answer": "Yes, Ryan said, \"I’ll just scream into the mic and call it punk rock. That counts, right?\" during the conversation about going to karaoke on Friday night.",
+    "processing_time": 9.601211071014404,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Ryan: Great job, @chloe! See, told you a joke would do the trick. What joke did you go with?",
+    "answer": "Chloe responded to Ryan's question about the joke she used by saying: \"I started with, 'I had two cups of coffee so I could power through this – if I talk too fast, blame the caffeine.' Got a chuckle, and I felt a lot more at ease.\"",
+    "processing_time": 1.6084811687469482,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Sarah: We want pics! How’s London treating you aside from work?",
+    "answer": "Chloe responded to Sarah by saying, \"It’s awesome. The city is so vibrant. The weather’s a bit dreary, but I did have amazing fish and chips at a local pub. Also, British accents everywhere – I’m in heaven. 😍\"",
+    "processing_time": 9.787862062454224,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Jake: Living your Sherlock Holmes dream, I see. Any souvenir requests?",
+    "answer": "Error: Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-YlCnIikkbms8a8vwYeX7zf9A on tokens per min (TPM): Limit 30000, Used 27038, Requested 4152. Please try again in 2.38s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}",
+    "processing_time": 16.9912691116333,
+    "truncated": false,
+    "context_size": 0,
+    "success": false
+  },
+  {
+    "question": "Sarah: You’re so sweet. When do you head back?",
+    "answer": "Chloe responded to Sarah's question by saying, \"My flight home is day after tomorrow. I’ll be pretty jet-lagged, but I can’t wait to be home and see you all.\"",
+    "processing_time": 3.604444980621338,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: I’ll make a reservation for tomorrow night. 7 PM okay for everyone?",
+    "answer": "Emma asked if 7 PM was okay for everyone for the welcome-back dinner for Chloe.",
+    "processing_time": 1.0654449462890625,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Emma: Awesome, done. Also, update: my boss approved my vacation days for next month. Thinking of doing a little trip. Any destination suggestions?",
+    "answer": "Ryan suggested, \"maybe somewhere relaxing like a beach,\" and Sarah mentioned, \"How about Hawaii? You’ve talked about wanting to go there.\"",
+    "processing_time": 1.2729640007019043,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  }
+]
