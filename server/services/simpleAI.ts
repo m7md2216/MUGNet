@@ -138,11 +138,15 @@ Instructions:
       console.log('🔍 Getting entity context for message:', message);
       console.log('📝 Extracted words:', words);
 
-      // Look for entities in Neo4j that match message content
+      // Enhanced semantic keyword matching for entities in Neo4j
       for (const word of words) {
         if (word.length > 3) {
           try {
-            const relatedMessages = await neo4jService.findMessagesByTopic(word, 3);
+            // Create semantic keyword mapping for better matching
+            const semanticKeywords = this.getSemanticKeywords(word);
+            
+            for (const keyword of semanticKeywords) {
+              const relatedMessages = await neo4jService.findMessagesByTopic(keyword, 3);
             console.log(`🔎 Found ${relatedMessages.length} messages for word "${word}"`);
             if (relatedMessages.length > 0) {
               relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
