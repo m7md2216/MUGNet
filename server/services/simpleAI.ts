@@ -147,9 +147,10 @@ Instructions:
             
             for (const keyword of semanticKeywords) {
               const relatedMessages = await neo4jService.findMessagesByTopic(keyword, 3);
-            console.log(`🔎 Found ${relatedMessages.length} messages for word "${word}"`);
-            if (relatedMessages.length > 0) {
-              relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
+              console.log(`🔎 Found ${relatedMessages.length} messages for word "${word}"`);
+              if (relatedMessages.length > 0) {
+                relevantEntities.push(`${word}: mentioned in ${relatedMessages.length} previous messages`);
+              }
             }
           } catch (wordError) {
             console.warn(`❌ Failed to search for word "${word}":`, wordError);
