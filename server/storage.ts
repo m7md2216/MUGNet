@@ -1,17 +1,11 @@
 import { 
   users, 
   messages, 
-  knowledgeGraphEntities, 
-  knowledgeGraphRelationships, 
   conversationThreads,
   type User, 
   type InsertUser,
   type Message,
   type InsertMessage,
-  type KnowledgeGraphEntity,
-  type InsertKnowledgeGraphEntity,
-  type KnowledgeGraphRelationship,
-  type InsertKnowledgeGraphRelationship,
   type ConversationThread,
   type InsertConversationThread
 } from "@shared/schema";
@@ -36,19 +30,6 @@ export interface IStorage {
   deleteAllMessages(): Promise<void>;
   clearKnowledgeGraph(): Promise<void>;
 
-  // Knowledge graph entities
-  getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined>;
-  getKnowledgeGraphEntityByName(name: string): Promise<KnowledgeGraphEntity | undefined>;
-  createKnowledgeGraphEntity(entity: InsertKnowledgeGraphEntity): Promise<KnowledgeGraphEntity>;
-  getAllKnowledgeGraphEntities(): Promise<KnowledgeGraphEntity[]>;
-  getKnowledgeGraphEntitiesByType(type: string): Promise<KnowledgeGraphEntity[]>;
-
-  // Knowledge graph relationships
-  getKnowledgeGraphRelationship(id: number): Promise<KnowledgeGraphRelationship | undefined>;
-  createKnowledgeGraphRelationship(relationship: InsertKnowledgeGraphRelationship): Promise<KnowledgeGraphRelationship>;
-  getKnowledgeGraphRelationshipsByEntity(entityId: number): Promise<KnowledgeGraphRelationship[]>;
-  getAllKnowledgeGraphRelationships(): Promise<KnowledgeGraphRelationship[]>;
-
   // Conversation threads
   getConversationThread(id: number): Promise<ConversationThread | undefined>;
   createConversationThread(thread: InsertConversationThread): Promise<ConversationThread>;
@@ -60,14 +41,10 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private users: Map<number, User> = new Map();
   private messages: Map<number, Message> = new Map();
-  private knowledgeGraphEntities: Map<number, KnowledgeGraphEntity> = new Map();
-  private knowledgeGraphRelationships: Map<number, KnowledgeGraphRelationship> = new Map();
   private conversationThreads: Map<number, ConversationThread> = new Map();
   
   private currentUserId = 1;
   private currentMessageId = 1;
-  private currentEntityId = 1;
-  private currentRelationshipId = 1;
   private currentThreadId = 1;
 
   constructor() {
@@ -149,82 +126,16 @@ export class MemStorage implements IStorage {
 
   async deleteAllMessages(): Promise<void> {
     this.messages.clear();
-    this.knowledgeGraphEntities.clear();
-    this.knowledgeGraphRelationships.clear();
     this.conversationThreads.clear();
     this.currentMessageId = 1;
-    this.currentEntityId = 1;
-    this.currentRelationshipId = 1;
     this.currentThreadId = 1;
   }
 
   async clearKnowledgeGraph(): Promise<void> {
-    this.knowledgeGraphEntities.clear();
-    this.knowledgeGraphRelationships.clear();
+    // Knowledge graph now stored in Neo4j - clear via Neo4j service
+    await neo4jService.clearAllData();
     this.conversationThreads.clear();
-    this.currentEntityId = 1;
-    this.currentRelationshipId = 1;
     this.currentThreadId = 1;
-  }
-
-  // Knowledge graph entities
-  async getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined> {
-    return this.knowledgeGraphEntities.get(id);
-  }
-
-  async getKnowledgeGraphEntityByName(name: string): Promise<KnowledgeGraphEntity | undefined> {
-    return Array.from(this.knowledgeGraphEntities.values()).find(entity => entity.name === name);
-  }
-
-  async createKnowledgeGraphEntity(insertEntity: InsertKnowledgeGraphEntity): Promise<KnowledgeGraphEntity> {
-    const id = this.currentEntityId++;
-    const entity: KnowledgeGraphEntity = {
-      id,
-      name: insertEntity.name,
-      type: insertEntity.type,
-      properties: insertEntity.properties || {},
-      createdAt: new Date()
-    };
-    this.knowledgeGraphEntities.set(id, entity);
-    return entity;
-  }
-
-  async getAllKnowledgeGraphEntities(): Promise<KnowledgeGraphEntity[]> {
-    return Array.from(this.knowledgeGraphEntities.values());
-  }
-
-  async getKnowledgeGraphEntitiesByType(type: string): Promise<KnowledgeGraphEntity[]> {
-    return Array.from(this.knowledgeGraphEntities.values()).filter(entity => entity.type === type);
-  }
-
-  // Knowledge graph relationships
-  async getKnowledgeGraphRelationship(id: number): Promise<KnowledgeGraphRelationship | undefined> {
-    return this.knowledgeGraphRelationships.get(id);
-  }
-
-  async createKnowledgeGraphRelationship(insertRelationship: InsertKnowledgeGraphRelationship): Promise<KnowledgeGraphRelationship> {
-    const id = this.currentRelationshipId++;
-    const relationship: KnowledgeGraphRelationship = {
-      id,
-      fromEntityId: insertRelationship.fromEntityId || null,
-      toEntityId: insertRelationship.toEntityId || null,
-      relationshipType: insertRelationship.relationshipType,
-      properties: insertRelationship.properties || {},
-      messageId: insertRelationship.messageId || null,
-      createdAt: new Date()
-    };
-    this.knowledgeGraphRelationships.set(id, relationship);
-    return relationship;
-  }
-
-  async getKnowledgeGraphRelationshipsByEntity(entityId: number): Promise<KnowledgeGraphRelationship[]> {
-    return Array.from(this.knowledgeGraphRelationships.values()).filter(rel => 
-      rel.fromEntityId === entityId || rel.toEntityId === entityId
-    );
-  }
-
-  async getAllKnowledgeGraphRelationships(): Promise<KnowledgeGraphRelationship[]> {
-    return Array.from(this.knowledgeGraphRelationships.values());
   }
 
   // Conversation threads
@@ -416,70 +327,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteAllMessages(): Promise<void> {
-    // Delete in order due to foreign key constraints
-    await db.delete(knowledgeGraphRelationships);
-    await db.delete(knowledgeGraphEntities);
     await db.delete(conversationThreads);
     await db.delete(messages);
   }
 
-  // Knowledge graph entities
-  async getKnowledgeGraphEntity(id: number): Promise<KnowledgeGraphEntity | undefined> {
-    const [entity] = await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.id, id));
-    return entity || undefined;
-  }
-
-  async getKnowledgeGraphEntityByName(name: string): Promise<KnowledgeGraphEntity | undefined> {
-    const [entity] = await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.name, name));
-    return entity || undefined;
-  }
-
-  async createKnowledgeGraphEntity(insertEntity: InsertKnowledgeGraphEntity): Promise<KnowledgeGraphEntity> {
-    const [entity] = await db
-      .insert(knowledgeGraphEntities)
-      .values({
-        ...insertEntity,
-        properties: insertEntity.properties || {},
-        createdAt: new Date()
-      })
-      .returning();
-    return entity;
-  }
-
-  async getAllKnowledgeGraphEntities(): Promise<KnowledgeGraphEntity[]> {
-    return await db.select().from(knowledgeGraphEntities).orderBy(desc(knowledgeGraphEntities.createdAt));
-  }
-
-  async getKnowledgeGraphEntitiesByType(type: string): Promise<KnowledgeGraphEntity[]> {
-    return await db.select().from(knowledgeGraphEntities).where(eq(knowledgeGraphEntities.type, type));
-  }
-
-  // Knowledge graph relationships
-  async getKnowledgeGraphRelationship(id: number): Promise<KnowledgeGraphRelationship | undefined> {
-    const [relationship] = await db.select().from(knowledgeGraphRelationships).where(eq(knowledgeGraphRelationships.id, id));
-    return relationship || undefined;
-  }
-
-  async createKnowledgeGraphRelationship(insertRelationship: InsertKnowledgeGraphRelationship): Promise<KnowledgeGraphRelationship> {
-    const [relationship] = await db
-      .insert(knowledgeGraphRelationships)
-      .values({
-        ...insertRelationship,
-        properties: insertRelationship.properties || {},
-        createdAt: new Date()
-      })
-      .returning();
-    return relationship;
-  }
-
-  async getKnowledgeGraphRelationshipsByEntity(entityId: number): Promise<KnowledgeGraphRelationship[]> {
-    return await db.select().from(knowledgeGraphRelationships).where(
-      eq(knowledgeGraphRelationships.fromEntityId, entityId)
-    );
-  }
-
-  async getAllKnowledgeGraphRelationships(): Promise<KnowledgeGraphRelationship[]> {
-    return await db.select().from(knowledgeGraphRelationships).orderBy(desc(knowledgeGraphRelationships.createdAt));
+  async clearKnowledgeGraph(): Promise<void> {
+    // Knowledge graph now stored in Neo4j - clear via Neo4j service
+    await neo4jService.clearAllData();
+    await db.delete(conversationThreads);
   }
 
   // Conversation threads

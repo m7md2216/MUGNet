@@ -1,5 +1,5 @@
 import { storage } from "../storage";
-import { type KnowledgeGraphEntity, type KnowledgeGraphRelationship, type Message } from "@shared/schema";
+import { type Message } from "@shared/schema";
 
 export interface GraphNode {
   id: number;
@@ -42,27 +42,12 @@ export interface EntitySummary {
 
 export class KnowledgeGraphService {
   async getGraphData(): Promise<KnowledgeGraphData> {
-    const entities = await storage.getAllKnowledgeGraphEntities();
-    const relationships = await storage.getAllKnowledgeGraphRelationships();
+    // Knowledge graph now stored exclusively in Neo4j
     const threads = await storage.getAllConversationThreads();
 
-    // Create nodes with connection counts
-    const nodes: GraphNode[] = entities.map(entity => ({
-      id: entity.id,
-      name: entity.name,
-      type: entity.type,
-      properties: entity.properties,
-      connections: this.getConnectionCount(entity.id, relationships)
-    }));
-
-    // Create relationship data
-    const graphRelationships: GraphRelationship[] = relationships.map(rel => ({
-      id: rel.id,
-      from: rel.fromEntityId!,
-      to: rel.toEntityId!,
-      type: rel.relationshipType,
-      properties: rel.properties
-    }));
+    // Return empty nodes and relationships since data is now in Neo4j
+    const nodes: GraphNode[] = [];
+    const graphRelationships: GraphRelationship[] = [];
 
     // Create conversation thread summaries
     const conversationThreads: ConversationThreadSummary[] = threads.map(thread => ({
@@ -77,7 +62,7 @@ export class KnowledgeGraphService {
       nodes,
       relationships: graphRelationships,
       conversationThreads,
-      entitySummaries: await this.generateEntitySummaries(entities, relationships)
+      entitySummaries: [] // Empty since using Neo4j
     };
   }
 

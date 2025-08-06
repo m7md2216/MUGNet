@@ -20,23 +20,7 @@ export const messages = pgTable("messages", {
   isAiResponse: boolean("is_ai_response").default(false),
 });
 
-export const knowledgeGraphEntities = pgTable("knowledge_graph_entities", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  type: text("type").notNull(), // 'person', 'topic', 'event', 'date'
-  properties: jsonb("properties").default({}),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const knowledgeGraphRelationships = pgTable("knowledge_graph_relationships", {
-  id: serial("id").primaryKey(),
-  fromEntityId: integer("from_entity_id").references(() => knowledgeGraphEntities.id),
-  toEntityId: integer("to_entity_id").references(() => knowledgeGraphEntities.id),
-  relationshipType: text("relationship_type").notNull(),
-  properties: jsonb("properties").default({}),
-  messageId: integer("message_id").references(() => messages.id),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+// PostgreSQL knowledge graph tables removed - using Neo4j as single source of truth
 
 export const conversationThreads = pgTable("conversation_threads", {
   id: serial("id").primaryKey(),
@@ -59,19 +43,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   isAiResponse: true,
 });
 
-export const insertKnowledgeGraphEntitySchema = createInsertSchema(knowledgeGraphEntities).pick({
-  name: true,
-  type: true,
-  properties: true,
-});
-
-export const insertKnowledgeGraphRelationshipSchema = createInsertSchema(knowledgeGraphRelationships).pick({
-  fromEntityId: true,
-  toEntityId: true,
-  relationshipType: true,
-  properties: true,
-  messageId: true,
-});
+// PostgreSQL knowledge graph schemas removed - using Neo4j as single source of truth
 
 export const insertConversationThreadSchema = createInsertSchema(conversationThreads).pick({
   topic: true,
@@ -85,11 +57,7 @@ export type User = typeof users.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Message = typeof messages.$inferSelect;
 
-export type InsertKnowledgeGraphEntity = z.infer<typeof insertKnowledgeGraphEntitySchema>;
-export type KnowledgeGraphEntity = typeof knowledgeGraphEntities.$inferSelect;
-
-export type InsertKnowledgeGraphRelationship = z.infer<typeof insertKnowledgeGraphRelationshipSchema>;
-export type KnowledgeGraphRelationship = typeof knowledgeGraphRelationships.$inferSelect;
+// PostgreSQL knowledge graph types removed - using Neo4j as single source of truth
 
 export type InsertConversationThread = z.infer<typeof insertConversationThreadSchema>;
 export type ConversationThread = typeof conversationThreads.$inferSelect;
