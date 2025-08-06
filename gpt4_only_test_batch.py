@@ -117,8 +117,8 @@ def main():
         print("Failed to load data")
         return
     
-    # Test only first 10 questions to avoid rate limits
-    test_questions = test_questions[:10]
+    # Test all questions
+    # test_questions = test_questions[:10]  # Remove this limit
     
     print(f"Conversation length: {len(conversation)} characters")
     print(f"Testing {len(test_questions)} questions with GPT-4o")
@@ -137,9 +137,9 @@ def main():
         print(f"Time: {result['processing_time']:.2f}s")
         print(f"Success: {result['success']}")
         
-        # Add delay to avoid rate limits
+        # Add shorter delay to avoid rate limits
         if i < len(test_questions) - 1:  # Don't wait after last question
-            time.sleep(2)
+            time.sleep(0.5)  # Reduced delay
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
