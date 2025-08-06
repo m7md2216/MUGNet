@@ -390,22 +390,38 @@ class ArchitectureComparison:
         
         return report
 
+def load_questions_from_file(filename: str) -> List[str]:
+    """Load test questions from file"""
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Extract questions (lines that end with ?)
+        questions = []
+        lines = content.strip().split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if line and line.endswith('?') and not line.startswith('#'):
+                questions.append(line)
+        
+        print(f"Loaded {len(questions)} questions from {filename}")
+        return questions
+        
+    except Exception as e:
+        print(f"Error loading questions from {filename}: {e}")
+        # Fallback to default questions
+        return [
+            "Who said they would pop a red telephone booth in their carry-on?",
+            "Which song did Emma have on repeat?",
+            "Who encountered a bear during a camping trip?"
+        ]
+
 def main():
     """Main execution function"""
     
-    # Test questions for comparison
-    test_questions = [
-        "Who said they would pop a red telephone booth in their carry-on?",
-        "Which song did Emma have on repeat?",
-        "Who encountered a bear during a camping trip?",
-        "What movie did Ryan recommend?",
-        "Who prefers rock music over country music?",
-        "What did Chloe say about her presentation?",
-        "Who mentioned spicy food?",
-        "What did Jake say about his singing?",
-        "Who talked about weekend plans?",
-        "What did Sarah say about the movie she was watching?"
-    ]
+    # Load test questions from file
+    test_questions = load_questions_from_file("conversation_script.txt")
     
     # Load conversation data
     conversation_file = "attached_assets/Pasted-Emma-Ugh-Monday-again-I-already-miss-the-weekend-Jake-Haha-same-here-I-m-struggling-to-focu-1753900326967_1753900326968.txt"
