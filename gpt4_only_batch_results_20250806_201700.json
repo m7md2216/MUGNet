@@ -1,0 +1,82 @@
+[
+  {
+    "question": "Who went camping?",
+    "answer": "Jake went camping. He mentioned, \"I went camping at Yosemite with my brother. It was amazing.\"",
+    "processing_time": 1.512122392654419,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "What does Emma like to eat?",
+    "answer": "Emma mentioned grabbing a burrito with extra hot sauce for lunch, saying, \"I grabbed a burrito. Extra hot sauce because this Monday needs some spice 🌶️.\" She also expressed interest in having popcorn and a donut while watching a movie, saying, \"Okay, I’ll give it another shot tonight. Maybe with popcorn... and that donut you mentioned. 😉\" Additionally, she agreed to a dinner at Pizzeria Roma, which suggests she likes Italian food.",
+    "processing_time": 2.298621892929077,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Which TV show did the group discuss?",
+    "answer": "The group discussed the TV show \"Galactic Heist Chronicles.\" Emma, Jake, and Sarah talked about it, with Jake mentioning, \"By the way, anyone watch last night’s episode of Galactic Heist Chronicles? I need to discuss that ending!\" Emma responded, \"I did! I literally gasped out loud,\" and Sarah said, \"Oh my gosh, yes – I screamed at the twist! I won’t spoil for anyone else, but I did not see that coming.\"",
+    "processing_time": 2.822483539581299,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Who encountered a bear during a camping trip?",
+    "answer": "Jake encountered a bear during a camping trip. He mentioned, \"Funny you ask… We did encounter a bear near our campsite! It was sniffing around our food stash. I nearly had a heart attack, but we made loud noises and it ran off.\"",
+    "processing_time": 1.250497579574585,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "What is Ryan's opinion on country music?",
+    "answer": "Ryan does not like country music. He said, \"Confession time: I just can’t stand country music or anything too twangy.\"",
+    "processing_time": 1.3157155513763428,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "What dessert was Sarah tempted by during lunch?",
+    "answer": "During lunch, Sarah was tempted by a chocolate donut. She mentioned, \"I’m already eyeing a chocolate donut for dessert.\"",
+    "processing_time": 1.1899001598358154,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Which musical genres does Chloe enjoy?",
+    "answer": "Chloe enjoys indie and folk music. She mentioned, \"I’m into indie and folk. Acoustic, soulful stuff is my jam. And yeah, some pop.\"",
+    "processing_time": 1.0618600845336914,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Who was nervous about a presentation in London?",
+    "answer": "Chloe was nervous about a presentation in London. She mentioned, \"I’m really nervous about this conference I have next week in London,\" and later confirmed, \"I have to present our project in front of a big audience, and just thinking about it makes my stomach flip.\"",
+    "processing_time": 2.390817880630493,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Who brought a guitar to the group picnic?",
+    "answer": "Jake mentioned that he would bring his guitar for some music at the picnic. He said, \"I’ll bring my guitar for some music (no bungee cords attached).\"",
+    "processing_time": 0.9229769706726074,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  },
+  {
+    "question": "Why was Sarah hesitant about going to the amusement park?",
+    "answer": "Sarah was hesitant about going to the amusement park because she is terrified of heights. She mentioned that the new giant roller coaster is \"like 300 feet high,\" which contributed to her fear. She said, \"Ummm you know me… I’m terrified of heights. That coaster is like 300 feet high. 😨\"",
+    "processing_time": 1.7401225566864014,
+    "truncated": false,
+    "context_size": 15749,
+    "success": true
+  }
+]

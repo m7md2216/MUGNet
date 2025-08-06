@@ -10,7 +10,7 @@ A: Galactic Heist Chronicles
 Q: Who encountered a bear during a camping trip?
 A: Jake
 
-Q: What is Ryan's opinion on country music?
+Q: What is Ryan’s opinion on country music?
 A: He dislikes country music or anything twangy
 
 Q: What dessert was Sarah tempted by during lunch?
@@ -70,7 +70,7 @@ A: Riverside Park
 Q: What did Jake say about his ears after the Metallica concert?
 A: His ears rang for two days
 
-Q: What's Chloe's opinion about the weather in London?
+Q: What’s Chloe’s opinion about the weather in London?
 A: A bit dreary
 
 Q: What food did Chloe enjoy in London?
@@ -100,7 +100,7 @@ A: Sarah
 Q: Who planned to watch the Galactic Heist episode after dinner?
 A: Sarah
 
-Q: Who comforted Chloe by saying she's the expert on stage?
+Q: Who comforted Chloe by saying she’s the expert on stage?
 A: Emma
 
 Q: Who expressed missing Chloe and her laugh?
@@ -115,7 +115,7 @@ A: Chloe
 Q: Who reassured Chloe after her presentation by calling her a rockstar?
 A: Jake
 
-Q: Who made fun of Jake's singing by mentioning wildlife?
+Q: Who made fun of Jake’s singing by mentioning wildlife?
 A: Emma and Sarah
 
 Q: Who sent memes to cheer Ryan up?
@@ -124,7 +124,7 @@ A: Emma and Sarah
 Q: Who felt relieved after using a joke during a talk?
 A: Chloe
 
-Q: Who called Chloe's city visit touristy?
+Q: Who called Chloe’s city visit touristy?
 A: Chloe herself
 
 Q: What did Emma say she became one with during the weekend?
@@ -156,3 +156,4 @@ A: Chloe
 
 Q: Who plans to catch up on the Galactic Heist episodes over the weekend?
 A: Emma
+

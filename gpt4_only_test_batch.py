@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GPT-4o Only Test - Pure LLM with Full Context
-Tests GPT-4o with entire conversation history for all questions
+GPT-4o Only Test - Batch processing with rate limit handling
+Tests GPT-4o with conversation history for evaluation questions in batches
 """
 
 import json
@@ -30,18 +30,15 @@ def load_questions_from_file(filename: str) -> List[str]:
         with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Extract questions (lines that start with Q:)
         questions = []
         lines = content.strip().split('\n')
         
         for line in lines:
             line = line.strip()
             if line and line.startswith('Q:'):
-                # Remove "Q: " prefix
                 question = line[2:].strip()
                 questions.append(question)
         
-        print(f"Loaded {len(questions)} questions from {filename}")
         return questions
         
     except Exception as e:
@@ -53,8 +50,8 @@ def test_gpt4_question(question: str, conversation: str) -> Dict[str, Any]:
     start_time = time.time()
     
     try:
-        # Truncate if too long (GPT-4o has ~128k token limit)
-        max_chars = 100000  # Conservative estimate
+        # Truncate if too long 
+        max_chars = 100000
         if len(conversation) > max_chars:
             conversation = conversation[-max_chars:]
             truncated = True
@@ -105,15 +102,13 @@ Instructions:
         }
 
 def main():
-    """Main execution function"""
+    """Main execution function with batch processing"""
     
     # Load conversation and questions
     conversation_file = "attached_assets/Pasted-Emma-Ugh-Monday-again-I-already-miss-the-weekend-Jake-Haha-same-here-I-m-struggling-to-focu-1753900326967_1753900326968.txt"
     questions_file = "example_questions.txt"
     
-    print("=== GPT-4o Only Test Framework ===")
-    print(f"Loading conversation from: {conversation_file}")
-    print(f"Loading questions from: {questions_file}")
+    print("=== GPT-4o Only Test Framework (Batch) ===")
     
     conversation = load_conversation(conversation_file)
     test_questions = load_questions_from_file(questions_file)
@@ -121,6 +116,9 @@ def main():
     if not conversation or not test_questions:
         print("Failed to load data")
         return
+    
+    # Test only first 10 questions to avoid rate limits
+    test_questions = test_questions[:10]
     
     print(f"Conversation length: {len(conversation)} characters")
     print(f"Testing {len(test_questions)} questions with GPT-4o")
@@ -138,10 +136,14 @@ def main():
         print(f"A: {result['answer'][:100]}...")
         print(f"Time: {result['processing_time']:.2f}s")
         print(f"Success: {result['success']}")
+        
+        # Add delay to avoid rate limits
+        if i < len(test_questions) - 1:  # Don't wait after last question
+            time.sleep(2)
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"gpt4_only_results_{timestamp}.json"
+    output_file = f"gpt4_only_batch_results_{timestamp}.json"
     
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
