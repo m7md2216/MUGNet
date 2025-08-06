@@ -27,11 +27,17 @@ export class DynamicRelationshipExtractor {
       const prompt = `
 Analyze this conversation message and intelligently extract ALL meaningful relationships between people, activities, preferences, objects, and concepts.
 
-Message: "${message}"
-Sender: ${messageContext.sender}
-Context: ${messageContext.conversationHistory?.slice(-3).join(' | ') || 'No prior context'}
+CURRENT MESSAGE: "${message}"
+SENDER: ${messageContext.sender}
+RECENT CONVERSATION CONTEXT: ${messageContext.conversationHistory?.slice(-5).join(' → ') || 'No prior context'}
 
 CORE PRINCIPLE: Extract relationships about WHO or WHAT the message content discusses, not just the sender.
+
+CONVERSATIONAL CONTEXT UNDERSTANDING:
+- If the current message is responding to a previous request/statement, understand the relationship in context
+- Look for humorous responses, sarcastic comments, or playful reactions
+- Identify when someone is joking, being literal, or making suggestions
+- Pay attention to cause-and-effect in conversation (request → response)
 
 RELATIONSHIP INTELLIGENCE:
 - Detect preferences: "I love X", "on repeat", "favorite", "can't stand", "hate"
@@ -41,6 +47,8 @@ RELATIONSHIP INTELLIGENCE:
 - Detect ownership: "has", "owns", "got", "bought"
 - Detect experiences: "encountered", "met", "saw", "heard"
 - Detect habits: "always", "never", "usually", "often", "sometimes"
+- Detect jokes/humor: "joked about", "made fun of", "teased about", "sarcastically said"
+- Detect responses: "responded to", "replied with", "answered by saying"
 
 INTELLIGENT RELATIONSHIP NAMING:
 Instead of predefined types, CREATE descriptive relationship names that capture the exact meaning:
@@ -51,6 +59,13 @@ Instead of predefined types, CREATE descriptive relationship names that capture 
 - "misses someone" → EMOTIONALLY_ATTACHED_TO
 - "prefers tea over coffee" → PREFERS_OVER
 - "always eats spicy food" → HABITUALLY_CONSUMES
+- "jokingly said she'll carry X in her bag" → JOKED_ABOUT_CARRYING
+- "humorously responded to request" → MADE_HUMOROUS_RESPONSE
+
+SPECIAL ATTENTION TO CONVERSATIONAL PATTERNS:
+- When someone makes a request and another person responds with something impractical or funny, this is often a joke
+- Look for phrases like "I'll pop one in my bag" in response to requests for large/impossible items
+- Understand sarcasm and humor in context
 
 Extract relationships in this JSON format:
 {
@@ -60,12 +75,12 @@ Extract relationships in this JSON format:
       "toEntity": "object/concept of the relationship", 
       "relationshipType": "INTELLIGENT_DESCRIPTIVE_NAME",
       "confidence": 0.0-1.0,
-      "context": "brief explanation of what this relationship means"
+      "context": "brief explanation of what this relationship means, including conversational context"
     }
   ]
 }
 
-THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do.
+THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do. Pay special attention to humor and conversational responses.
 `;
 
       const response = await this.openai.chat.completions.create({
