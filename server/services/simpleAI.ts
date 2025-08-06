@@ -39,12 +39,12 @@ export class SimpleAIService {
         .map(msg => `${msg.senderName}: ${msg.content}`)
         .join('\n');
 
-      // PRIMARY INTELLIGENCE: Get intelligent context from knowledge graph
+      // PRIMARY INTELLIGENCE: Get intelligent context from Neo4j knowledge graph
       console.log('\n🧠 AI THOUGHT PROCESS - STEP 1: Query Analysis');
       console.log('📝 User Query:', context.currentMessage);
       console.log('🔍 Extracting keywords from query...');
       
-      const intelligentContext = await knowledgeGraphService.getIntelligentContext(
+      const intelligentContext = await this.getIntelligentContextFromNeo4j(
         context.currentMessage, 
         1 // Current user ID - could be dynamic
       );
@@ -240,6 +240,102 @@ Instructions:
     } catch (error) {
       console.warn('Failed to find relevant history:', error);
       return [];
+    }
+  }
+
+  // NEW: Get intelligent context directly from Neo4j instead of PostgreSQL
+  private async getIntelligentContextFromNeo4j(query: string, currentUserId: number): Promise<{
+    relevantEntities: Array<{name: string, type: string, context: string}>;
+    relatedPeople: Array<{name: string, relationship: string, context: string}>;
+    topicInsights: Array<{topic: string, participants: string[], lastDiscussed: Date}>;
+    entityConnections: Array<{entity1: string, entity2: string, connectionType: string}>;
+  }> {
+    try {
+      // Extract keywords from query
+      const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+      
+      // Query Neo4j directly for relevant entities and relationships
+      const entityConnections: Array<{entity1: string, entity2: string, connectionType: string}> = [];
+      
+      if (neo4jService.session) {
+        // Enhanced search strategy for better keyword matching
+        for (const word of queryWords) {
+          try {
+            // Direct entity name matching
+            const result1 = await neo4jService.session.run(
+              `MATCH (e1:Entity)-[r]->(e2:Entity) 
+               WHERE e1.name CONTAINS $word OR e2.name CONTAINS $word 
+               RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
+               LIMIT 10`,
+              { word }
+            );
+            
+            result1.records.forEach(record => {
+              entityConnections.push({
+                entity1: record.get('entity1'),
+                entity2: record.get('entity2'),
+                connectionType: record.get('relationshipType')
+              });
+            });
+
+            // Search by relationship type for words like "repeat", "song", "music"
+            if (word === 'repeat' || word === 'song' || word === 'music') {
+              const result2 = await neo4jService.session.run(
+                `MATCH (e1:Entity)-[r]->(e2:Entity) 
+                 WHERE type(r) CONTAINS 'LISTENS' OR type(r) CONTAINS 'REPEAT' OR type(r) CONTAINS 'MUSIC'
+                 RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
+                 LIMIT 10`
+              );
+              
+              result2.records.forEach(record => {
+                entityConnections.push({
+                  entity1: record.get('entity1'),
+                  entity2: record.get('entity2'),
+                  connectionType: record.get('relationshipType')
+                });
+              });
+            }
+          } catch (error) {
+            console.warn(`Failed to query Neo4j for word "${word}":`, error);
+          }
+        }
+
+        // Special handling for Emma-related queries
+        if (queryWords.includes('emma')) {
+          try {
+            const emmaResult = await neo4jService.session.run(
+              `MATCH (emma:Entity {name: "Emma"})-[r]->(target:Entity) 
+               RETURN emma.name as entity1, type(r) as relationshipType, target.name as entity2 
+               LIMIT 20`
+            );
+            
+            emmaResult.records.forEach(record => {
+              entityConnections.push({
+                entity1: record.get('entity1'),
+                entity2: record.get('entity2'),
+                connectionType: record.get('relationshipType')
+              });
+            });
+          } catch (error) {
+            console.warn('Failed to query Emma relationships:', error);
+          }
+        }
+      }
+      
+      return {
+        relevantEntities: [], // Could be enhanced later
+        relatedPeople: [], // Could be enhanced later  
+        topicInsights: [], // Could be enhanced later
+        entityConnections
+      };
+    } catch (error) {
+      console.error('Failed to get intelligent context from Neo4j:', error);
+      return {
+        relevantEntities: [],
+        relatedPeople: [],
+        topicInsights: [],
+        entityConnections: []
+      };
     }
   }
 

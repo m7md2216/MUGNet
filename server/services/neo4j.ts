@@ -25,7 +25,7 @@ interface MessageContext {
 
 export class Neo4jService {
   private driver: Driver;
-  private session: Session | null = null;
+  public session: Session | null = null;
 
   constructor() {
     // For development, we'll use Neo4j Desktop or Aura connection
