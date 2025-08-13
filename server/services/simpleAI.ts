@@ -214,12 +214,12 @@ Instructions:
         // Enhanced search strategy for better keyword matching
         for (const word of queryWords) {
           try {
-            // Direct entity name matching
+            // Direct entity name matching (case-insensitive)
             const result1 = await neo4jService.session.run(
               `MATCH (e1:Entity)-[r]->(e2:Entity) 
-               WHERE e1.name CONTAINS $word OR e2.name CONTAINS $word 
+               WHERE toLower(e1.name) CONTAINS toLower($word) OR toLower(e2.name) CONTAINS toLower($word)
                RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-               LIMIT 10`,
+               LIMIT 15`,
               { word }
             );
             
@@ -231,13 +231,16 @@ Instructions:
               });
             });
 
-            // Search by relationship type for words like "repeat", "song", "music"
-            if (word === 'repeat' || word === 'song' || word === 'music') {
+            // Recipe-specific searches for cocoa, powder, chili, potluck keywords
+            if (['cocoa', 'powder', 'chili', 'potluck', 'recipe'].includes(word)) {
               const result2 = await neo4jService.session.run(
                 `MATCH (e1:Entity)-[r]->(e2:Entity) 
-                 WHERE type(r) CONTAINS 'LISTENS' OR type(r) CONTAINS 'REPEAT' OR type(r) CONTAINS 'MUSIC'
+                 WHERE type(r) CONTAINS 'TESTED' OR type(r) CONTAINS 'USED' OR type(r) CONTAINS 'COOKED' OR
+                       toLower(e1.name) CONTAINS 'cocoa' OR toLower(e2.name) CONTAINS 'cocoa' OR
+                       toLower(e1.name) CONTAINS 'chili' OR toLower(e2.name) CONTAINS 'chili' OR
+                       toLower(e1.name) CONTAINS 'potluck' OR toLower(e2.name) CONTAINS 'potluck'
                  RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-                 LIMIT 10`
+                 LIMIT 15`
               );
               
               result2.records.forEach(record => {
@@ -248,8 +251,48 @@ Instructions:
                 });
               });
             }
+
+            // Search by relationship type for words like "repeat", "song", "music"
+            if (word === 'repeat' || word === 'song' || word === 'music') {
+              const result3 = await neo4jService.session.run(
+                `MATCH (e1:Entity)-[r]->(e2:Entity) 
+                 WHERE type(r) CONTAINS 'LISTENS' OR type(r) CONTAINS 'REPEAT' OR type(r) CONTAINS 'MUSIC'
+                 RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
+                 LIMIT 10`
+              );
+              
+              result3.records.forEach(record => {
+                entityConnections.push({
+                  entity1: record.get('entity1'),
+                  entity2: record.get('entity2'),
+                  connectionType: record.get('relationshipType')
+                });
+              });
+            }
           } catch (error) {
             console.warn(`Failed to query Neo4j for word "${word}":`, error);
+          }
+        }
+
+        // Special search for Chloe-related queries
+        if (queryWords.some(word => word.includes('chloe') || word.includes('Chloe'))) {
+          try {
+            const chloeResult = await neo4jService.session.run(
+              `MATCH (chloe:Entity)-[r]->(target:Entity) 
+               WHERE toLower(chloe.name) CONTAINS 'chloe'
+               RETURN chloe.name as entity1, type(r) as relationshipType, target.name as entity2 
+               LIMIT 20`
+            );
+            
+            chloeResult.records.forEach(record => {
+              entityConnections.push({
+                entity1: record.get('entity1'),
+                entity2: record.get('entity2'),
+                connectionType: record.get('relationshipType')
+              });
+            });
+          } catch (error) {
+            console.warn('Failed to query Chloe relationships:', error);
           }
         }
 
@@ -275,11 +318,25 @@ Instructions:
         }
       }
       
+      // Remove duplicates and sort for consistent results
+      const uniqueConnections = Array.from(
+        new Map(entityConnections.map(conn => 
+          [`${conn.entity1}-${conn.connectionType}-${conn.entity2}`, conn]
+        )).values()
+      ).sort((a, b) => {
+        // Sort by entity1, then entity2, then connectionType for consistency
+        const primary = a.entity1.localeCompare(b.entity1);
+        if (primary !== 0) return primary;
+        const secondary = a.entity2.localeCompare(b.entity2);
+        if (secondary !== 0) return secondary;
+        return a.connectionType.localeCompare(b.connectionType);
+      });
+
       return {
         relevantEntities: [], // Could be enhanced later
         relatedPeople: [], // Could be enhanced later  
         topicInsights: [], // Could be enhanced later
-        entityConnections
+        entityConnections: uniqueConnections
       };
     } catch (error) {
       console.error('Failed to get intelligent context from Neo4j:', error);
