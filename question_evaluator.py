@@ -161,6 +161,50 @@ class QuestionEvaluator:
         
         return f"Error: Failed after {max_retries} attempts"
     
+    def calculate_accuracy(self, ai_response: str, ground_truth: str) -> float:
+        """Calculate accuracy score between AI response and ground truth (0.0 to 1.0)"""
+        if not ai_response or not ground_truth:
+            return 0.0
+        
+        # Handle error responses
+        if 'Error:' in ai_response or 'trouble responding' in ai_response.lower():
+            return 0.0
+        
+        # Clean and normalize both strings
+        ai_clean = ai_response.lower().strip()
+        truth_clean = ground_truth.lower().strip()
+        
+        # Exact match
+        if ai_clean == truth_clean:
+            return 1.0
+        
+        # Check if ground truth is contained in AI response
+        if truth_clean in ai_clean:
+            return 0.9
+        
+        # Check for key words match
+        truth_words = set(truth_clean.split())
+        ai_words = set(ai_clean.split())
+        
+        if len(truth_words) == 0:
+            return 0.0
+        
+        # Calculate word overlap
+        common_words = truth_words.intersection(ai_words)
+        word_accuracy = len(common_words) / len(truth_words)
+        
+        # Check for any meaningful overlap
+        if word_accuracy >= 0.7:
+            return 0.8
+        elif word_accuracy >= 0.5:
+            return 0.6
+        elif word_accuracy >= 0.3:
+            return 0.4
+        elif len(common_words) > 0:
+            return 0.2
+        else:
+            return 0.0
+    
     def find_latest_intermediate_file(self) -> Optional[str]:
         """Find the most recent intermediate results file"""
         import glob
@@ -287,6 +331,9 @@ class QuestionEvaluator:
             # Ask the AI
             ai_response = self.ask_ai_question(question['prompt'])
             
+            # Calculate accuracy score
+            accuracy_score = self.calculate_accuracy(ai_response, question['ground_truth'])
+            
             # Store result
             result = {
                 'question_number': question_num,
@@ -294,6 +341,8 @@ class QuestionEvaluator:
                 'memory_type': question['memory_type'],
                 'ground_truth': question['ground_truth'],
                 'ai_response': ai_response,
+                'accuracy_score': accuracy_score,
+                'is_correct': accuracy_score >= 0.8,  # Consider 80%+ as correct
                 'timestamp': datetime.now().isoformat(),
                 'response_length': len(ai_response),
                 'contains_error': 'Error:' in ai_response or 'timeout' in ai_response.lower()
@@ -330,6 +379,11 @@ class QuestionEvaluator:
         error_count = sum(1 for r in results if r['contains_error'])
         success_count = len(results) - error_count
         
+        # Calculate accuracy metrics
+        correct_count = sum(1 for r in results if r.get('is_correct', False))
+        avg_accuracy = sum(r.get('accuracy_score', 0.0) for r in results) / len(results) if results else 0.0
+        accuracy_percentage = (correct_count / len(results)) * 100 if results else 0.0
+        
         report = {
             'evaluation_metadata': {
                 'evaluation_timestamp': datetime.now().isoformat(),
@@ -338,6 +392,9 @@ class QuestionEvaluator:
                 'successful_responses': success_count,
                 'error_responses': error_count,
                 'success_rate': (success_count / len(questions)) * 100,
+                'correct_answers': correct_count,
+                'accuracy_percentage': accuracy_percentage,
+                'average_accuracy_score': avg_accuracy,
                 'total_evaluation_time_seconds': total_time,
                 'average_time_per_question': total_time / len(questions)
             },
@@ -350,6 +407,8 @@ class QuestionEvaluator:
         
         print(f"\n🎯 EVALUATION COMPLETE")
         print(f"✅ Successful responses: {success_count}/{len(questions)} ({(success_count/len(questions))*100:.1f}%)")
+        print(f"🎯 Correct answers: {correct_count}/{len(questions)} ({accuracy_percentage:.1f}%)")
+        print(f"📊 Average accuracy score: {avg_accuracy:.2f}")
         print(f"❌ Error responses: {error_count}")
         print(f"⏱️  Total time: {total_time/60:.1f} minutes")
         
@@ -380,6 +439,8 @@ class QuestionEvaluator:
                 'Question',
                 'Ground Truth',
                 'AI Response',
+                'Accuracy Score',
+                'Is Correct',
                 'Response Length',
                 'Contains Error',
                 'Timestamp'
@@ -393,6 +454,8 @@ class QuestionEvaluator:
                     result['prompt'],
                     result['ground_truth'],
                     result['ai_response'],
+                    result.get('accuracy_score', 0.0),
+                    result.get('is_correct', False),
                     result['response_length'],
                     result['contains_error'],
                     result['timestamp']
