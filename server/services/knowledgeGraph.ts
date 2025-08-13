@@ -74,8 +74,10 @@ export class KnowledgeGraphService {
     entityConnections: Array<{entity1: string, entity2: string, connectionType: string}>;
   }> {
     try {
-      const entities = await storage.getAllKnowledgeGraphEntities();
-      const relationships = await storage.getAllKnowledgeGraphRelationships();
+      // Knowledge graph entities and relationships now stored in Neo4j only
+      // Return empty arrays as fallback since this method is being phased out
+      const entities: any[] = [];
+      const relationships: any[] = [];
       const messages = await storage.getAllMessages(); // Get all messages for comprehensive analysis
       
       // Extract keywords from the query
@@ -231,13 +233,13 @@ export class KnowledgeGraphService {
     return `Found in conversations: ${contexts.join(' | ')} (${relevantMessages.length} total mentions)`;
   }
 
-  private getConnectionCount(entityId: number, relationships: KnowledgeGraphRelationship[]): number {
+  private getConnectionCount(entityId: number, relationships: any[]): number {
     return relationships.filter(rel => 
       rel.fromEntityId === entityId || rel.toEntityId === entityId
     ).length;
   }
 
-  private async generateEntitySummaries(entities: KnowledgeGraphEntity[], relationships: KnowledgeGraphRelationship[]): Promise<EntitySummary[]> {
+  private async generateEntitySummaries(entities: any[], relationships: any[]): Promise<EntitySummary[]> {
     const summaries: EntitySummary[] = [];
     
     for (const entity of entities) {

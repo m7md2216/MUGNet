@@ -1,0 +1,211 @@
+{
+  "evaluation_metadata": {
+    "evaluation_timestamp": "2025-08-13T01:29:07.288491",
+    "questions_completed": 20,
+    "total_questions": 502,
+    "progress_percentage": 3.9840637450199203,
+    "is_intermediate": true
+  },
+  "detailed_results": [
+    {
+      "question_number": 1,
+      "prompt": "Who went camping?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Jake",
+      "ai_response": "According to the knowledge graph, Jake went camping. He mentioned going to the desert, seeing the Milky Way, and spotting a scorpion.",
+      "timestamp": "2025-08-13T01:22:47.587623",
+      "response_length": 133,
+      "contains_error": false
+    },
+    {
+      "question_number": 2,
+      "prompt": "What does Emma like to eat?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Burritos with hot sauce",
+      "ai_response": "Emma is living a \"foodie dream,\" which suggests she enjoys exploring various foods. She also mentioned making a spicy Thai green curry, indicating a taste for flavorful and spicy dishes.",
+      "timestamp": "2025-08-13T01:23:00.367085",
+      "response_length": 186,
+      "contains_error": false
+    },
+    {
+      "question_number": 3,
+      "prompt": "Which TV show did the group discuss?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Galactic Heist Chronicles",
+      "ai_response": "According to the knowledge graph, Emma inquired about a TV show discussion, but the specific TV show that the group discussed isn't directly mentioned in the graph. However, Sarah is a frequent viewer of the show \"Friends,\" which might have been part of the discussion.",
+      "timestamp": "2025-08-13T01:23:13.355147",
+      "response_length": 269,
+      "contains_error": false
+    },
+    {
+      "question_number": 4,
+      "prompt": "Who encountered a bear during a camping trip?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Jake",
+      "ai_response": "According to the knowledge graph, Jake encountered a bear during a camping trip. He experienced a bear scare and plans to bring bear bells to avoid future encounters.",
+      "timestamp": "2025-08-13T01:23:25.284231",
+      "response_length": 166,
+      "contains_error": false
+    },
+    {
+      "question_number": 5,
+      "prompt": "What is Ryan’s opinion on country music?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "He dislikes country music or anything twangy",
+      "ai_response": "According to the knowledge graph, Ryan dislikes country music. He has expressed a dislike for the genre and country songs specifically.",
+      "timestamp": "2025-08-13T01:23:40.951252",
+      "response_length": 135,
+      "contains_error": false
+    },
+    {
+      "question_number": 6,
+      "prompt": "What dessert was Sarah tempted by during lunch?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Chocolate donut",
+      "ai_response": "According to the knowledge graph, Sarah is generally tempted by dessert. While it doesn't specify a particular dessert she was tempted by during lunch, it does highlight her inclination towards desserts in general.",
+      "timestamp": "2025-08-13T01:24:08.326663",
+      "response_length": 214,
+      "contains_error": false
+    },
+    {
+      "question_number": 7,
+      "prompt": "Which musical genres does Chloe enjoy?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "\"Indie and folk, and some pop\"",
+      "ai_response": "According to the knowledge graph, Chloe has preferences for various musical genres, but it doesn't specify which particular genres she enjoys. If you want more details, you might consider asking Chloe directly about her favorite genres!",
+      "timestamp": "2025-08-13T01:24:21.000399",
+      "response_length": 236,
+      "contains_error": false
+    },
+    {
+      "question_number": 8,
+      "prompt": "Who was nervous about a presentation in London?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Chloe",
+      "ai_response": "According to the knowledge graph, Chloe was nervous about a presentation. However, the specific location of the presentation in London isn't directly mentioned in the graph.",
+      "timestamp": "2025-08-13T01:24:41.877792",
+      "response_length": 173,
+      "contains_error": false
+    },
+    {
+      "question_number": 9,
+      "prompt": "Who brought a guitar to the group picnic?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Jake",
+      "ai_response": "According to the knowledge graph, Jake is the one who brings a guitar for music. So, it's likely that Jake brought a guitar to the group picnic.",
+      "timestamp": "2025-08-13T01:25:09.018663",
+      "response_length": 144,
+      "contains_error": false
+    },
+    {
+      "question_number": 10,
+      "prompt": "Why was Sarah hesitant about going to the amusement park?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "She is terrified of heights",
+      "ai_response": "According to the knowledge graph, Sarah was hesitant about going to the amusement park. This hesitation might be related to the new giant roller coaster featured there, which could be a factor in her reluctance.",
+      "timestamp": "2025-08-13T01:25:19.757587",
+      "response_length": 211,
+      "contains_error": false
+    },
+    {
+      "question_number": 11,
+      "prompt": "What food item did Emma claim she needs to wake up?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Spicy food / hot sauce",
+      "ai_response": "According to the knowledge graph, Emma claimed she needed a food item to wake up, but the specific food item isn't mentioned. However, given her \"foodie dream\" lifestyle, it might be something flavorful or caffeinated.",
+      "timestamp": "2025-08-13T01:25:42.445863",
+      "response_length": 218,
+      "contains_error": false
+    },
+    {
+      "question_number": 12,
+      "prompt": "Who advised Chloe to use humor in her presentation?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Ryan",
+      "ai_response": "According to the knowledge graph, Sarah advised Chloe to use humor in her presentation.",
+      "timestamp": "2025-08-13T01:26:09.789368",
+      "response_length": 87,
+      "contains_error": false
+    },
+    {
+      "question_number": 13,
+      "prompt": "Who helped cheer up Ryan after a stressful day at work?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "\"Emma, Jake, and Sarah\"",
+      "ai_response": "According to the knowledge graph, Emma inquired about cheering up Ryan, which suggests she was involved in supporting him after a stressful day at work.",
+      "timestamp": "2025-08-13T01:26:39.808276",
+      "response_length": 152,
+      "contains_error": false
+    },
+    {
+      "question_number": 14,
+      "prompt": "What kind of vacation did Ryan suggest for Emma?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "A relaxing beach vacation",
+      "ai_response": "According to the knowledge graph, Ryan made a vacation suggestion for Emma, but the specific details of the vacation suggestion aren't explicitly mentioned in the graph. If you need more information, you might want to check with Ryan directly for the details of his suggestion.",
+      "timestamp": "2025-08-13T01:27:03.949148",
+      "response_length": 277,
+      "contains_error": false
+    },
+    {
+      "question_number": 15,
+      "prompt": "Who offered to bring dessert to the picnic?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Sarah",
+      "ai_response": "According to the knowledge graph, Sarah was assigned the role of bringing dessert to the picnic.",
+      "timestamp": "2025-08-13T01:27:31.263358",
+      "response_length": 96,
+      "contains_error": false
+    },
+    {
+      "question_number": 16,
+      "prompt": "What role did Ryan play in helping Chloe calm her nerves?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "He suggested opening with a joke to ease the tension",
+      "ai_response": "According to the knowledge graph, Ryan advised Chloe to use humor in her presentation, which likely helped her calm her nerves.",
+      "timestamp": "2025-08-13T01:27:59.383619",
+      "response_length": 127,
+      "contains_error": false
+    },
+    {
+      "question_number": 17,
+      "prompt": "Which song did Emma have on repeat?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Midnight Reverie by The Moonlighters",
+      "ai_response": "According to the knowledge graph, Emma had \"Midnight Reverie\" on repeat. She seems to enjoy that song quite a bit!",
+      "timestamp": "2025-08-13T01:28:09.549066",
+      "response_length": 114,
+      "contains_error": false
+    },
+    {
+      "question_number": 18,
+      "prompt": "What did Chloe plan to buy as gifts for her friends in London?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Keychains and English tea",
+      "ai_response": "According to the knowledge graph, Chloe planned to buy gifts for her friends in London.",
+      "timestamp": "2025-08-13T01:28:33.521897",
+      "response_length": 87,
+      "contains_error": false
+    },
+    {
+      "question_number": 19,
+      "prompt": "Which TV show did the group discuss and avoid spoiling?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Galactic Heist Chronicles",
+      "ai_response": "According to the knowledge graph, Emma inquired about a TV show discussion. However, the specific TV show that the group discussed and avoided spoiling isn't explicitly mentioned in the graph. If you need more details, you might want to check with the group directly for the specific TV show they were discussing.",
+      "timestamp": "2025-08-13T01:28:43.890737",
+      "response_length": 313,
+      "contains_error": false
+    },
+    {
+      "question_number": 20,
+      "prompt": "Who fell asleep while watching 'The Galactic Heist'?",
+      "memory_type": "Manual Entry",
+      "ground_truth": "Sarah",
+      "ai_response": "According to the knowledge graph, Sarah is noted for falling asleep during activities, which suggests she might have been the one who fell asleep while watching 'The Galactic Heist'.",
+      "timestamp": "2025-08-13T01:29:07.288396",
+      "response_length": 182,
+      "contains_error": false
+    }
+  ]
+}

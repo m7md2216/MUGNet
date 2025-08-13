@@ -143,7 +143,7 @@ Instructions:
         if (word.length > 3) {
           try {
             // Create semantic keyword mapping for better matching
-            const semanticKeywords = this.getSemanticKeywords(word);
+            const semanticKeywords = [word, word.slice(0, -1), word + 's']; // Simple semantic expansion
             
             for (const keyword of semanticKeywords) {
               const relatedMessages = await neo4jService.findMessagesByTopic(keyword, 3);
@@ -174,62 +174,10 @@ Instructions:
     try {
       console.log('🔍 Getting entity context from knowledge graph via storage');
       
-      // Get knowledge graph entities from storage
-      const allEntities = await storage.getAllKnowledgeGraphEntities();
+      // Knowledge graph is now in Neo4j - return fallback context
+      console.log('⚠️ Knowledge graph entities moved to Neo4j - using fallback');
       
-      if (!allEntities || allEntities.length === 0) {
-        console.log('❌ No knowledge graph entities found in storage');
-        return 'No knowledge graph entities available';
-      }
-      
-      console.log(`📊 Found ${allEntities.length} entities in knowledge graph`);
-      
-      // Extract key terms from the message
-      const words = message.toLowerCase().split(/\s+/);
-      const relevantTopics: string[] = [];
-      const relevantPeople: string[] = [];
-      const relevantEvents: string[] = [];
-      
-      // Search for relevant entities in the knowledge graph
-      for (const entity of allEntities) {
-        const entityName = entity.name.toLowerCase();
-        
-        // Check if any word in the message matches or is contained in the entity name
-        for (const word of words) {
-          if (word.length > 3 && (entityName.includes(word) || word.includes(entityName))) {
-            switch (entity.type) {
-              case 'topic':
-                relevantTopics.push(entity.name);
-                break;
-              case 'person':
-                relevantPeople.push(entity.name);
-                break;
-              case 'event':
-                relevantEvents.push(entity.name);
-                break;
-            }
-          }
-        }
-      }
-      
-      // Build context summary
-      const contextParts = [];
-      if (relevantTopics.length > 0) {
-        contextParts.push(`Relevant topics: ${relevantTopics.slice(0, 5).join(', ')}`);
-      }
-      if (relevantPeople.length > 0) {
-        contextParts.push(`Mentioned people: ${relevantPeople.slice(0, 5).join(', ')}`);
-      }
-      if (relevantEvents.length > 0) {
-        contextParts.push(`Related events: ${relevantEvents.slice(0, 5).join(', ')}`);
-      }
-      
-      const result = contextParts.length > 0 
-        ? contextParts.join('\n')
-        : 'No specific context from knowledge graph';
-      
-      console.log('📊 Knowledge graph context result:', result);
-      return result;
+      return 'Knowledge graph entities now stored in Neo4j - using direct Neo4j queries instead';
       
     } catch (error) {
       console.warn('Failed to get entity context from knowledge graph:', error);

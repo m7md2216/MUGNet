@@ -206,16 +206,7 @@ export class Neo4jService {
             { name: person, messageId }
           );
           
-          // Also store in PostgreSQL for AI context
-          try {
-            await storage.createKnowledgeGraphEntity({
-              name: person,
-              type: 'person',
-              properties: { source: 'neo4j', messageId: parseInt(messageId) }
-            });
-          } catch (pgError) {
-            console.warn('Failed to store person entity in PostgreSQL:', pgError);
-          }
+          // Note: Knowledge graph now stored exclusively in Neo4j
         }
       }
 
@@ -231,16 +222,7 @@ export class Neo4jService {
             { name: event, messageId }
           );
           
-          // Also store in PostgreSQL for AI context
-          try {
-            await storage.createKnowledgeGraphEntity({
-              name: event,
-              type: 'location',
-              properties: { source: 'neo4j', messageId: parseInt(messageId) }
-            });
-          } catch (pgError) {
-            console.warn('Failed to store location entity in PostgreSQL:', pgError);
-          }
+          // Note: Knowledge graph now stored exclusively in Neo4j
         }
       }
 
@@ -255,16 +237,7 @@ export class Neo4jService {
           { name: date, messageId }
         );
         
-        // Also store in PostgreSQL for AI context
-        try {
-          await storage.createKnowledgeGraphEntity({
-            name: date,
-            type: 'time',
-            properties: { source: 'neo4j', messageId: parseInt(messageId) }
-          });
-        } catch (pgError) {
-          console.warn('Failed to store time entity in PostgreSQL:', pgError);
-        }
+        // Note: Knowledge graph now stored exclusively in Neo4j
       }
 
     } catch (error) {

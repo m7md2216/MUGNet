@@ -311,7 +311,7 @@ export class DatabaseStorage implements IStorage {
       }
     });
     
-    return [...new Set(topics)]; // Remove duplicates
+    return Array.from(new Set(topics)); // Remove duplicates
   }
 
   async getAllMessages(): Promise<Message[]> {
