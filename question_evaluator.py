@@ -161,6 +161,34 @@ class QuestionEvaluator:
         
         return f"Error: Failed after {max_retries} attempts"
     
+    def find_latest_intermediate_file(self) -> Optional[str]:
+        """Find the most recent intermediate results file"""
+        import glob
+        
+        intermediate_files = glob.glob("question_evaluation_intermediate_*of*.json")
+        if not intermediate_files:
+            return None
+        
+        # Sort by modification time, get most recent
+        latest_file = max(intermediate_files, key=os.path.getmtime)
+        return latest_file
+    
+    def load_intermediate_results(self, filename: str) -> Tuple[List[Dict], int]:
+        """Load results from intermediate file"""
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            results = data.get('detailed_results', [])
+            completed_count = len(results)
+            
+            print(f"📂 Loaded {completed_count} completed questions from {filename}")
+            return results, completed_count
+            
+        except Exception as e:
+            print(f"❌ Error loading intermediate file: {e}")
+            return [], 0
+
     def save_intermediate_results(self, results: List[Dict], questions_count: int, current_question: int) -> str:
         """Save intermediate results to prevent data loss"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -189,6 +217,22 @@ class QuestionEvaluator:
         print("🧪 QUESTION EVALUATOR")
         print("=" * 50)
         
+        # Check for existing intermediate results
+        latest_intermediate = self.find_latest_intermediate_file()
+        results = []
+        start_question = 1
+        
+        if latest_intermediate:
+            print(f"🔍 Found intermediate results: {latest_intermediate}")
+            resume_choice = input("Do you want to resume from where you left off? (y/n): ").strip().lower()
+            
+            if resume_choice in ['y', 'yes']:
+                results, completed_count = self.load_intermediate_results(latest_intermediate)
+                start_question = completed_count + 1
+                print(f"🔄 Resuming from question {start_question}")
+            else:
+                print("🆕 Starting fresh evaluation")
+        
         # Determine file type and load questions
         if questions_file.endswith('.csv'):
             questions = self.load_questions_from_csv(questions_file)
@@ -199,16 +243,45 @@ class QuestionEvaluator:
             print("❌ No questions loaded")
             return {}
         
-        print(f"🎯 Evaluating {len(questions)} questions...")
-        print(f"⏱️  Estimated time: {len(questions) * (delay_between_questions + 5)} seconds")
+        if start_question > len(questions):
+            print(f"✅ All {len(questions)} questions already completed!")
+            # Generate final report from existing results
+            total_time = 0  # We don't have timing info from loaded results
+            error_count = sum(1 for r in results if r['contains_error'])
+            success_count = len(results) - error_count
+            
+            report = {
+                'evaluation_metadata': {
+                    'evaluation_timestamp': datetime.now().isoformat(),
+                    'source_file': questions_file,
+                    'total_questions': len(questions),
+                    'successful_responses': success_count,
+                    'error_responses': error_count,
+                    'success_rate': (success_count / len(questions)) * 100,
+                    'total_evaluation_time_seconds': total_time,
+                    'average_time_per_question': 0,
+                    'resumed_from_intermediate': True
+                },
+                'question_breakdown': {
+                    memory_type: len([q for q in questions if q['memory_type'] == memory_type])
+                    for memory_type in set(q['memory_type'] for q in questions)
+                },
+                'detailed_results': results
+            }
+            return report
+        
+        print(f"🎯 Evaluating questions {start_question} to {len(questions)} ({len(questions) - start_question + 1} remaining)")
+        print(f"⏱️  Estimated time: {(len(questions) - start_question + 1) * (delay_between_questions + 5)} seconds")
         print(f"💾 Saving intermediate results every 5 questions")
         print("=" * 50)
         
-        results = []
         start_time = time.time()
         
-        for i, question in enumerate(questions, 1):
-            print(f"\n📋 Question {i}/{len(questions)}")
+        for i in range(start_question - 1, len(questions)):
+            question_num = i + 1
+            question = questions[i]
+            
+            print(f"\n📋 Question {question_num}/{len(questions)}")
             print(f"❓ {question['prompt'][:60]}...")
             
             # Ask the AI
@@ -216,7 +289,7 @@ class QuestionEvaluator:
             
             # Store result
             result = {
-                'question_number': i,
+                'question_number': question_num,
                 'prompt': question['prompt'],
                 'memory_type': question['memory_type'],
                 'ground_truth': question['ground_truth'],
@@ -236,19 +309,20 @@ class QuestionEvaluator:
             
             # Progress update
             elapsed = time.time() - start_time
-            avg_time_per_question = elapsed / i
-            remaining_questions = len(questions) - i
+            questions_processed = question_num - start_question + 1
+            avg_time_per_question = elapsed / questions_processed if questions_processed > 0 else 0
+            remaining_questions = len(questions) - question_num
             eta = remaining_questions * avg_time_per_question
             
-            if i % 5 == 0 or i == len(questions):
-                print(f"📊 Progress: {i}/{len(questions)} ({(i/len(questions))*100:.1f}%) - ETA: {eta/60:.1f} minutes")
+            if question_num % 5 == 0 or question_num == len(questions):
+                print(f"📊 Progress: {question_num}/{len(questions)} ({(question_num/len(questions))*100:.1f}%) - ETA: {eta/60:.1f} minutes")
                 
                 # Save intermediate results every 5 questions
-                if i % 5 == 0 and i < len(questions):
-                    self.save_intermediate_results(results, len(questions), i)
+                if question_num % 5 == 0 and question_num < len(questions):
+                    self.save_intermediate_results(results, len(questions), question_num)
             
             # Delay between questions
-            if i < len(questions) and delay_between_questions > 0:
+            if question_num < len(questions) and delay_between_questions > 0:
                 time.sleep(delay_between_questions)
         
         # Generate evaluation report
