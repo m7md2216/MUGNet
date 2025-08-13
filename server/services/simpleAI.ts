@@ -211,15 +211,15 @@ Instructions:
       const entityConnections: Array<{entity1: string, entity2: string, connectionType: string}> = [];
       
       if (neo4jService.session) {
-        // Enhanced search strategy for better keyword matching
+        // Dynamic search strategy - no hard-coded keywords
         for (const word of queryWords) {
           try {
-            // Direct entity name matching (case-insensitive)
+            // 1. Direct entity name matching (case-insensitive)
             const result1 = await neo4jService.session.run(
               `MATCH (e1:Entity)-[r]->(e2:Entity) 
                WHERE toLower(e1.name) CONTAINS toLower($word) OR toLower(e2.name) CONTAINS toLower($word)
                RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-               LIMIT 15`,
+               LIMIT 20`,
               { word }
             );
             
@@ -231,60 +231,16 @@ Instructions:
               });
             });
 
-            // Recipe-specific searches for cocoa, powder, chili, potluck keywords
-            if (['cocoa', 'powder', 'chili', 'potluck', 'recipe'].includes(word)) {
-              const result2 = await neo4jService.session.run(
-                `MATCH (e1:Entity)-[r]->(e2:Entity) 
-                 WHERE type(r) CONTAINS 'TESTED' OR type(r) CONTAINS 'USED' OR type(r) CONTAINS 'COOKED' OR
-                       toLower(e1.name) CONTAINS 'cocoa' OR toLower(e2.name) CONTAINS 'cocoa' OR
-                       toLower(e1.name) CONTAINS 'chili' OR toLower(e2.name) CONTAINS 'chili' OR
-                       toLower(e1.name) CONTAINS 'potluck' OR toLower(e2.name) CONTAINS 'potluck'
-                 RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-                 LIMIT 15`
-              );
-              
-              result2.records.forEach(record => {
-                entityConnections.push({
-                  entity1: record.get('entity1'),
-                  entity2: record.get('entity2'),
-                  connectionType: record.get('relationshipType')
-                });
-              });
-            }
-
-            // Search by relationship type for words like "repeat", "song", "music"
-            if (word === 'repeat' || word === 'song' || word === 'music') {
-              const result3 = await neo4jService.session.run(
-                `MATCH (e1:Entity)-[r]->(e2:Entity) 
-                 WHERE type(r) CONTAINS 'LISTENS' OR type(r) CONTAINS 'REPEAT' OR type(r) CONTAINS 'MUSIC'
-                 RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-                 LIMIT 10`
-              );
-              
-              result3.records.forEach(record => {
-                entityConnections.push({
-                  entity1: record.get('entity1'),
-                  entity2: record.get('entity2'),
-                  connectionType: record.get('relationshipType')
-                });
-              });
-            }
-          } catch (error) {
-            console.warn(`Failed to query Neo4j for word "${word}":`, error);
-          }
-        }
-
-        // Special search for Chloe-related queries
-        if (queryWords.some(word => word.includes('chloe') || word.includes('Chloe'))) {
-          try {
-            const chloeResult = await neo4jService.session.run(
-              `MATCH (chloe:Entity)-[r]->(target:Entity) 
-               WHERE toLower(chloe.name) CONTAINS 'chloe'
-               RETURN chloe.name as entity1, type(r) as relationshipType, target.name as entity2 
-               LIMIT 20`
+            // 2. Search in relationship types dynamically
+            const result2 = await neo4jService.session.run(
+              `MATCH (e1:Entity)-[r]->(e2:Entity) 
+               WHERE toLower(type(r)) CONTAINS toLower($word)
+               RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
+               LIMIT 20`,
+              { word }
             );
             
-            chloeResult.records.forEach(record => {
+            result2.records.forEach(record => {
               entityConnections.push({
                 entity1: record.get('entity1'),
                 entity2: record.get('entity2'),
@@ -292,8 +248,33 @@ Instructions:
               });
             });
           } catch (error) {
-            console.warn('Failed to query Chloe relationships:', error);
+            console.warn(`Failed to query Neo4j for word "${word}":`, error);
           }
+        }
+
+        // 3. Comprehensive wildcard search to catch any connections
+        try {
+          const wildcardResult = await neo4jService.session.run(
+            `MATCH (e1:Entity)-[r]->(e2:Entity)
+             WHERE ANY(word IN $queryWords WHERE 
+               toLower(e1.name) CONTAINS toLower(word) OR 
+               toLower(e2.name) CONTAINS toLower(word) OR
+               toLower(type(r)) CONTAINS toLower(word)
+             )
+             RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
+             LIMIT 50`,
+            { queryWords }
+          );
+          
+          wildcardResult.records.forEach(record => {
+            entityConnections.push({
+              entity1: record.get('entity1'),
+              entity2: record.get('entity2'),
+              connectionType: record.get('relationshipType')
+            });
+          });
+        } catch (error) {
+          console.warn('Failed wildcard search:', error);
         }
 
         // Special handling for Emma-related queries
