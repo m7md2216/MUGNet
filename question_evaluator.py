@@ -161,6 +161,28 @@ class QuestionEvaluator:
         
         return f"Error: Failed after {max_retries} attempts"
     
+    def save_intermediate_results(self, results: List[Dict], questions_count: int, current_question: int) -> str:
+        """Save intermediate results to prevent data loss"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"question_evaluation_intermediate_{current_question}of{questions_count}_{timestamp}.json"
+        
+        intermediate_report = {
+            'evaluation_metadata': {
+                'evaluation_timestamp': datetime.now().isoformat(),
+                'questions_completed': current_question,
+                'total_questions': questions_count,
+                'progress_percentage': (current_question / questions_count) * 100,
+                'is_intermediate': True
+            },
+            'detailed_results': results
+        }
+        
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(intermediate_report, f, indent=2, ensure_ascii=False)
+        
+        print(f"💾 Saved intermediate results: {filename}")
+        return filename
+
     def evaluate_questions(self, questions_file: str, delay_between_questions: float = 2.0) -> Dict:
         """Evaluate all questions and generate results"""
         
@@ -179,6 +201,7 @@ class QuestionEvaluator:
         
         print(f"🎯 Evaluating {len(questions)} questions...")
         print(f"⏱️  Estimated time: {len(questions) * (delay_between_questions + 5)} seconds")
+        print(f"💾 Saving intermediate results every 5 questions")
         print("=" * 50)
         
         results = []
@@ -219,6 +242,10 @@ class QuestionEvaluator:
             
             if i % 5 == 0 or i == len(questions):
                 print(f"📊 Progress: {i}/{len(questions)} ({(i/len(questions))*100:.1f}%) - ETA: {eta/60:.1f} minutes")
+                
+                # Save intermediate results every 5 questions
+                if i % 5 == 0 and i < len(questions):
+                    self.save_intermediate_results(results, len(questions), i)
             
             # Delay between questions
             if i < len(questions) and delay_between_questions > 0:
@@ -251,6 +278,10 @@ class QuestionEvaluator:
         print(f"✅ Successful responses: {success_count}/{len(questions)} ({(success_count/len(questions))*100:.1f}%)")
         print(f"❌ Error responses: {error_count}")
         print(f"⏱️  Total time: {total_time/60:.1f} minutes")
+        
+        # Save final results immediately
+        json_file, csv_file = self.save_results(report)
+        print(f"💾 Final results auto-saved: {json_file}")
         
         return report
     
