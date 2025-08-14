@@ -202,33 +202,17 @@ PRIORITY RULES:
     }
   }
 
-  // Dynamic relationship priority scoring based on semantic meaning
-  private getRelationshipPriorityScore(relationshipType: string): number {
-    const type = relationshipType.toLowerCase();
+  // Simple data-driven approach: avoid "unknown person" entities
+  private getFirstValidConnection(connections: any[]): any {
+    // Find first connection that doesn't involve "unknown person"
+    for (const conn of connections) {
+      if (conn.entity1 !== 'unknown person' && conn.entity2 !== 'unknown person') {
+        return conn;
+      }
+    }
     
-    // Action/ownership relationships (highest priority)
-    if (type.includes('owns') || type.includes('has') || type.includes('possesses')) return 100;
-    if (type.includes('experienced') || type.includes('did') || type.includes('performed')) return 90;
-    if (type.includes('works') || type.includes('employed') || type.includes('job')) return 85;
-    
-    // Emotional/preference relationships (high priority)
-    if (type.includes('likes') || type.includes('loves') || type.includes('enjoys')) return 80;
-    if (type.includes('dislikes') || type.includes('hates') || type.includes('avoids')) return 75;
-    
-    // Factual state relationships (medium priority)  
-    if (type.includes('is_a') || type.includes('type') || type.includes('category')) return 70;
-    if (type.includes('lives') || type.includes('located') || type.includes('resides')) return 65;
-    
-    // Communication/social relationships (lower priority)
-    if (type.includes('talks') || type.includes('discusses') || type.includes('mentions')) return 60;
-    if (type.includes('knows') || type.includes('friends') || type.includes('acquainted')) return 55;
-    
-    // Inquiry/question relationships (lowest priority - these are just questions, not facts)
-    if (type.includes('inquires') || type.includes('asks') || type.includes('wonders')) return 10;
-    if (type.includes('questions') || type.includes('seeks') || type.includes('requests')) return 5;
-    
-    // Default for unknown relationship types
-    return 50;
+    // If all involve unknown person, return the first one
+    return connections[0];
   }
 
   // NEW: Get intelligent context directly from Neo4j instead of PostgreSQL
@@ -387,23 +371,8 @@ PRIORITY RULES:
         if (connections.length === 1) {
           resolvedConnections.push(connections[0]);
         } else {
-          // Multiple relationships between same entities - resolve dynamically
-          let bestConnection = connections[0];
-          
-          for (const conn of connections) {
-            // Skip "unknown person" relationships if named person exists
-            if (conn.entity1 === 'unknown person' && connections.some((c: any) => c.entity1 !== 'unknown person')) {
-              continue;
-            }
-            
-            // Dynamic priority based on relationship semantics
-            const currentScore = this.getRelationshipPriorityScore(conn.connectionType);
-            const bestScore = this.getRelationshipPriorityScore(bestConnection.connectionType);
-            
-            if (currentScore > bestScore) {
-              bestConnection = conn;
-            }
-          }
+          // Multiple relationships between same entities - use first valid one
+          const bestConnection = this.getFirstValidConnection(connections);
           resolvedConnections.push(bestConnection);
         }
       });
