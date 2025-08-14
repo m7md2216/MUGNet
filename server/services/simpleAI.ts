@@ -202,6 +202,35 @@ PRIORITY RULES:
     }
   }
 
+  // Dynamic relationship priority scoring based on semantic meaning
+  private getRelationshipPriorityScore(relationshipType: string): number {
+    const type = relationshipType.toLowerCase();
+    
+    // Action/ownership relationships (highest priority)
+    if (type.includes('owns') || type.includes('has') || type.includes('possesses')) return 100;
+    if (type.includes('experienced') || type.includes('did') || type.includes('performed')) return 90;
+    if (type.includes('works') || type.includes('employed') || type.includes('job')) return 85;
+    
+    // Emotional/preference relationships (high priority)
+    if (type.includes('likes') || type.includes('loves') || type.includes('enjoys')) return 80;
+    if (type.includes('dislikes') || type.includes('hates') || type.includes('avoids')) return 75;
+    
+    // Factual state relationships (medium priority)  
+    if (type.includes('is_a') || type.includes('type') || type.includes('category')) return 70;
+    if (type.includes('lives') || type.includes('located') || type.includes('resides')) return 65;
+    
+    // Communication/social relationships (lower priority)
+    if (type.includes('talks') || type.includes('discusses') || type.includes('mentions')) return 60;
+    if (type.includes('knows') || type.includes('friends') || type.includes('acquainted')) return 55;
+    
+    // Inquiry/question relationships (lowest priority - these are just questions, not facts)
+    if (type.includes('inquires') || type.includes('asks') || type.includes('wonders')) return 10;
+    if (type.includes('questions') || type.includes('seeks') || type.includes('requests')) return 5;
+    
+    // Default for unknown relationship types
+    return 50;
+  }
+
   // NEW: Get intelligent context directly from Neo4j instead of PostgreSQL
   private async getIntelligentContextFromNeo4j(query: string, currentUserId: number): Promise<{
     relevantEntities: Array<{name: string, type: string, context: string}>;
@@ -358,30 +387,20 @@ PRIORITY RULES:
         if (connections.length === 1) {
           resolvedConnections.push(connections[0]);
         } else {
-          // Multiple relationships between same entities - prioritize
-          const priorityOrder = ['OWNS_PET', 'EXPERIENCED_MISHAP', 'WORKS_AS', 'LIKES', 'DISLIKES'];
-          
-          // Find the highest priority relationship
+          // Multiple relationships between same entities - resolve dynamically
           let bestConnection = connections[0];
+          
           for (const conn of connections) {
             // Skip "unknown person" relationships if named person exists
             if (conn.entity1 === 'unknown person' && connections.some((c: any) => c.entity1 !== 'unknown person')) {
               continue;
             }
             
-            // Prioritize ownership/action over inquiry
-            if (conn.connectionType.includes('OWNS_') || conn.connectionType.includes('EXPERIENCED_')) {
-              const hasInquiry = connections.some((c: any) => c.connectionType.includes('INQUIRES_'));
-              if (hasInquiry) {
-                bestConnection = conn;
-                break;
-              }
-            }
+            // Dynamic priority based on relationship semantics
+            const currentScore = this.getRelationshipPriorityScore(conn.connectionType);
+            const bestScore = this.getRelationshipPriorityScore(bestConnection.connectionType);
             
-            // Use priority order
-            const currentPriority = priorityOrder.indexOf(conn.connectionType);
-            const bestPriority = priorityOrder.indexOf(bestConnection.connectionType);
-            if (currentPriority !== -1 && (bestPriority === -1 || currentPriority < bestPriority)) {
+            if (currentScore > bestScore) {
               bestConnection = conn;
             }
           }
