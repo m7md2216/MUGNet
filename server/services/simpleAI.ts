@@ -225,6 +225,7 @@ PRIORITY RULES:
     try {
       // Extract keywords from query
       const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+      console.log('🔍 DEBUG: Query words:', queryWords);
       
       // Query Neo4j directly for relevant entities and relationships
       const entityConnections: Array<{entity1: string, entity2: string, connectionType: string}> = [];
@@ -353,6 +354,11 @@ PRIORITY RULES:
 
       }
       
+      console.log('🔍 DEBUG: Raw entityConnections found:', entityConnections.length);
+      entityConnections.forEach(conn => {
+        console.log(`   RAW: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
+      });
+
       // Remove duplicates and filter conflicting relationships
       const connectionMap = new Map<string, any>();
       
