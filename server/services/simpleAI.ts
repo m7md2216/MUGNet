@@ -443,6 +443,12 @@ PRIORITY RULES:
       intelligentContext.entityConnections.forEach(conn => {
         sections.push(`  • ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
       });
+      
+      // DEBUG: Log what we're sending to AI
+      console.log('🔍 DEBUG: Entity connections being sent to AI:');
+      intelligentContext.entityConnections.forEach(conn => {
+        console.log(`   ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
+      });
     }
     
     return sections.length > 0 ? sections.join('\n') : "No relevant knowledge graph context found";
