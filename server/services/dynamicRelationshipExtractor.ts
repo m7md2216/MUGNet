@@ -87,10 +87,7 @@ Extract relationships in this JSON format:
   ]
 }
 
-ATTRIBUTION EXAMPLES:
-- If Emma says "My friend Jake's cat Mittens is sick" → "fromEntity": "Jake", "toEntity": "Mittens", "relationshipType": "OWNS_PET"
-- If someone says "He went camping" and 'he' refers to Jake → "fromEntity": "Jake", "toEntity": "camping", "relationshipType": "EXPERIENCED_ACTIVITY"
-- If context unclear, use the most recent specific person mentioned
+
 
 THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do. Pay special attention to humor and conversational responses.
 `;

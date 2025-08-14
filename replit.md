@@ -8,6 +8,7 @@ This is a full-stack AI chat application featuring an intelligent chat system wi
 
 Preferred communication style: Simple, everyday language.
 **CRITICAL REQUIREMENT**: Absolutely no hardcoded names or manual semantic mapping - system must be completely dynamic and systematic.
+**CRITICAL INSTRUCTION**: Fix only root causes, never add hardcoded examples or specific circumstance handling.
 
 ## System Architecture
 
