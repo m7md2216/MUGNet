@@ -114,9 +114,11 @@ PRIORITY RULES:
 LOGICAL INFERENCE RULES:
 - If Person A created an object and "friend" or "someone" gave the same/similar object, then "friend" = Person A (replace vague with specific)
 - When creation and giving actions involve the same object, connect them to the same person definitively
+- If Person A owns pets and pets send comfort/vibes to "friend," then "friend" = Person A (pets comfort their owners)
 - Apply logical reasoning to resolve vague entities to specific named people when clear patterns exist
-- Be confident in logical inferences when the connections are obvious (creators typically give their own creations)
-- Example: If "Chloe CREATED cat planter" and "friend GAVE cat planter" both exist, answer definitively "Chloe gave the cat planter"`;
+- Be confident in logical inferences when the connections are obvious (creators give their creations, pets comfort their owners)
+- Example: If "Chloe CREATED cat planter" and "friend GAVE cat planter" both exist, answer definitively "Chloe gave the cat planter"
+- Example: If "Chloe OWNS cats" and "cats SEND purr-well soon vibes to friend" both exist, answer definitively "Chloe's cats send her purr-well soon vibes"`;
 
       console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt Construction');
       console.log('📝 Complete prompt sent to GPT-4o:');
@@ -358,6 +360,7 @@ LOGICAL INFERENCE RULES:
         // Apply logical inference: if someone created an object and someone vaguely gave a similar object,
         // replace the vague giver with the specific creator
         const resolvedVagueConnections = vagueConnections.map(vagueConn => {
+          // Pattern 1: Creator giving their creation
           if (vagueConn.connectionType === 'GAVE_OBJECT' || vagueConn.connectionType === 'GIFTED') {
             const creator = specificConnections.find(specConn => 
               specConn.connectionType === 'CREATED_OBJECT' || specConn.connectionType === 'CREATED'
@@ -367,6 +370,24 @@ LOGICAL INFERENCE RULES:
               return { ...vagueConn, entity1: creator.entity1 };
             }
           }
+          
+          // Pattern 2: Pet owner receiving comfort from their pets
+          if (vagueConn.connectionType === 'RECEIVES_COMFORT_FROM' || 
+              vagueConn.connectionType === 'GETS_VIBES_FROM' ||
+              vagueConn.entity2.toLowerCase().includes('purr') ||
+              vagueConn.entity2.toLowerCase().includes('comfort')) {
+            const petOwner = specificConnections.find(specConn => 
+              specConn.connectionType === 'OWNS_PET' || 
+              specConn.connectionType === 'HAS_PET' ||
+              specConn.entity2.toLowerCase().includes('cat') ||
+              specConn.entity2.toLowerCase().includes('dog')
+            );
+            if (petOwner) {
+              console.log(`🔍 LOGICAL INFERENCE: Resolved vague "${vagueConn.entity1}" to "${petOwner.entity1}" for pet comfort`);
+              return { ...vagueConn, entity1: petOwner.entity1 };
+            }
+          }
+          
           return vagueConn;
         });
         
