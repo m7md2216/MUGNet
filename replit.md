@@ -38,10 +38,12 @@ Preferred communication style: Simple, everyday language.
 ## Recent Progress (August 14, 2025)
 
 - **Critical Vague Entity Resolution Bug RESOLVED**: AI now correctly identifies specific people instead of responding with vague terms like "your friend"
-- **Root Cause Fixed**: Enhanced logical inference system to connect creation and giving actions for the same objects, systematically resolving vague entities to specific names
-- **Implementation**: Added entity normalization, improved topic grouping, and strengthened GPT-4o prompt engineering with explicit logical inference rules
-- **Verification Complete**: AI now definitively answers "Chloe gave the cat planter" instead of "your friend gave the cat planter"
-- **Systematic Approach**: Solution maintains dynamic relationship resolution without hardcoded names or manual semantic mapping
+- **Root Cause Identified and Fixed**: The system was incorrectly extracting entities from questions (e.g., "Which friend did this?") and storing "friend" as factual relationships in Neo4j database
+- **Question Detection Implemented**: Enhanced DynamicRelationshipExtractor with question detection logic to distinguish between information requests and factual statements  
+- **Entity Extraction Rules**: Questions now skip all entity extraction, preventing vague entity contamination; only factual statements create specific relationships
+- **Database Cleaning**: Removed contaminated "friend" entities from Neo4j and rebuilt with proper specific relationships like "Chloe owns cats"
+- **Verification Complete**: AI now definitively answers "Chloe receives purr-well soon vibes from her cats" instead of "your friend"
+- **Systematic Approach**: Solution prevents future contamination while maintaining dynamic relationship resolution without hardcoded names or manual semantic mapping
 
 ## External Dependencies
 

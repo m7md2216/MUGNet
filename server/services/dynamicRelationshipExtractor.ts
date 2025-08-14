@@ -31,6 +31,11 @@ CURRENT MESSAGE: "${message}"
 SENDER: ${messageContext.sender}
 RECENT CONVERSATION CONTEXT: ${messageContext.conversationHistory?.slice(-5).join(' → ') || 'No prior context'}
 
+CRITICAL: DISTINGUISH BETWEEN QUESTIONS AND STATEMENTS
+- QUESTIONS (Who did this? Which friend? What cat?): DO NOT extract entities from questions - these are requests for information, not factual statements
+- STATEMENTS (Jake went camping, Chloe has cats): Extract specific relationships from factual statements only
+- If the message is asking about someone/something, DO NOT create relationships with vague entities like "friend", "someone", "which person"
+
 CORE PRINCIPLE: Extract relationships about WHO or WHAT the message content discusses, not just the sender.
 
 CRITICAL ATTRIBUTION RULES:
@@ -38,7 +43,8 @@ CRITICAL ATTRIBUTION RULES:
 - THIRD-PARTY ACTIONS: When someone says "Jake went camping" - attribute to Jake, not the speaker  
 - INDIRECT REFERENCES: When someone says "my friend" or "my coworker", try to identify the specific person from context
 - PRONOUN RESOLUTION: Use conversation history to resolve "he", "she", "they" to specific people
-- AVOID VAGUE ENTITIES: Never create relationships with "unknown person", "someone", "my friend" unless no specific person can be identified
+- AVOID VAGUE ENTITIES: Never create relationships with "unknown person", "someone", "my friend", "which friend" unless no specific person can be identified
+- QUESTIONS ARE NOT FACTS: If the message is asking "who did X?" or "which friend did Y?", do not extract "friend" as an entity
 
 CONVERSATIONAL CONTEXT UNDERSTANDING:
 - If the current message is responding to a previous request/statement, understand the relationship in context
@@ -74,11 +80,16 @@ SPECIAL ATTENTION TO CONVERSATIONAL PATTERNS:
 - Look for phrases like "I'll pop one in my bag" in response to requests for large/impossible items
 - Understand sarcasm and humor in context
 
+QUESTION DETECTION: Before extracting any relationships, determine if this message is:
+- A QUESTION (contains ?, who, what, which, where, when, how, etc.): Return empty relationships array
+- A STATEMENT or DECLARATION: Extract specific relationships only
+
 Extract relationships in this JSON format:
 {
+  "isQuestion": true/false,
   "relationships": [
     {
-      "fromEntity": "SPECIFIC_PERSON_NAME (never 'unknown person', 'someone', 'my friend')",
+      "fromEntity": "SPECIFIC_PERSON_NAME (never 'unknown person', 'someone', 'my friend', 'which friend')",
       "toEntity": "object/concept of the relationship", 
       "relationshipType": "INTELLIGENT_DESCRIPTIVE_NAME",
       "confidence": 0.0-1.0,
@@ -87,7 +98,7 @@ Extract relationships in this JSON format:
   ]
 }
 
-
+IF isQuestion = true, relationships array MUST be empty [].
 
 THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do. Pay special attention to humor and conversational responses.
 `;
@@ -102,7 +113,13 @@ THINK CREATIVELY: What relationships would be useful for answering questions abo
         temperature: 0.1
       });
 
-      const result = JSON.parse(response.choices[0].message.content || '{"relationships": []}');
+      const result = JSON.parse(response.choices[0].message.content || '{"isQuestion": false, "relationships": []}');
+      
+      // If the message is identified as a question, return empty relationships
+      if (result.isQuestion) {
+        console.log('🔍 Message identified as question - skipping relationship extraction');
+        return [];
+      }
       
       const relationships: DynamicRelationship[] = result.relationships.map((rel: any) => ({
         fromEntity: rel.fromEntity,
