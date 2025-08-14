@@ -340,12 +340,56 @@ PRIORITY RULES:
 
       }
       
-      // Remove duplicates and sort for consistent results
-      const uniqueConnections = Array.from(
-        new Map(entityConnections.map(conn => 
-          [`${conn.entity1}-${conn.connectionType}-${conn.entity2}`, conn]
-        )).values()
-      ).sort((a, b) => {
+      // Remove duplicates and filter conflicting relationships
+      const connectionMap = new Map<string, any>();
+      
+      // First pass: collect all connections
+      entityConnections.forEach(conn => {
+        const key = `${conn.entity1}-${conn.entity2}`;
+        if (!connectionMap.has(key)) {
+          connectionMap.set(key, []);
+        }
+        connectionMap.get(key).push(conn);
+      });
+      
+      // Second pass: resolve conflicts by prioritizing relationship types
+      const resolvedConnections: any[] = [];
+      connectionMap.forEach((connections, key) => {
+        if (connections.length === 1) {
+          resolvedConnections.push(connections[0]);
+        } else {
+          // Multiple relationships between same entities - prioritize
+          const priorityOrder = ['OWNS_PET', 'EXPERIENCED_MISHAP', 'WORKS_AS', 'LIKES', 'DISLIKES'];
+          
+          // Find the highest priority relationship
+          let bestConnection = connections[0];
+          for (const conn of connections) {
+            // Skip "unknown person" relationships if named person exists
+            if (conn.entity1 === 'unknown person' && connections.some((c: any) => c.entity1 !== 'unknown person')) {
+              continue;
+            }
+            
+            // Prioritize ownership/action over inquiry
+            if (conn.connectionType.includes('OWNS_') || conn.connectionType.includes('EXPERIENCED_')) {
+              const hasInquiry = connections.some((c: any) => c.connectionType.includes('INQUIRES_'));
+              if (hasInquiry) {
+                bestConnection = conn;
+                break;
+              }
+            }
+            
+            // Use priority order
+            const currentPriority = priorityOrder.indexOf(conn.connectionType);
+            const bestPriority = priorityOrder.indexOf(bestConnection.connectionType);
+            if (currentPriority !== -1 && (bestPriority === -1 || currentPriority < bestPriority)) {
+              bestConnection = conn;
+            }
+          }
+          resolvedConnections.push(bestConnection);
+        }
+      });
+      
+      const uniqueConnections = resolvedConnections.sort((a, b) => {
         // Sort by entity1, then entity2, then connectionType for consistency
         const primary = a.entity1.localeCompare(b.entity1);
         if (primary !== 0) return primary;
