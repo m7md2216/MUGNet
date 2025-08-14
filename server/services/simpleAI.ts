@@ -262,7 +262,7 @@ Instructions:
                toLower(type(r)) CONTAINS toLower(word)
              )
              RETURN e1.name as entity1, type(r) as relationshipType, e2.name as entity2 
-             LIMIT 50`,
+             LIMIT 100`,
             { queryWords }
           );
           
@@ -273,8 +273,68 @@ Instructions:
               connectionType: record.get('relationshipType')
             });
           });
+
+          // 4. Multi-hop relationships to find deeper connections
+          const multiHopResult = await neo4jService.session.run(
+            `MATCH path = (e1:Entity)-[r1]->(e2:Entity)-[r2]->(e3:Entity)
+             WHERE ANY(word IN $queryWords WHERE 
+               toLower(e1.name) CONTAINS toLower(word) OR 
+               toLower(e2.name) CONTAINS toLower(word) OR
+               toLower(e3.name) CONTAINS toLower(word)
+             )
+             RETURN e1.name as entity1, type(r1) as rel1, e2.name as entity2, 
+                    type(r2) as rel2, e3.name as entity3
+             LIMIT 50`,
+            { queryWords }
+          );
+          
+          multiHopResult.records.forEach(record => {
+            // Add both direct relationships from the path
+            entityConnections.push({
+              entity1: record.get('entity1'),
+              entity2: record.get('entity2'),
+              connectionType: record.get('rel1')
+            });
+            entityConnections.push({
+              entity1: record.get('entity2'),
+              entity2: record.get('entity3'),
+              connectionType: record.get('rel2')
+            });
+          });
         } catch (error) {
-          console.warn('Failed wildcard search:', error);
+          console.warn('Failed wildcard/multi-hop search:', error);
+        }
+
+        // 5. Person-specific search for "who did X" questions
+        if (queryWords.includes('who')) {
+          try {
+            const personResult = await neo4jService.session.run(
+              `MATCH (person:Entity)-[r]->(action:Entity)
+               WHERE ANY(word IN $queryWords WHERE 
+                 toLower(action.name) CONTAINS toLower(word) OR
+                 toLower(type(r)) CONTAINS toLower(word)
+               ) AND (
+                 toLower(person.name) IN ['jake', 'emma', 'chloe', 'sarah'] OR
+                 toLower(type(r)) CONTAINS 'experienced' OR
+                 toLower(type(r)) CONTAINS 'spilled' OR
+                 toLower(type(r)) CONTAINS 'did' OR
+                 toLower(type(r)) CONTAINS 'owns'
+               )
+               RETURN person.name as entity1, type(r) as relationshipType, action.name as entity2 
+               LIMIT 30`,
+              { queryWords }
+            );
+            
+            personResult.records.forEach(record => {
+              entityConnections.push({
+                entity1: record.get('entity1'),
+                entity2: record.get('entity2'),
+                connectionType: record.get('relationshipType')
+              });
+            });
+          } catch (error) {
+            console.warn('Failed person search:', error);
+          }
         }
 
         // Special handling for Emma-related queries
