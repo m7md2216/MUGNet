@@ -33,6 +33,13 @@ RECENT CONVERSATION CONTEXT: ${messageContext.conversationHistory?.slice(-5).joi
 
 CORE PRINCIPLE: Extract relationships about WHO or WHAT the message content discusses, not just the sender.
 
+CRITICAL ATTRIBUTION RULES:
+- POSSESSION/OWNERSHIP: When someone says "my friend's cat", "his dog", "her car" - attribute to the OWNER not the speaker
+- THIRD-PARTY ACTIONS: When someone says "Jake went camping" - attribute to Jake, not the speaker  
+- INDIRECT REFERENCES: When someone says "my friend" or "my coworker", try to identify the specific person from context
+- PRONOUN RESOLUTION: Use conversation history to resolve "he", "she", "they" to specific people
+- AVOID VAGUE ENTITIES: Never create relationships with "unknown person", "someone", "my friend" unless no specific person can be identified
+
 CONVERSATIONAL CONTEXT UNDERSTANDING:
 - If the current message is responding to a previous request/statement, understand the relationship in context
 - Look for humorous responses, sarcastic comments, or playful reactions
@@ -71,14 +78,19 @@ Extract relationships in this JSON format:
 {
   "relationships": [
     {
-      "fromEntity": "person/entity the relationship is about",
+      "fromEntity": "SPECIFIC_PERSON_NAME (never 'unknown person', 'someone', 'my friend')",
       "toEntity": "object/concept of the relationship", 
       "relationshipType": "INTELLIGENT_DESCRIPTIVE_NAME",
       "confidence": 0.0-1.0,
-      "context": "brief explanation of what this relationship means, including conversational context"
+      "context": "brief explanation including WHO owns/does this action"
     }
   ]
 }
+
+ATTRIBUTION EXAMPLES:
+- If Emma says "My friend Jake's cat Mittens is sick" → "fromEntity": "Jake", "toEntity": "Mittens", "relationshipType": "OWNS_PET"
+- If someone says "He went camping" and 'he' refers to Jake → "fromEntity": "Jake", "toEntity": "camping", "relationshipType": "EXPERIENCED_ACTIVITY"
+- If context unclear, use the most recent specific person mentioned
 
 THINK CREATIVELY: What relationships would be useful for answering questions about people's preferences, experiences, and connections? Extract everything that gives insight into who people are and what they like/dislike/do. Pay special attention to humor and conversational responses.
 `;

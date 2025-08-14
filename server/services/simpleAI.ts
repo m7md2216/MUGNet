@@ -62,6 +62,11 @@ export class SimpleAIService {
       console.log(formattedKnowledgeContext);
       console.log('='.repeat(80));
       
+      // Also log the system prompt being sent to AI
+      console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt');
+      console.log('📋 System prompt that will be sent to AI:');
+      console.log('='.repeat(50));
+      
       // Check if the conversation history contains the Airbnb message
       const hasAirbnbMessage = recentHistory.some(msg => 
         msg.content.toLowerCase().includes('airbnb')
@@ -230,10 +235,14 @@ PRIORITY RULES:
       // Query Neo4j directly for relevant entities and relationships
       const entityConnections: Array<{entity1: string, entity2: string, connectionType: string}> = [];
       
+      console.log('🔍 DEBUG: Neo4j session available:', !!neo4jService.session);
+      
       if (neo4jService.session) {
+        console.log('🔍 DEBUG: Starting Neo4j search...');
         // Dynamic search strategy - no hard-coded keywords
         for (const word of queryWords) {
           try {
+            console.log(`🔍 DEBUG: Searching Neo4j for word: "${word}"`);
             // 1. Direct entity name matching (case-insensitive)
             const result1 = await neo4jService.session.run(
               `MATCH (e1:Entity)-[r]->(e2:Entity) 
@@ -242,13 +251,16 @@ PRIORITY RULES:
                LIMIT 20`,
               { word }
             );
+            console.log(`🔍 DEBUG: Found ${result1.records.length} results for word "${word}"`);
             
             result1.records.forEach(record => {
-              entityConnections.push({
+              const conn = {
                 entity1: record.get('entity1'),
                 entity2: record.get('entity2'),
                 connectionType: record.get('relationshipType')
-              });
+              };
+              console.log(`   Found: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
+              entityConnections.push(conn);
             });
 
             // 2. Search in relationship types dynamically
