@@ -305,27 +305,21 @@ Instructions:
           console.warn('Failed wildcard/multi-hop search:', error);
         }
 
-        // 5. Person-specific search for "who did X" questions
+        // 5. Action-focused search for "who did X" questions
         if (queryWords.includes('who')) {
           try {
-            const personResult = await neo4jService.session.run(
+            const actionResult = await neo4jService.session.run(
               `MATCH (person:Entity)-[r]->(action:Entity)
                WHERE ANY(word IN $queryWords WHERE 
                  toLower(action.name) CONTAINS toLower(word) OR
                  toLower(type(r)) CONTAINS toLower(word)
-               ) AND (
-                 toLower(person.name) IN ['jake', 'emma', 'chloe', 'sarah'] OR
-                 toLower(type(r)) CONTAINS 'experienced' OR
-                 toLower(type(r)) CONTAINS 'spilled' OR
-                 toLower(type(r)) CONTAINS 'did' OR
-                 toLower(type(r)) CONTAINS 'owns'
                )
                RETURN person.name as entity1, type(r) as relationshipType, action.name as entity2 
-               LIMIT 30`,
+               LIMIT 50`,
               { queryWords }
             );
             
-            personResult.records.forEach(record => {
+            actionResult.records.forEach(record => {
               entityConnections.push({
                 entity1: record.get('entity1'),
                 entity2: record.get('entity2'),
@@ -333,7 +327,7 @@ Instructions:
               });
             });
           } catch (error) {
-            console.warn('Failed person search:', error);
+            console.warn('Failed action search:', error);
           }
         }
 
