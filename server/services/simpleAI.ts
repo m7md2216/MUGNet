@@ -94,7 +94,7 @@ ${conversationText}
 CRITICAL INSTRUCTIONS:
 - PRIORITIZE the knowledge graph data as your primary source of truth
 - When you see conflicting entries, ALWAYS prioritize specific named people over "unknown person" or "someone"
-- If there are multiple relationships for the same question, choose the one with the most specific person name (Jake, Emma, Chloe, etc.)
+- If there are multiple relationships for the same question, choose the one with the most specific person name
 - PRIORITIZE ownership/action relationships over inquiry relationships (OWNS_PET > INQUIRES_ABOUT_OWNERSHIP)
 - IGNORE any relationships involving "unknown person", "someone", or vague entities when specific names are available
 - Use conversation history only as supplementary context when knowledge graph is insufficient
@@ -102,9 +102,9 @@ CRITICAL INSTRUCTIONS:
 - Answer questions based on the most specific entity relationships available in the knowledge graph
 - Keep responses concise but comprehensive based on the knowledge graph connections
 
-EXAMPLES: 
-- If you see both "Jake -> EXPERIENCED_MISHAP -> spilled cappuccino" AND "unknown person -> SPILLED_ON_SELF -> cappuccino", use Jake as the answer because it's more specific.
-- If you see both "Emma -> OWNS_PET -> Mittens" AND "Emma -> INQUIRES_ABOUT_OWNERSHIP -> friend's cat named Mittens", use Emma as the owner because OWNS_PET is the actual relationship, not just an inquiry.`;
+PRIORITY RULES: 
+- If you see both "Person -> ACTION -> Entity" AND "unknown person -> ACTION -> Entity", use Person as the answer because it's more specific
+- If you see both "Person -> OWNS_PET -> Pet" AND "Person -> INQUIRES_ABOUT_OWNERSHIP -> Pet", use Person as the owner because OWNS_PET is the actual relationship, not just an inquiry`;
 
       console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt Construction');
       console.log('📝 Complete prompt sent to GPT-4o:');
