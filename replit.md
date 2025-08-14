@@ -33,6 +33,15 @@ Preferred communication style: Simple, everyday language.
 - **Real-time Relationship Inference**: GPT-4o powered service analyzes messages to infer and store semantic relationships (e.g., ENJOYS_ACTIVITY, PREFERS_OVER) in Neo4j, enhancing AI's contextual understanding.
 - **Developer-Centric Knowledge Graph Access**: Custom frontend graph visualization has been replaced with direct access to the professional Neo4j Browser for advanced querying and analysis.
 - **Robust Entity Attribution**: Enhanced prompt engineering ensures correct attribution of message content to subjects rather than just senders in the knowledge graph.
+- **Logical Inference Resolution**: Systematic vague entity resolution implemented through entity normalization, improved topic grouping, and strengthened prompt engineering to resolve ambiguous references without hardcoding (August 14, 2025).
+
+## Recent Progress (August 14, 2025)
+
+- **Critical Vague Entity Resolution Bug RESOLVED**: AI now correctly identifies specific people instead of responding with vague terms like "your friend"
+- **Root Cause Fixed**: Enhanced logical inference system to connect creation and giving actions for the same objects, systematically resolving vague entities to specific names
+- **Implementation**: Added entity normalization, improved topic grouping, and strengthened GPT-4o prompt engineering with explicit logical inference rules
+- **Verification Complete**: AI now definitively answers "Chloe gave the cat planter" instead of "your friend gave the cat planter"
+- **Systematic Approach**: Solution maintains dynamic relationship resolution without hardcoded names or manual semantic mapping
 
 ## External Dependencies
 

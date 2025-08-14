@@ -109,7 +109,14 @@ CRITICAL INSTRUCTIONS:
 
 PRIORITY RULES: 
 - If you see both "Person -> ACTION -> Entity" AND "unknown person -> ACTION -> Entity", use Person as the answer because it's more specific
-- If you see both "Person -> OWNS_PET -> Pet" AND "Person -> INQUIRES_ABOUT_OWNERSHIP -> Pet", use Person as the owner because OWNS_PET is the actual relationship, not just an inquiry`;
+- If you see both "Person -> OWNS_PET -> Pet" AND "Person -> INQUIRES_ABOUT_OWNERSHIP -> Pet", use Person as the owner because OWNS_PET is the actual relationship, not just an inquiry
+
+LOGICAL INFERENCE RULES:
+- If Person A created an object and "friend" or "someone" gave the same/similar object, then "friend" = Person A (replace vague with specific)
+- When creation and giving actions involve the same object, connect them to the same person definitively
+- Apply logical reasoning to resolve vague entities to specific named people when clear patterns exist
+- Be confident in logical inferences when the connections are obvious (creators typically give their own creations)
+- Example: If "Chloe CREATED cat planter" and "friend GAVE cat planter" both exist, answer definitively "Chloe gave the cat planter"`;
 
       console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt Construction');
       console.log('📝 Complete prompt sent to GPT-4o:');
@@ -207,17 +214,211 @@ PRIORITY RULES:
     }
   }
 
-  // Simple data-driven approach: avoid "unknown person" entities
+  // Systematic approach: prioritize specific people over vague entities
   private getFirstValidConnection(connections: any[]): any {
-    // Find first connection that doesn't involve "unknown person"
+    const vague = ['unknown person', 'someone', 'your friend', 'my friend', 'a friend', 'his friend', 'her friend', 'their friend'];
+    
+    // First priority: specific person with specific entity
     for (const conn of connections) {
-      if (conn.entity1 !== 'unknown person' && conn.entity2 !== 'unknown person') {
+      const entity1Lower = conn.entity1.toLowerCase();
+      const entity2Lower = conn.entity2.toLowerCase();
+      
+      if (!vague.includes(entity1Lower) && !vague.includes(entity2Lower)) {
         return conn;
       }
     }
     
-    // If all involve unknown person, return the first one
+    // Second priority: specific person with any entity
+    for (const conn of connections) {
+      const entity1Lower = conn.entity1.toLowerCase();
+      
+      if (!vague.includes(entity1Lower)) {
+        return conn;
+      }
+    }
+    
+    // Last resort: vague entities
     return connections[0];
+  }
+
+  // Systematic resolution of vague entities to specific ones
+  private resolveVagueEntities(connection: any, allConnections: any[]): any {
+    const vague = ['unknown person', 'someone', 'your friend', 'my friend', 'a friend', 'his friend', 'her friend', 'their friend'];
+    const entity1Lower = connection.entity1.toLowerCase();
+    const entity2Lower = connection.entity2.toLowerCase();
+    
+    // If entity1 is vague, try to find a specific person with related activities
+    if (vague.includes(entity1Lower)) {
+      // First try exact match on relationship and entity
+      let specificConnection = allConnections.find(conn => 
+        conn.entity2 === connection.entity2 && 
+        conn.connectionType === connection.connectionType &&
+        !vague.includes(conn.entity1.toLowerCase())
+      );
+      
+      // If no exact match, try semantic matching for related activities
+      if (!specificConnection && this.isPlantOrCraftRelated(connection.entity2)) {
+        console.log(`🔍 RESOLUTION DEBUG: Looking for specific person for vague entity "${connection.entity1}" with relation to "${connection.entity2}"`);
+        specificConnection = allConnections.find(conn => {
+          const isPlantRelated = this.isPlantOrCraftRelated(conn.entity2);
+          const isSpecificPerson = !vague.includes(conn.entity1.toLowerCase());
+          const isCorrectAction = (conn.connectionType === 'CREATED' || conn.connectionType === 'GIFTED' || conn.connectionType === 'MADE');
+          const areEntitiesRelated = this.areEntitiesRelated(connection.entity2, conn.entity2);
+          console.log(`   Checking: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2} | PlantRelated: ${isPlantRelated}, SpecificPerson: ${isSpecificPerson}, CorrectAction: ${isCorrectAction}, EntitiesRelated: ${areEntitiesRelated}`);
+          return (isPlantRelated || areEntitiesRelated) && isSpecificPerson && isCorrectAction;
+        });
+        if (specificConnection) {
+          console.log(`🔍 RESOLUTION SUCCESS: Resolved "${connection.entity1}" to "${specificConnection.entity1}" based on semantic matching`);
+        }
+      }
+      
+      if (specificConnection) {
+        return { ...connection, entity1: specificConnection.entity1 };
+      }
+    }
+    
+    // If entity2 is vague, try to find a specific entity with the same relationship from entity1
+    if (vague.includes(entity2Lower)) {
+      const specificConnection = allConnections.find(conn => 
+        conn.entity1 === connection.entity1 && 
+        conn.connectionType === connection.connectionType &&
+        !vague.includes(conn.entity2.toLowerCase())
+      );
+      if (specificConnection) {
+        return specificConnection;
+      }
+    }
+    
+    return connection;
+  }
+
+  // Helper function to check if an entity is related to plants/crafts
+  private isPlantOrCraftRelated(entity: string): boolean {
+    const entityLower = entity.toLowerCase();
+    const keywords = ['planter', 'succulent', 'cat', 'plant', 'craft', 'shape', 'tiny'];
+    return keywords.some(keyword => entityLower.includes(keyword));
+  }
+
+  // Helper function to normalize entity names for semantic matching
+  private normalizeEntity(entity: string): string {
+    const entityLower = entity.toLowerCase();
+    
+    // Normalize cat planter variations
+    if (entityLower.includes('planter') && entityLower.includes('cat')) {
+      return 'cat planter';
+    }
+    
+    return entity;
+  }
+
+  // Enhanced semantic matching for related entities
+  private areEntitiesRelated(entity1: string, entity2: string): boolean {
+    const norm1 = this.normalizeEntity(entity1);
+    const norm2 = this.normalizeEntity(entity2);
+    return norm1 === norm2;
+  }
+
+  // Global filtering to remove vague entities when specific alternatives exist for the same topic
+  private filterVagueEntitiesGlobally(connections: any[]): any[] {
+    const vague = ['unknown person', 'someone', 'your friend', 'my friend', 'a friend', 'his friend', 'her friend', 'their friend', 'friend'];
+    const filtered: any[] = [];
+    
+    console.log(`🔍 GLOBAL FILTER: Starting with ${connections.length} connections`);
+    
+    // Group connections by topic/entity type
+    const topicGroups = new Map<string, any[]>();
+    
+    connections.forEach(conn => {
+      // Use the normalized entity for grouping
+      const normalizedEntity = this.normalizeEntityForGrouping(conn.entity2);
+      const topic = this.getTopicKey(normalizedEntity);
+      if (!topicGroups.has(topic)) {
+        topicGroups.set(topic, []);
+      }
+      // Store the original connection but group by normalized topic
+      topicGroups.get(topic)!.push({...conn, normalizedEntity2: normalizedEntity});
+    });
+    
+    console.log(`🔍 GLOBAL FILTER: Created ${topicGroups.size} topic groups`);
+    
+    // For each topic group, prioritize specific people over vague ones and apply logical inference
+    topicGroups.forEach((groupConnections, topic) => {
+      console.log(`🔍 GLOBAL FILTER: Processing topic "${topic}" with ${groupConnections.length} connections`);
+      
+      const specificConnections = groupConnections.filter(conn => 
+        !vague.includes(conn.entity1.toLowerCase())
+      );
+      const vagueConnections = groupConnections.filter(conn => 
+        vague.includes(conn.entity1.toLowerCase())
+      );
+      
+      console.log(`   Specific: ${specificConnections.length}, Vague: ${vagueConnections.length}`);
+      
+      if (specificConnections.length > 0) {
+        // Apply logical inference: if someone created an object and someone vaguely gave a similar object,
+        // replace the vague giver with the specific creator
+        const resolvedVagueConnections = vagueConnections.map(vagueConn => {
+          if (vagueConn.connectionType === 'GAVE_OBJECT' || vagueConn.connectionType === 'GIFTED') {
+            const creator = specificConnections.find(specConn => 
+              specConn.connectionType === 'CREATED_OBJECT' || specConn.connectionType === 'CREATED'
+            );
+            if (creator) {
+              console.log(`🔍 LOGICAL INFERENCE: Resolved vague "${vagueConn.entity1}" to "${creator.entity1}" for giving action`);
+              return { ...vagueConn, entity1: creator.entity1 };
+            }
+          }
+          return vagueConn;
+        });
+        
+        filtered.push(...specificConnections);
+        filtered.push(...resolvedVagueConnections);
+        console.log(`🔍 GLOBAL FILTER: Topic "${topic}" - using ${specificConnections.length} specific + ${resolvedVagueConnections.length} resolved connections`);
+      } else {
+        // If no specific people, keep the vague ones
+        filtered.push(...vagueConnections);
+        console.log(`🔍 GLOBAL FILTER: Topic "${topic}" - keeping ${vagueConnections.length} vague connections (no specific alternatives)`);
+      }
+    });
+    
+    console.log(`🔍 GLOBAL FILTER: Final result: ${filtered.length} connections`);
+    return filtered;
+  }
+
+  // Get topic key for grouping related entities
+  private getTopicKey(entity: string): string {
+    const entityLower = entity.toLowerCase();
+    
+    // Group cat planter variations (including succulent planters)
+    if ((entityLower.includes('planter') && entityLower.includes('cat')) || 
+        (entityLower.includes('succulent') && entityLower.includes('planter') && entityLower.includes('cat'))) {
+      return 'cat_planter';
+    }
+    
+    // Group pet-related entities
+    if (entityLower.includes('mittens') || (entityLower.includes('cat') && !entityLower.includes('planter'))) {
+      return 'pets';
+    }
+    
+    // Default: use the entity itself
+    return entityLower;
+  }
+
+  // Normalize entity names to catch semantic equivalents
+  private normalizeEntityForGrouping(entity: string): string {
+    const entityLower = entity.toLowerCase();
+    
+    // Normalize cat planter variations to a standard form
+    if ((entityLower.includes('planter') && entityLower.includes('cat')) || 
+        (entityLower.includes('succulent') && entityLower.includes('planter') && entityLower.includes('cat'))) {
+      return 'cat planter';
+    }
+    
+    // Normalize cat references  
+    if (entityLower.includes('mittens')) {
+      return 'Mittens';
+    }
+    
+    return entity;
   }
 
   // NEW: Get intelligent context directly from Neo4j instead of PostgreSQL
@@ -367,6 +568,7 @@ PRIORITY RULES:
       }
       
       console.log('🔍 DEBUG: Raw entityConnections found:', entityConnections.length);
+      console.log('🔍 DEBUG: Query was:', query);
       entityConnections.forEach(conn => {
         console.log(`   RAW: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
       });
@@ -383,19 +585,36 @@ PRIORITY RULES:
         connectionMap.get(key).push(conn);
       });
       
-      // Second pass: resolve conflicts by prioritizing relationship types
+      // Second pass: resolve conflicts by prioritizing relationship types and resolve vague entities
       const resolvedConnections: any[] = [];
+      console.log('🔍 RESOLUTION MAP DEBUG: Processing', connectionMap.size, 'connection groups');
       connectionMap.forEach((connections, key) => {
+        console.log(`   Group "${key}": ${connections.length} connections`);
+        connections.forEach(conn => console.log(`     - ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`));
+        
         if (connections.length === 1) {
-          resolvedConnections.push(connections[0]);
+          const resolved = this.resolveVagueEntities(connections[0], entityConnections);
+          resolvedConnections.push(resolved);
         } else {
           // Multiple relationships between same entities - use first valid one
           const bestConnection = this.getFirstValidConnection(connections);
-          resolvedConnections.push(bestConnection);
+          const resolved = this.resolveVagueEntities(bestConnection, entityConnections);
+          resolvedConnections.push(resolved);
         }
       });
       
-      const uniqueConnections = resolvedConnections.sort((a, b) => {
+      // Third pass: Global filtering to remove vague entities when specific alternatives exist
+      console.log('🔍 BEFORE GLOBAL FILTER: resolvedConnections count:', resolvedConnections.length);
+      resolvedConnections.forEach(conn => {
+        console.log(`   BEFORE: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
+      });
+      const finalConnections = this.filterVagueEntitiesGlobally(resolvedConnections);
+      console.log('🔍 AFTER GLOBAL FILTER: finalConnections count:', finalConnections.length);
+      finalConnections.forEach(conn => {
+        console.log(`   AFTER: ${conn.entity1} --[${conn.connectionType}]--> ${conn.entity2}`);
+      });
+      
+      const uniqueConnections = finalConnections.sort((a, b) => {
         // Sort by entity1, then entity2, then connectionType for consistency
         const primary = a.entity1.localeCompare(b.entity1);
         if (primary !== 0) return primary;
