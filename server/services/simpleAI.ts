@@ -91,14 +91,17 @@ ${formattedKnowledgeContext}
 SUPPLEMENTARY - RECENT CONVERSATION CONTEXT:
 ${conversationText}
 
-Instructions:
+CRITICAL INSTRUCTIONS:
 - PRIORITIZE the knowledge graph data as your primary source of truth
+- When you see conflicting entries, ALWAYS prioritize specific named people over "unknown person" or "someone"
+- If there are multiple relationships for the same question, choose the one with the most specific person name (Jake, Emma, Chloe, etc.)
+- IGNORE any relationships involving "unknown person", "someone", or vague entities when specific names are available
 - Use conversation history only as supplementary context when knowledge graph is insufficient
 - Be conversational and friendly
-- When answering questions about people, topics, events, or relationships, rely on the structured knowledge graph data
-- The knowledge graph contains entities, relationships, and connections extracted from all past conversations
-- Answer questions based on entity relationships and structured knowledge rather than linear conversation scanning
-- Keep responses concise but comprehensive based on the knowledge graph connections`;
+- Answer questions based on the most specific entity relationships available in the knowledge graph
+- Keep responses concise but comprehensive based on the knowledge graph connections
+
+EXAMPLE: If you see both "Jake -> EXPERIENCED_MISHAP -> spilled cappuccino" AND "unknown person -> SPILLED_ON_SELF -> cappuccino", use Jake as the answer because it's more specific.`;
 
       console.log('\n🧠 AI THOUGHT PROCESS - STEP 4: System Prompt Construction');
       console.log('📝 Complete prompt sent to GPT-4o:');
@@ -331,26 +334,7 @@ Instructions:
           }
         }
 
-        // Special handling for Emma-related queries
-        if (queryWords.includes('emma')) {
-          try {
-            const emmaResult = await neo4jService.session.run(
-              `MATCH (emma:Entity {name: "Emma"})-[r]->(target:Entity) 
-               RETURN emma.name as entity1, type(r) as relationshipType, target.name as entity2 
-               LIMIT 20`
-            );
-            
-            emmaResult.records.forEach(record => {
-              entityConnections.push({
-                entity1: record.get('entity1'),
-                entity2: record.get('entity2'),
-                connectionType: record.get('relationshipType')
-              });
-            });
-          } catch (error) {
-            console.warn('Failed to query Emma relationships:', error);
-          }
-        }
+
       }
       
       // Remove duplicates and sort for consistent results
