@@ -8,7 +8,6 @@ vite.config.ts.*
 # Development and testing files
 evaluation/
 scripts/
-attached_assets/
 __pycache__/
 *.pyc
 
