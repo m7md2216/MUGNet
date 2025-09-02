@@ -108,20 +108,40 @@ npm run dev
 
 The `evaluation/` folder contains comprehensive tools for testing AI memory performance across different architectural approaches.
 
-## 🌐 Deployment
+## 🌐 Deployment Options
 
-This app can be deployed on:
-- **Replit** (recommended) - One-click deployment with built-in database
-- **Vercel/Netlify** - For frontend only
-- **Railway/Render** - For full-stack deployment
+### **Production Deployment (Recommended)**
 
-### Environment Variables Required
+#### **Option 1: Vercel + Railway**
+- **Frontend**: Deploy on [Vercel](https://vercel.com) (free tier available)
+- **Backend**: Deploy on [Railway](https://railway.app) (includes PostgreSQL)
+- **Neo4j**: Use [Neo4j AuraDB](https://neo4j.com/cloud/aura/) (free tier available)
+
+#### **Option 2: Render**
+- **Full-stack**: Deploy on [Render](https://render.com) (includes PostgreSQL)
+- **Neo4j**: Use [Neo4j AuraDB](https://neo4j.com/cloud/aura/)
+
+#### **Option 3: DigitalOcean/AWS/GCP**
+- Deploy on any cloud provider with Docker
+- Use managed databases (PostgreSQL + Neo4j)
+
+### **Development/Demo**
+- **Replit**: Quick setup for demos and development
+
+### **Environment Variables Required**
 ```env
-DATABASE_URL=postgresql://...
-NEO4J_URI=neo4j+s://...
+DATABASE_URL=postgresql://username:password@host:port/database
+NEO4J_URI=neo4j+s://xxx.databases.neo4j.io
 NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=...
-OPENAI_API_KEY=sk-...
+NEO4J_PASSWORD=your_password
+OPENAI_API_KEY=sk-your_openai_key
+```
+
+### **Docker Deployment**
+```bash
+# Build and run with Docker
+docker build -t ai-chat-system .
+docker run -p 5000:5000 --env-file .env ai-chat-system
 ```
 
 ## 📄 License
