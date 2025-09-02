@@ -2,6 +2,14 @@
 
 An advanced conversational AI platform that creates dynamic, contextually-aware interactions through intelligent knowledge graph technologies and adaptive reasoning.
 
+## 🚀 Live Demo
+
+**[Try the Live App →](https://your-app-name.replit.app)**
+
+> **To deploy:** Click the "Deploy" button in this Replit, then update this link with your actual deployment URL
+
+[![Deploy to Replit](https://img.shields.io/badge/Deploy%20to-Replit-orange?style=for-the-badge&logo=replit)](https://replit.com/@m7md2216/MUGNet)
+
 ## 🏗️ Architecture
 
 ### Frontend
@@ -25,6 +33,13 @@ An advanced conversational AI platform that creates dynamic, contextually-aware 
 - **Context-aware AI responses** using graph data
 - **Real-time relationship storage** in Neo4j
 - **Evaluation tools** for testing AI memory performance
+
+## 📖 About
+
+This project is part of AI research comparing three different architectural approaches for conversational memory:
+- **Neo4j + Knowledge Graph** (current implementation)
+- **Pure LLM with full context**
+- **LLM + RAG (Retrieval-Augmented Generation)**
 
 ## 🚀 Quick Start
 
@@ -92,6 +107,22 @@ npm run dev
 ## 🧪 Testing & Evaluation
 
 The `evaluation/` folder contains comprehensive tools for testing AI memory performance across different architectural approaches.
+
+## 🌐 Deployment
+
+This app can be deployed on:
+- **Replit** (recommended) - One-click deployment with built-in database
+- **Vercel/Netlify** - For frontend only
+- **Railway/Render** - For full-stack deployment
+
+### Environment Variables Required
+```env
+DATABASE_URL=postgresql://...
+NEO4J_URI=neo4j+s://...
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=...
+OPENAI_API_KEY=sk-...
+```
 
 ## 📄 License
 
