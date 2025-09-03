@@ -4,19 +4,9 @@ An advanced conversational AI platform that creates dynamic, contextually-aware 
 
 ## 🚀 Live Demo
 
-**[Try the Live App →](https://your-app-name.replit.app)**
+**[Try the Live App →]( https://group-chat-intelligence-mratrout.replit.app)**
 
-> **To deploy:** Click the "Deploy" button in this Replit, then update this link with your actual deployment URL
 
-## 🎮 Try It Yourself
-
-**Option 1: One-Click Setup**
-[![Run on Replit](https://img.shields.io/badge/Run%20on-Replit-orange?style=for-the-badge&logo=replit)](https://replit.com/@m7md2216/MUGNet)
-
-Click the button above to fork and run your own instance immediately!
-
-**Option 2: Quick Deploy**
-[![Deploy to Railway](https://img.shields.io/badge/Deploy%20on-Railway-purple?style=for-the-badge&logo=railway)](https://railway.app/template) | [![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-46E3B7?style=for-the-badge&logo=render)](https://render.com)
 
 ## 🏗️ Architecture
 
