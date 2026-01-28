@@ -16,7 +16,7 @@ An advanced conversational AI platform that creates dynamic, contextually-aware 
 ### 2. Send Messages
 - Click on a user to switch to their perspective
 - Type messages in the input box at the bottom
-- Mention the AI by typing `@AI Agent` to get intelligent responses
+- Mention the AI by typing `@aiagent` to get intelligent responses
 - Mention other users with `@Username` to discuss them
 
 ### 3. Build Knowledge
@@ -25,16 +25,12 @@ An advanced conversational AI platform that creates dynamic, contextually-aware 
 - The AI uses this graph to provide context-aware answers about what users have discussed
 
 ### 4. Ask the AI Questions
-- Switch to any user and ask `@AI Agent` questions like:
+- Switch to any user and ask `@aiagent` questions like:
   - "What does Jake like?"
   - "Who is Sarah's friend?"
   - "What restaurant did we mention?"
 - The AI retrieves relevant context from the knowledge graph to answer accurately
 
-### 5. Management Tools
-- **View Knowledge Graph**: Opens Neo4j browser to explore stored relationships
-- **Rebuild Knowledge Graph**: Re-processes all messages for entity extraction
-- **Delete All Users and Chat**: Clears everything for a fresh start
 
 ## 🏗️ Architecture
 
