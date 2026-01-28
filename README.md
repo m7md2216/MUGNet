@@ -6,7 +6,35 @@ An advanced conversational AI platform that creates dynamic, contextually-aware 
 
 **[Try the Live App →]( https://group-chat-intelligence-mratrout.replit.app)**
 
+## Quick Start Guide
 
+### 1. Add Users
+- Enter a name in the text field on the left sidebar
+- Click the **+** button to add them to the chat
+- The **AI Agent** is always present and ready to answer questions
+
+### 2. Send Messages
+- Click on a user to switch to their perspective
+- Type messages in the input box at the bottom
+- Mention the AI by typing `@AI Agent` to get intelligent responses
+- Mention other users with `@Username` to discuss them
+
+### 3. Build Knowledge
+- As users chat, the system automatically extracts entities and relationships
+- Information like preferences, relationships, and facts are stored in the Neo4j knowledge graph
+- The AI uses this graph to provide context-aware answers about what users have discussed
+
+### 4. Ask the AI Questions
+- Switch to any user and ask `@AI Agent` questions like:
+  - "What does Jake like?"
+  - "Who is Sarah's friend?"
+  - "What restaurant did we mention?"
+- The AI retrieves relevant context from the knowledge graph to answer accurately
+
+### 5. Management Tools
+- **View Knowledge Graph**: Opens Neo4j browser to explore stored relationships
+- **Rebuild Knowledge Graph**: Re-processes all messages for entity extraction
+- **Delete All Users and Chat**: Clears everything for a fresh start
 
 ## 🏗️ Architecture
 
@@ -84,10 +112,10 @@ npm run dev
 ## 🧠 How It Works
 
 1. **Message Processing**: Users send messages through the React frontend
-2. **Entity Extraction**: GPT-4o extracts entities (people, places, activities, times)
+2. **Entity Extraction**: GPT-4o-mini extracts entities (people, places, activities, times)
 3. **Relationship Storage**: Entities and relationships stored in Neo4j graph
 4. **Context Retrieval**: AI queries Neo4j for relevant context when answering
-5. **Intelligent Responses**: GPT-4o generates responses using graph context + recent history
+5. **Intelligent Responses**: GPT-4o-mini generates responses using graph context + recent history
 
 ## 🔧 Development
 
